@@ -1,5 +1,7 @@
 <h1>Auth boi WATCHING YOU</h1>
 
+<h4>(this bot in development its means "not working")</h4>
+
 <section>
     that bot collect all of your info: <br>
     email, password, and more info about you(in future)
