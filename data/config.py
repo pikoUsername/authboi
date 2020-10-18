@@ -9,4 +9,10 @@ DB_PORT = str(os.getenv("DB_PORT"))
 DB_USER = str(os.getenv("DB_USER"))
 DB_PASS = str(os.getenv("DB_PASS"))
 
+BOT_TOKEN = str(os.getenv("BOT_TOKEN"))
+
+ADMIN_IDS = [
+    str(os.getenv("ADMIN_ID"))
+]
+
 DSN = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
