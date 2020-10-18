@@ -5,7 +5,7 @@
     email, password, and more info about you)).
     <br><br>
     you can install that bot for local host:<br>
-    <code> git clone *github bot* </code><br>
+    <code> git clone https://github.com/pikoUsername/authboi.git </code><br>
     for use bot change some values in .env file.
     
 </section>
