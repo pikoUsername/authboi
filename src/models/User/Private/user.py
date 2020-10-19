@@ -1,3 +1,5 @@
-from asyncpg import
+from sqlalchemy import (
+    Column, Integer,
+)
 
 
