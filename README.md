@@ -1,4 +1,4 @@
-<h1>Auth boi WATCHING YOU</h1>
+<h1>Auth bot(for fun)</h1>
 
 <h4>(this bot in development its means "not working")</h4>
 
