@@ -5,4 +5,5 @@ from src.loader import dp
 from src.states.level1.start import StartState
 
 @dp.message_handler(state=StartState.wait_to_login, content_types=ContentType.TEXT)
-async def
+async def cmd_wait_to_login():
+    SendMessage("")
