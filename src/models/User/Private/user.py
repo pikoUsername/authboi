@@ -1,5 +1,3 @@
-from sqlalchemy import (
-    Column, Integer,
-)
+from gino import Gino
 
 

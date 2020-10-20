@@ -1,9 +1,10 @@
-#
+# s
 /src/.env
 #
-#
+# env
 #
 authboi/*
 authboi
 #
 .idea
+.idea/*

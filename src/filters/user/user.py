@@ -1,8 +1,12 @@
 from aiogram.dispatcher.filters import BoundFilter
+from aiogram import types
+from aiogram.types import ChatType
 
-class UserFilter(BoundFilter):
-    key = "is_user"
-    is_user: bool = True
 
-    async def check(self) -> bool:
-        pass
+class Is_private(BoundFilter):
+    key = 'is_private'
+
+    is_private: bool
+
+    def check(self) -> bool:
+        return ChatType.is_private()
