@@ -1,3 +1,2 @@
-from gino import Gino
 
 

@@ -8,3 +8,10 @@
 #
 /.idea
 /.idea/*
+.idea
+#
+#pycahce
+#
+__pycache__/
+#
+
