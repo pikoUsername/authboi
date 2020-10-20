@@ -1,10 +1,10 @@
 # s
-/src/.env
+/src/*.env
 #
 # env
 #
-authboi/*
-authboi
+/authboi/*
+/authboi
 #
-.idea
-.idea/*
+/.idea
+/.idea/*
