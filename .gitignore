@@ -7,11 +7,13 @@
 /authboi
 #
 /.idea
-/.idea/*
+.idea/*
 .idea
 #
 #pycahce
 #
-__pycache__/
+__pycache__/*
+src/handlers/__pycache__/*
+data/__pycache__/*
 #
 
