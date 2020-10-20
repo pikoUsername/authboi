@@ -1,18 +1,27 @@
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+import secrets
 
-DB_NAME = str(os.getenv("DB_NAME"))
-DB_HOST = str(os.getenv("DB_HOST"))
-DB_PORT = str(os.getenv("DB_PORT"))
-DB_USER = str(os.getenv("DB_USER"))
-DB_PASS = str(os.getenv("DB_PASS"))
+from envparse import env
 
-BOT_TOKEN = str(os.getenv("BOT_TOKEN"))
+# psql
+POSTGRES_NAME = env.str("DB_NAME")
+POSTGRES_HOST = env.str("DB_HOST")
+POSTGRES_PORT = env.int("DB_PORT")
+POSTGRES_USER = env.str("DB_USER")
+POSTGRES_PASS = env.str("DB_PASS")
 
+# webhook configs
+DOMAIN = env.str("DOMAIN", default="localhost")
+SECRET_KEY = secrets.token_urlsafe(48)
+WEBHOOK_BASE_PATH = env.str("WEBHOOK_BASE_PATH", default="/webhook")
+WEBHOOK_PATH = f"{WEBHOOK_BASE_PATH}:{SECRET_KEY}"
+WEBHOOK_URL = f"https://{DOMAIN}{WEBHOOK_PATH}"
+
+BOT_TOKEN = env.str("BOT_TOKEN")
 ADMIN_IDS = [
-    str(os.getenv("ADMIN_ID"))
+    env.int("ADMIN_IDS")
 ]
+TELEGRAM_PORT = env.int("TELEGRAM_PORT", default=5000)
 
-DSN = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
