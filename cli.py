@@ -1,17 +1,19 @@
+from loguru import logger
 
 async def on_startup(dp):
     from src import filters
     from src import middlewares
-    from src.handlers import user, error
+    from src.handlers import user, errors
 
-    error.setup(dp)
+    errors.setup(dp)
     user.setup(dp)
     filters.setup(dp)
     middlewares.setup(dp)
 
+    logger.info("Bot started")
+
     from src.handlers.admins.notify_admins import notify_admins
     await notify_admins(dp)
-
 
 if __name__ == '__main__':
     from aiogram import executor

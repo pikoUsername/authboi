@@ -5,6 +5,8 @@
 /.idea
 .idea/*
 .idea
+# logs
+logs/
 
 # pycahce
 __pycache__/
