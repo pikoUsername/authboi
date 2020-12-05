@@ -1,2 +1,2 @@
-from .User import dp
-from .error import dp
+from . import errors
+from . import user

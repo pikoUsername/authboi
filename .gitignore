@@ -1,17 +1,13 @@
-# s
+# very important info here
 /src/*.env
-#
-# env
-#
-/authboi/*
-/authboi
-#
+.env
+# pycharm's trash
 /.idea
 .idea/*
 .idea
-#
+
 # pycahce
-#
+__pycache__/
 __pycache__/*
 src/handlers/__pycache__/*
 data/__pycache__/*

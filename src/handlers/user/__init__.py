@@ -1,0 +1,37 @@
+from aiogram import Dispatcher
+from aiogram.dispatcher.filters import CommandStart, CommandHelp, Text
+from aiogram.types import ContentTypes
+
+from .help import bot_help
+from .start import bot_start
+from .auth import (
+    bot_auth_login,
+    bot_cancel_handler,
+    bot_auth_password,
+    bot_auth_accept,
+    bot_auth_back,
+)
+
+from authboi.src.states.user.auth import StartState
+
+def setup(dp: Dispatcher):
+    dp.register_message_handler(bot_start, CommandStart(), state="*")
+    dp.register_message_handler(bot_help, CommandHelp())
+    dp.register_message_handler(bot_cancel_handler, Text("cancel", ignore_case=True), state="*")
+    dp.register_message_handler(bot_cancel_handler, "cancel", state="*")
+    dp.register_message_handler(bot_auth_back, "back", state="*")
+    dp.register_message_handler(
+        bot_auth_login,
+        state=StartState.wait_to_login,
+        content_types=ContentTypes.TEXT
+    )
+    dp.register_message_handler(
+        bot_auth_password,
+        state=StartState.wait_to_login,
+        content_types=ContentTypes.TEXT
+    )
+    dp.register_message_handler(
+        bot_auth_accept,
+        state=StartState.wait_to_accept,
+        content_types=ContentTypes.TEXT
+    )
