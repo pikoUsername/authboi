@@ -10,6 +10,7 @@ from .auth import (
     bot_auth_password,
     bot_auth_accept,
     bot_auth_back,
+    bot_auth_email,
 )
 
 from src.states.user.auth import StartState
@@ -23,12 +24,20 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(
         bot_auth_login,
         state=StartState.wait_to_login,
+        content_types=ContentTypes.TEXT,
     )
     dp.register_message_handler(
         bot_auth_password,
         state=StartState.wait_to_password,
+        content_types=ContentTypes.TEXT,
     )
     dp.register_message_handler(
         bot_auth_accept,
         state=StartState.wait_to_accept,
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        bot_auth_email,
+        state=StartState.wait_to_email,
+        content_types=ContentTypes.TEXT,
     )
