@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 
 from src.models.models import DBCommands
 
@@ -15,7 +16,11 @@ async def make_user_profile(user_id: int) -> str:
     return "\n".join(text)
 
 
-async def get_user_profile(msg: types.Message):
+async def get_user_profile(msg: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state:
+        return
+
     tg_user = types.User.get_current()
     user_profile = await make_user_profile(tg_user.id)
 

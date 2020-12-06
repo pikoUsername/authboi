@@ -2,10 +2,17 @@ from aiogram import Dispatcher
 from aiogram.dispatcher.filters import CommandStart, CommandHelp, Text, Command
 from aiogram.types import ContentTypes
 
+# handlers
 from .help import bot_help
 from .start import register_user
 from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
+from .profile import get_user_profile
+from .description import (
+    change_description,
+    start_change_description,
+    accept_change_description
+)
 from .auth import (
     bot_auth_login,
     bot_cancel_handler,
@@ -14,15 +21,22 @@ from .auth import (
     bot_auth_back,
     bot_auth_email,
 )
+# end list of handlers
 
+# states
+from src.states.user.desc import DescriptionChange
 from src.states.user.auth import StartState
 
 def setup(dp: Dispatcher):
+    # just handlers with any state
     dp.register_message_handler(register_user, CommandStart(), state="*")
     dp.register_message_handler(bot_help, CommandHelp(), Command("authtorizate"), state="*")
     dp.register_message_handler(bot_cancel_handler, Text("cancel", ignore_case=True), state="*")
     dp.register_message_handler(bot_cancel_handler, Command("cancel"), state="*")
     dp.register_message_handler(bot_auth_back, Command("back"), state="*")
+    dp.register_message_handler(get_user_profile, Command("profile"), state="*")
+
+    # handlers with states
     dp.register_message_handler(
         bot_auth_login,
         state=StartState.wait_to_login,
@@ -41,5 +55,20 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(
         bot_auth_email,
         state=StartState.wait_to_email,
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        start_change_description,
+        state="*",
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        change_description,
+        state=DescriptionChange.wait_to_description,
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        accept_change_description,
+        state=DescriptionChange.wait_to_accept_change,
         content_types=ContentTypes.TEXT,
     )
