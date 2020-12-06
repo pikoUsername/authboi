@@ -1,0 +1,7 @@
+aiogram
+aiohttp
+gino
+loguru
+aiojobs
+python-dotenv
+sqlalchemy

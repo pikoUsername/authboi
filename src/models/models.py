@@ -19,13 +19,16 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
-    uid = Column(BigInteger)
+    user_id = Column(BigInteger)
     username = Column(String(50))
     full_name = Column(String(100))
+    login = Column(String(100))
     email = Column(String(200))
-    password = Column() # there must be hash
+    password = Column(String(200)) # there must be hash
     referal = Column(Integer)
     is_authed = Column(Boolean)
+    is_password_changed = Column(Boolean)
+    description = Column(String(250))
     query: sql.Select
 
     def __repr__(self):
@@ -36,7 +39,14 @@ class DBCommands:
         user = await User.query.where(User.user_id == user_id).gino.first()
         return user
 
-    async def add_new_user(self, referral=None):
+    async def add_new_user(
+            self,
+            referral=None,
+            login=None,
+            email: str=None,
+            password: str=None,
+            is_authed: bool=False
+    ):
         user = types.User.get_current()
         old_user = await self.get_user(user.id)
 
@@ -44,6 +54,10 @@ class DBCommands:
             return old_user
 
         new_user = User()
+        new_user.login = login
+        new_user.is_authed = is_authed
+        new_user.email = email
+        new_user.password = password
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
@@ -56,6 +70,10 @@ class DBCommands:
     async def count_users(self) -> int:
         total = await db.func.count(User.id).gino.scalar()
         return total
+
+    async def check_for_authed(self, user_id):
+        tg_user = types.User.get_current()
+        user = await self.get_user(user_id)
 
     async def check_referrals(self):
         bot = Bot.get_current()

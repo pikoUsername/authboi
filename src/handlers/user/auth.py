@@ -1,11 +1,14 @@
+import re
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loguru import logger
 
 from src.states.user.auth import StartState
-from src.utils.misc.other import check_to_cyrillic, check_for_space, check_for_email_correct
+from src.utils.misc.other import check_for_email_correct
+from src.models.models import DBCommands
 
-#TODO: Make request to database, and make db API
+db = DBCommands()
 
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     # checking for corrent state!
@@ -20,10 +23,9 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
 
 async def bot_auth_login(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if not check_for_space:
+        if not '' in msg.text:
             return await msg.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
-        elif not check_to_cyrillic:
-            return await msg.answer("Имя не должен содержать в себе кириллицу!")
+
         data["login"] = msg.text
 
         logger.info("seme one getted login", msg.text)
@@ -46,8 +48,7 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
 async def bot_auth_password(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         # checking to cirilic in text
-        check = check_to_cyrillic(msg.text)
-
+        check = re.search(r'[^\W\d]', msg.text)
         # cheking for spaces in password and etc.
         if not check:
             logger.info(f"Some one really stupid wants to type with russian words password FUCK!")
@@ -78,6 +79,8 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
         await msg.answer("Вы теперь авторизованы как полноправный пользветель!")
         async with state.proxy() as data:
             login = data["login"]
+            password = data["password"]
+            email = data["email"]
             password_len = len(data["password"])
             pass_to_show = []
 
@@ -87,11 +90,20 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
             text = [
                 "Вы авторизованы как: ",
                 f"Имя: {login}",
+                f"email: {email}",
                 f"Пароль: ",
                 "".join(pass_to_show),
             ]
 
             await msg.answer("\n".join(text))
+            logger.info('------USER AUTHORIZATION!------')
+            logger.info(f"| login: {login} | email: {email} |")
+            await db.add_new_user(
+                login=login,
+                email=email,
+                password=password,
+                is_authed=True,
+            )
 
         await state.finish()
 
@@ -100,5 +112,3 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
         await state.finish()
     else:
         await msg.answer("Попробуйте снова!")
-
-

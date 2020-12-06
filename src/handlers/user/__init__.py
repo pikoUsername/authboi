@@ -19,7 +19,7 @@ from src.states.user.auth import StartState
 
 def setup(dp: Dispatcher):
     dp.register_message_handler(register_user, CommandStart(), state="*")
-    dp.register_message_handler(bot_help, CommandHelp(), state="*")
+    dp.register_message_handler(bot_help, CommandHelp(), Command("authtorizate"), state="*")
     dp.register_message_handler(bot_cancel_handler, Text("cancel", ignore_case=True), state="*")
     dp.register_message_handler(bot_cancel_handler, Command("cancel"), state="*")
     dp.register_message_handler(bot_auth_back, Command("back"), state="*")
