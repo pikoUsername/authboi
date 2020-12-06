@@ -1,3 +1,5 @@
+import asyncio
+
 from loguru import logger
 
 from src.models.models import create_db
@@ -7,6 +9,8 @@ async def on_startup(dp):
     from src import filters
     from src import middlewares
     from src.handlers import user, errors
+    
+    await asyncio.sleep(5)
 
     errors.setup(dp)
     user.setup(dp)

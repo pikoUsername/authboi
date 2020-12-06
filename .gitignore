@@ -9,10 +9,17 @@
 logs/
 
 # pycahce
-__pycache__/
+*/__pycache__/
+*/__pycache__/*
+**/__pycache__/**
+*/__pycache__/**
+**/__pycache__/*
+/__pycache__/
 __pycache__/*
 src/handlers/__pycache__/*
 data/__pycache__/*
+data/__pycache__/
+data/__pycache__/config.cpython-38.pyc
 src/handlers/User/__pycache__/*
 #
 authboi/*
