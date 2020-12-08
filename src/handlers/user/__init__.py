@@ -27,12 +27,14 @@ from .auth import (
     bot_auth_back,
     bot_auth_email,
 )
+from .signup import sign_in, start_sign_in, login_sign_in, password_sign_in
 # end list of handlers
 
 # states
 from src.states.user.desc import DescriptionChange
 from src.states.user.auth import StartState
 from src.states.user.cng_pass import ChangePassword
+from src.states.user.sign_up import SignIn
 
 def setup(dp: Dispatcher):
     # just handlers with any state
@@ -50,6 +52,9 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(start_change_password,
                                 Command(commands=["change_password", "cng_pass"]),
                                 state="*")
+    dp.register_callback_query_handler(start_sign_in, text="sign_up_auth", state="*")
+    dp.register_message_handler(login_sign_in, state=SignIn.wait_to_type_login)
+    dp.register_message_handler(password_sign_in, state=SignIn.wait_to_type_password)
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
     dp.register_message_handler(changing_fully, state=ChangePassword.wait_to_accept_pass)
 

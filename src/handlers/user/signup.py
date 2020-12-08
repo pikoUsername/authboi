@@ -24,6 +24,8 @@ async def password_sign_in(message: types.Message, state: FSMContext):
     with state.proxy() as data:
         data["user_authed_with_pass"] = user_authed_with_pass
 
-async def sign_in():
+async def sign_in(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer("Эта комманда Не работает!")
     pass
 
