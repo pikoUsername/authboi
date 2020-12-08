@@ -48,7 +48,7 @@ def setup(dp: Dispatcher):
     dp.register_callback_query_handler(log_in_user, text="log_in", state="*")
     dp.register_message_handler(change_password, state=ChangePassword.wait_to_password)
     dp.register_message_handler(start_change_password,
-                                Command(commands=["change_password", "change_password"]),
+                                Command(commands=["change_password", "cng_pass"]),
                                 state="*")
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
     dp.register_message_handler(changing_fully, state=ChangePassword.wait_to_accept_pass)

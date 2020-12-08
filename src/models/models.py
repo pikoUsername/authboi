@@ -67,6 +67,23 @@ class DBCommands:
         await new_user.create()
         return new_user
 
+    async def get_user_by_login(self, login):
+        user = await User.query.where(User.login == login).gino.first()
+        return user
+
+    async def get_user_by_password(self, password):
+        user = await User.query.where(User.password == password).gino.first()
+        return user
+
+    async def sign_in(self, login):
+        user = await User.query.where(User.login == login).gino.first()
+
+        if user is None or user.is_authed is True:
+            return
+
+        return user
+
+
     async def count_users(self) -> int:
         total = await db.func.count(User.id).gino.scalar()
         return total

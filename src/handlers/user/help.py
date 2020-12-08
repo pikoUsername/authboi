@@ -25,7 +25,7 @@ async def bot_help(msg: types.Message):
         '/help - Получить справку',
         '/cancel - отменяет вход',
         "/back - ход назад",
-        '/about - показывает гитхаб бота'
+        '/about - показывает гитхаб бота',
         '/change_password - Смена пароля',
         '/profile - Показывает ваш профиль',
         '/change_description - Смена описания',
