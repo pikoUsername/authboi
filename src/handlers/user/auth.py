@@ -57,9 +57,11 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
             return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
         elif len(msg.text) <= 7:
             # check for len text and tip "better change it"
-            await msg.answer("Пароль не надежный, лучше смените его!")
+            await msg.answer("Такой пароль не допускается!\n Пароль должен иметь длину больше 7 символов!")
+            return
 
         data["password"] = msg.text
+        await msg.delete()
 
     await StartState.wait_to_accept.set()
     await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")

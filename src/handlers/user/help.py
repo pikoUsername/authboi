@@ -14,3 +14,6 @@ async def bot_help(msg: types.Message):
         "Если хотите полный список комманд, то вы должны пройти авторизацию, коммандой /start, или /login"
     ]
     await msg.answer('\n'.join(text))
+
+async def bot_about(msg: types.Message):
+    await msg.answer("https://github.com/pikoUsername/authboi.git")
