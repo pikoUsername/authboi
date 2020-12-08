@@ -40,6 +40,7 @@ def setup(dp: Dispatcher):
     # just handlers with any state
     dp.register_message_handler(register_user, CommandStart(), state="*")
     dp.register_message_handler(bot_help, CommandHelp())
+    dp.register_message_handler(get_refferals_bot, Command(commands=["ref", "refferal"]), state="*")
     dp.register_message_handler(bot_about, Command("about"))
     dp.register_message_handler(bot_cancel_handler, Text("cancel", ignore_case=True), state="*")
     dp.register_message_handler(bot_cancel_handler, Command("cancel"), state="*")

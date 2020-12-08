@@ -29,6 +29,7 @@ async def bot_help(msg: types.Message):
         '/change_password - Смена пароля',
         '/profile - Показывает ваш профиль',
         '/change_description - Смена описания',
+        '/ref - Получить рефералку'
     ]
     return await msg.answer("\n".join(text))
 
