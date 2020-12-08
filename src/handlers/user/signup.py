@@ -13,7 +13,7 @@ async def start_sign_in(call_back: types.CallbackQuery):
 
 async def login_sign_in(message: types.Message, state: FSMContext):
     user_login = await db.get_user_by_login(message.text)
-    with state.proxy() as data:
+    async with state.proxy() as data:
         data["user_login"] = user_login
         await SignIn.wait_to_type_password.set()
         return await message.answer("Теперь ввидите пароль! ")
@@ -21,11 +21,7 @@ async def login_sign_in(message: types.Message, state: FSMContext):
 
 async def password_sign_in(message: types.Message, state: FSMContext):
     user_authed_with_pass = await db.get_user_by_password(message.text)
-    with state.proxy() as data:
+    async with state.proxy() as data:
         data["user_authed_with_pass"] = user_authed_with_pass
-
-async def sign_in(message: types.Message, state: FSMContext):
-    await state.finish()
-    await message.answer("Эта комманда Не работает!")
-    pass
-
+        await state.finish()
+        await message.answer("Эта комманда Не работает! Пока что")

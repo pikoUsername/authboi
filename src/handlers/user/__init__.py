@@ -4,7 +4,7 @@ from aiogram.types import ContentTypes
 
 # handlers
 from .help import bot_help, bot_about
-from .start import register_user, sign_up_user, log_in_user
+from .start import register_user, sign_in_user, log_in_user
 from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
 from .profile import get_user_profile
@@ -27,7 +27,7 @@ from .auth import (
     bot_auth_back,
     bot_auth_email,
 )
-from .signup import sign_in, start_sign_in, login_sign_in, password_sign_in
+from .signup import start_sign_in, login_sign_in, password_sign_in
 # end list of handlers
 
 # states
@@ -46,13 +46,12 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(bot_auth_back, Command("back"), state="*")
     dp.register_message_handler(get_user_profile, Command("profile"), state="*")
     dp.register_message_handler(start_change_description, Command("change_desc"))
-    dp.register_callback_query_handler(sign_up_user, text="sign_in", state="*")
+    dp.register_callback_query_handler(sign_in_user, text="sign_in", state="*")
     dp.register_callback_query_handler(log_in_user, text="log_in", state="*")
     dp.register_message_handler(change_password, state=ChangePassword.wait_to_password)
     dp.register_message_handler(start_change_password,
                                 Command(commands=["change_password", "cng_pass"]),
                                 state="*")
-    dp.register_callback_query_handler(start_sign_in, text="sign_up_auth", state="*")
     dp.register_message_handler(login_sign_in, state=SignIn.wait_to_type_login)
     dp.register_message_handler(password_sign_in, state=SignIn.wait_to_type_password)
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)

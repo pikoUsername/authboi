@@ -1,8 +1,7 @@
 from aiogram import types
-from loguru import logger
 
 from src.states.user.auth import StartState
-from src.states.user.sign_up import SignUp
+from src.states.user.sign_up import SignIn
 from src.loader import db
 from src.keyboards.inline.start import choice_kb
 
@@ -14,8 +13,6 @@ async def register_user(msg: types.Message):
     if user:
         return await msg.answer("Вы уже авторизованы как польветель! Если хотите выйти то комманда exit!")
 
-
-
     return await msg.answer("Выбирите:", reply_markup=choice_kb)
 
 async def log_in_user(call_back: types.CallbackQuery):
@@ -23,8 +20,8 @@ async def log_in_user(call_back: types.CallbackQuery):
 
     await call_back.message.reply("Прежде чем пройти и использвать бота, авторизуйтесь! \n Предупреждение! Вы будете вышвернуты с аккаунта если будете уверены об этом пуоступке")
 
-async def sign_up_user(call_back: types.CallbackQuery):
-    await SignUp.wait_to_type_login.set()
+async def sign_in_user(call_back: types.CallbackQuery):
+    await SignIn.wait_to_type_login.set()
 
     await call_back.message.answer("Ввидите ваш Логин или Имя!")
 
