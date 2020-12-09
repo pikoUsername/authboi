@@ -48,6 +48,8 @@ async def changing_fully(msg: types.Message, state: FSMContext):
             tg_user = types.User.get_current()
             user = await db.get_user(tg_user.id)
 
+            await msg.delete()
+
             await user.update(password=password).apply()
 
             await msg.answer("Успех вы сменили пароль!")

@@ -5,7 +5,7 @@ from src.loader import db
 async def get_user_profile(msg: types.Message):
     tg_user = types.User.get_current()
     user = await db.get_user(tg_user.id)
-    if user is None:
+    if user.is_authed is False and not user:
         return await msg.answer("Вы не авторизованы!")
 
     text = [

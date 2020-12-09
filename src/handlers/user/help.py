@@ -8,7 +8,7 @@ async def bot_help(msg: types.Message):
     tg_user = types.User.get_current()
     user = await db.get_user(tg_user.id)
 
-    if user is None:
+    if not user:
         text = [
             'Список команд: ',
             '/start - Начать диалог',

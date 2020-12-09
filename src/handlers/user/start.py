@@ -10,7 +10,7 @@ async def register_user(msg: types.Message):
     tg_user = types.User.get_current()
     user = await db.get_user(tg_user.id)
 
-    if user:
+    if user and user.is_authed is True:
         return await msg.answer("Вы уже авторизованы как польветель! Если хотите выйти то комманда exit!")
 
     return await msg.answer("Выбирите:", reply_markup=choice_kb)
