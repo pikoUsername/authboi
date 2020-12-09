@@ -1,6 +1,6 @@
 <h1>Auth bot(for fun)</h1>
 
-<h4>(this bot in development its means "not working")</h4>
+<h4>(this bot in development its means "working", and yeah that bot russian guy)</h4>
 
 <section>
     that bot collect all of your info: <br>
