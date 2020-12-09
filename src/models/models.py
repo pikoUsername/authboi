@@ -112,6 +112,7 @@ class DBCommands:
         user = await self.get_user(user_id)
         user.is_authed = False
 
+
 async def create_db():
     await db.set_bind(POSTGRES_URI)
 

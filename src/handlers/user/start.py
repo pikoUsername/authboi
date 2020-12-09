@@ -4,10 +4,18 @@ from src.states.user.auth import StartState
 from src.states.user.sign_up import SignIn
 from src.loader import db
 from src.keyboards.inline.start import choice_kb
+from src.keyboards.inline.admin import admin_kb
+from data.config import ADMIN_IDS
 
 async def register_user(msg: types.Message):
     # here check to user exists
     tg_user = types.User.get_current()
+    if tg_user.id in ADMIN_IDS:
+        return await msg.answer(
+            "Вы авторизованы как админ, админ панель:",
+            reply_markup=admin_kb,
+        )
+
     user = await db.get_user(tg_user.id)
 
     if user and user.is_authed is True:
