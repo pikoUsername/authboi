@@ -10,6 +10,9 @@ from src.models.models import DBCommands
 db = DBCommands()
 
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
+    """
+    registered in 45 65 line __init__.py
+    """
     # checking for corrent state!
     current_state = await state.get_state()
     if not current_state:
@@ -21,8 +24,13 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_login(msg: types.Message, state: FSMContext):
+    """
+    checks for space and commits this changes
+    registered in 67 line __init__.py
+
+    """
     async with state.proxy() as data:
-        if not '' in msg.text:
+        if not ' ' in msg.text:
             return await msg.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
 
         data["login"] = msg.text
@@ -34,6 +42,11 @@ async def bot_auth_login(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_email(msg: types.Message, state: FSMContext):
+    """
+    Checks for space and '@' if exists in text
+    registered in 82 line __init__.py
+
+    """
     async with state.proxy() as data:
         if ' ' in msg.text:
             return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
@@ -47,6 +60,9 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_password(msg: types.Message, state: FSMContext):
+    """
+    delete message password,
+    """
     logger.info('password handler activated')
     async with state.proxy() as data:
         # checking to cirilic in text

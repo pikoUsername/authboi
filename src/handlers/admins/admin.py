@@ -4,13 +4,13 @@ from aiogram.utils.callback_data import CallbackData
 from src.loader import db
 from src.keyboards.inline.admin import admin_kb
 
-async def get_statistic(call_back: types.CallbackQuery):
+async def get_statistic(call_back: types.CallbackQuery): # registered in 6 line __init__.py
     # here statistic
 
     await call_back.message.edit_text("Смотреть нечего")
 
 
-async def get_users(call_back: types.CallbackQuery):
+async def get_users(call_back: types.CallbackQuery): # registered in 7 line __init__.py
     users_data = CallbackData('name', 'id')
     # here get all users in inline keyboard
     all_users = await db.get_all_users()
@@ -21,8 +21,9 @@ async def get_users(call_back: types.CallbackQuery):
 
     await call_back.message.edit_reply_markup(all_users_keyboard)
 
-async def from_all_users_back(call_back: types.CallbackQuery):
+async def from_all_users_back(call_back: types.CallbackQuery): # refister in __init__.py 8 line
     await call_back.message.edit_text("Админка: ")
     await call_back.message.edit_reply_markup(admin_kb)
 
-async def
+async def some_notFeature(): # register in
+    pass

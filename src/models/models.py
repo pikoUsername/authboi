@@ -69,28 +69,9 @@ class DBCommands:
         await new_user.create()
         return new_user
 
-    async def get_user_by_login(self, login):
-        user = await User.query.where(User.login == login).gino.first()
-        return user
-
-    async def get_user_by_password(self, password):
-        user = await User.query.where(User.password == password).gino.first()
-        return user
-
-    async def sign_in(self, login):
-        user = await User.query.where(User.login == login).gino.first()
-
-        if user is None or user.is_authed is True:
-            return
-
-        return user
-
     async def count_users(self) -> int:
         total = await db.func.count(User.id).gino.scalar()
         return total
-
-    async def check_for_authed(self, user_id):
-        user = await self.get_user(user_id)
 
     async def check_referrals(self):
         bot = Bot.get_current()
@@ -103,10 +84,6 @@ class DBCommands:
             f"{num + 1}. " + (await bot.get_chat(referral.user_id)).get_mention(as_html=True)
             for num, referral in enumerate(referrals)
         ])
-
-    async def remove_user(self, user_id):
-        user = await self.get_user(user_id)
-        user.__tablename__.drop()
 
     async def exit_user(self, user_id):
         user = await self.get_user(user_id)

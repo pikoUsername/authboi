@@ -37,6 +37,8 @@ async def check_to_really_user(msg: types.Message):
 
 async def change_password(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
+        if len(msg.text) <= 8:
+            return await msg.answer("Недопустимый пароль, он должен прывышать длинну 8 знаков")
         data["password"] = msg.text
 
         await msg.delete()
