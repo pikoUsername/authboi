@@ -27,7 +27,7 @@ class User(db.Model):
     login = Column(String(100))
     email = Column(String(200))
     password = Column(String(200)) # there must be hash
-    referal = Column(Integer)
+    referral = Column(Integer)
     is_authed = Column(Boolean)
     is_password_changed = Column(Boolean)
     description = Column(String(250))

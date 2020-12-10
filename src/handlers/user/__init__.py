@@ -4,10 +4,11 @@ from aiogram.types import ContentTypes
 
 # handlers
 from .help import bot_help, bot_about
-from .start import register_user, sign_in_user, log_in_user
+from .start import register_user, log_in_user
 from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
 from .profile import get_user_profile
+from .what_can import bot_what_can, back_to_reg_menu
 from .password import (
     start_change_password,
     change_password,
@@ -26,15 +27,14 @@ from .auth import (
     bot_auth_accept,
     bot_auth_back,
     bot_auth_email,
+    bot_auth_password_verify,
 )
-from .signup import start_sign_in, login_sign_in, password_sign_in
 # end list of handlers
 
 # states
 from src.states.user.desc import DescriptionChange
 from src.states.user.auth import StartState
 from src.states.user.cng_pass import ChangePassword
-from src.states.user.sign_up import SignIn
 
 def setup(dp: Dispatcher):
     # just handlers with any state
@@ -47,18 +47,22 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(bot_auth_back, Command("back"), state="*")
     dp.register_message_handler(get_user_profile, Command("profile"), state="*")
     dp.register_message_handler(start_change_description, Command("change_desc"))
-    dp.register_callback_query_handler(sign_in_user, text="sign_in", state="*")
     dp.register_callback_query_handler(log_in_user, text="log_in", state="*")
     dp.register_message_handler(change_password, state=ChangePassword.wait_to_password)
     dp.register_message_handler(start_change_password,
                                 Command(commands=["change_password", "cng_pass"]),
                                 state="*")
-    dp.register_message_handler(login_sign_in, state=SignIn.wait_to_type_login)
-    dp.register_message_handler(password_sign_in, state=SignIn.wait_to_type_password)
+    dp.register_callback_query_handler(back_to_reg_menu, text="back_to_reg_menu")
+    dp.register_callback_query_handler(bot_what_can, text="what_can")
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
     dp.register_message_handler(changing_fully, state=ChangePassword.wait_to_accept_pass)
     dp.register_callback_query_handler(remove_user, text="admin_kb_delete_user")
     # handlers with states
+    dp.register_message_handler(
+        bot_auth_password_verify,
+        state=StartState.wait_to_verify_pass,
+        content_types=ContentTypes.TEXT,
+    )
     dp.register_message_handler(
         bot_auth_login,
         state=StartState.wait_to_login,

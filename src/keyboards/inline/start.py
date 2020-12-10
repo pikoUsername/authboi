@@ -2,8 +2,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 choice_btns = [
     [
-        InlineKeyboardButton("Авторизоваться", callback_data="log_in"),
-        InlineKeyboardButton("Войти", callback_data="sign_in"),
+        InlineKeyboardButton("Что может этот бот", callback_data="what_can"),
+        InlineKeyboardButton("Авторизоватся", callback_data="log_in"),
     ],
 ]
 

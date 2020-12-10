@@ -24,3 +24,5 @@ async def get_users(call_back: types.CallbackQuery):
 async def from_all_users_back(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Админка: ")
     await call_back.message.edit_reply_markup(admin_kb)
+
+async def

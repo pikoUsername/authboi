@@ -32,6 +32,7 @@ async def bot_auth_login(msg: types.Message, state: FSMContext):
     await StartState.wait_to_email.set()
     await msg.answer("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
 
+
 async def bot_auth_email(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if ' ' in msg.text:
@@ -46,6 +47,7 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_password(msg: types.Message, state: FSMContext):
+    logger.info('password handler activated')
     async with state.proxy() as data:
         # checking to cirilic in text
         check = re.search(r'[^\W\d]', msg.text)
@@ -55,18 +57,25 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
             return await msg.answer("В строке имеются символы керилицы!")
         elif ' ' in msg.text:
             return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
-        elif len(msg.text) >= 8:
+        elif len(msg.text) <= 8:
             return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
         else:
             data["password"] = msg.text
 
-    await StartState.wait_to_accept.set()
+    await StartState.wait_to_verify_pass.set()
     await msg.delete()
-    await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+    await msg.answer("Теперь ввидите ваш пароль снова! Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
+
 
 async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        pass
+        password_verify = data["password"]
+        if password_verify != msg.text:
+            return await msg.answer("Не правильный Пароль, Повторите еще раз!")
+        await StartState.wait_to_accept.set()
+        await msg.delete()
+        await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+
 
 async def bot_auth_back(msg: types.Message, state: FSMContext):
 
@@ -77,6 +86,7 @@ async def bot_auth_back(msg: types.Message, state: FSMContext):
     logger.info(f"Someone was backed to {current_state}")
     await StartState.previous()
     await msg.answer(f"Вы сделали шаг назад, это непримелимо.\n Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
+
 
 async def bot_auth_accept(msg: types.Message, state: FSMContext):
     if msg.text in ["Y", "y", "yes"]:
