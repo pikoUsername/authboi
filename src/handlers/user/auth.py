@@ -30,7 +30,7 @@ async def bot_auth_login(msg: types.Message, state: FSMContext):
 
     """
     async with state.proxy() as data:
-        if not ' ' in msg.text:
+        if ' ' in msg.text:
             return await msg.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
 
         data["login"] = msg.text
@@ -47,6 +47,7 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
     registered in 82 line __init__.py
 
     """
+    logger.info(f"getted email, email {msg.text}")
     async with state.proxy() as data:
         if ' ' in msg.text:
             return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
@@ -84,6 +85,7 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
+    logger.info(f"Accept State, user: {msg.from_user.username}")
     async with state.proxy() as data:
         password_verify = data["password"]
         if password_verify != msg.text:
@@ -94,7 +96,6 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
 
 
 async def bot_auth_back(msg: types.Message, state: FSMContext):
-
     current_state = await state.get_state()
     if not current_state:
         return
@@ -113,6 +114,7 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
             email = data["email"]
             password_len = len(data["password"])
             pass_to_show = []
+            logger.info(f"User authed, name:{msg.from_user.username}")
 
             for i in range(0, password_len):
                 pass_to_show.append("*")
@@ -139,6 +141,7 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
 
     elif msg.text in ["N", "n", "no"]:
         await msg.answer("Вы отменили авторизацию!")
+        logger.info("cancelled authorization")
         await state.finish()
     else:
         await msg.answer("Попробуйте снова!")
