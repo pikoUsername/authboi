@@ -13,6 +13,10 @@ async def get_password(user_id: int) -> Union[str, None]:
 
 
 async def start_change_password(msg: types.Message):
+    """
+    starting change password
+    registered in 52 line of __init__.py
+    """
     tg_user = types.User.get_current()
     pass_ = await get_password(tg_user.id)
     logger.info(f"Starting to changing password: {tg_user.full_name}")
@@ -36,9 +40,15 @@ async def check_to_really_user(msg: types.Message):
 
 
 async def change_password(msg: types.Message, state: FSMContext):
+    """
+    checks msg.text for long and spaces in text
+    refistered on 51 line of __init__.py
+    """
     async with state.proxy() as data:
         if len(msg.text) <= 8:
             return await msg.answer("Недопустимый пароль, он должен прывышать длинну 8 знаков")
+        elif ' ' in msg.text:
+            return await msg.answer("Недопустимый пароль, он содержит пробелы, это недпоустимо!")
         data["password"] = msg.text
 
         await msg.delete()
@@ -48,8 +58,13 @@ async def change_password(msg: types.Message, state: FSMContext):
 
 
 async def changing_fully(msg: types.Message, state: FSMContext):
+    """
+    accept and changing password for User
+    registered in 58 line in __init__.py
+    """
     if msg.text in ["Y", "y", "yes", "yeah", "да"]:
         async with state.proxy() as data:
+            logger.info(f"user: {msg.from_user.username}, changed password")
             password = data["password"]
             tg_user = types.User.get_current()
             user = await db.get_user(tg_user.id)

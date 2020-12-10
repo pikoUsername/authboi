@@ -5,6 +5,10 @@ from src.loader import db
 
 @rate_limit(5, 'help')
 async def bot_help(msg: types.Message):
+    """
+    getting tg_user and user by id,
+    registered 42 line of __init__.py
+    """
     tg_user = types.User.get_current()
     user = await db.get_user(tg_user.id)
 
