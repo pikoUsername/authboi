@@ -1,4 +1,5 @@
 from aiogram import types
+from loguru import logger
 
 from src.states.user.auth import StartState
 from src.states.user.sign_up import SignIn
@@ -9,13 +10,15 @@ from data.config import ADMIN_IDS
 
 async def register_user(msg: types.Message):
     # here check to user exists
-    tg_user = types.User.get_current()
-    if tg_user.id in ADMIN_IDS:
+
+    logger.info(f"Start register_user handler user_id: {msg.from_user.id}, chat_id: {msg.chat.id}")
+    if msg.chat.id in ADMIN_IDS:
         return await msg.answer(
             "Вы авторизованы как админ, админ панель:",
             reply_markup=admin_kb,
         )
 
+    tg_user = types.User.get_current()
     user = await db.get_user(tg_user.id)
 
     if user and user.is_authed is True:

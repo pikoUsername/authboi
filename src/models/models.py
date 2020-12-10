@@ -1,3 +1,5 @@
+from typing import List
+
 from aiogram import types, Bot
 from gino.schema import GinoSchemaVisitor
 from gino import Gino
@@ -83,13 +85,11 @@ class DBCommands:
 
         return user
 
-
     async def count_users(self) -> int:
         total = await db.func.count(User.id).gino.scalar()
         return total
 
     async def check_for_authed(self, user_id):
-        tg_user = types.User.get_current()
         user = await self.get_user(user_id)
 
     async def check_referrals(self):
@@ -112,10 +112,14 @@ class DBCommands:
         user = await self.get_user(user_id)
         user.is_authed = False
 
+    async def get_all_users(self) -> List:
+        user = await User.query.where().gino.all()
+        return user
 
-async def create_db():
+async def create_db(drop_after_restart: bool=True):
     await db.set_bind(POSTGRES_URI)
 
     db.gino: GinoSchemaVisitor
-    await db.gino.drop_all()
+    if drop_after_restart:
+        await db.gino.drop_all()
     await db.gino.create_all()

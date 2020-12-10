@@ -5,7 +5,6 @@ from aiogram.types import ContentTypes
 # handlers
 from .help import bot_help, bot_about
 from .start import register_user, sign_in_user, log_in_user
-from .admin import get_statistic, get_users, remove_user
 from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
 from .profile import get_user_profile
@@ -58,11 +57,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(password_sign_in, state=SignIn.wait_to_type_password)
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
     dp.register_message_handler(changing_fully, state=ChangePassword.wait_to_accept_pass)
-    dp.register_callback_query_handler(get_users, text="admin_kb_get_all_users")
-    dp.register_callback_query_handler(get_statistic, text="admin_kb_get_statistic")
     dp.register_callback_query_handler(remove_user, text="admin_kb_delete_user")
-
-
     # handlers with states
     dp.register_message_handler(
         bot_auth_login,

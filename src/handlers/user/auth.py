@@ -5,7 +5,6 @@ from aiogram.dispatcher import FSMContext
 from loguru import logger
 
 from src.states.user.auth import StartState
-from src.utils.misc.other import check_for_email_correct
 from src.models.models import DBCommands
 
 db = DBCommands()
@@ -16,9 +15,9 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     if not current_state:
         return
 
-    logger.info("Cancelling authorazation")
+    logger.info(f"Cancelling {await state.get_state()}")
     await state.finish()
-    await msg.answer("Отмена авторизации!")
+    await msg.answer("Действие было Отмменено!")
 
 
 async def bot_auth_login(msg: types.Message, state: FSMContext):
@@ -35,10 +34,11 @@ async def bot_auth_login(msg: types.Message, state: FSMContext):
 
 async def bot_auth_email(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if not check_for_email_correct:
-            return await msg.answer("Вы не правильно ввели Емейл,\n Бот поддерживает только 2 вида эмейлов,\n gmail, mail.ru нечего более")
-        else:
-            data["email"] = msg.text
+        if ' ' in msg.text:
+            return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
+        elif not '@' in msg.text:
+            return await msg.answer("Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
+        data["email"] = msg.text
 
 
     await msg.answer("Теперь ввидите ваш пароль, если хотите конечно.\n Вас никто не заставляет.\n всегда есть комманда /cancel.")
@@ -55,6 +55,8 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
             return await msg.answer("В строке имеются символы керилицы!")
         elif ' ' in msg.text:
             return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
+        elif len(msg.text) >= 8:
+            return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
         else:
             data["password"] = msg.text
 
@@ -62,6 +64,9 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
     await msg.delete()
     await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
+async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        pass
 
 async def bot_auth_back(msg: types.Message, state: FSMContext):
 

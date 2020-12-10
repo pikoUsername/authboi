@@ -10,11 +10,12 @@ from src.loader import bot
 async def on_startup(dp):
     from src import filters
     from src import middlewares
-    from src.handlers import user, errors
+    from src.handlers import user, errors, admins
     
     await asyncio.sleep(3)
 
     log.setup()
+    admins.setup(dp)
     errors.setup(dp)
     user.setup(dp)
     filters.setup(dp)

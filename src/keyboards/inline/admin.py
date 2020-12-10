@@ -4,7 +4,7 @@ admin_btns = [
     [
         InlineKeyboardButton("Пользветели", callback_data="admin_kb_get_all_users"),
         InlineKeyboardButton("Статистка", callback_data="admin_kb_get_statistic"),
-        InlineKeyboardButton("Удалить Пользветеля", callback_data="admin_kb_delete_user"),
+        InlineKeyboardButton("<< Назад", callback_data="")
     ]
 ]
 
