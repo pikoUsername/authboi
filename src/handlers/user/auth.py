@@ -47,14 +47,14 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
     registered in 82 line __init__.py
 
     """
+    if ' ' in msg.text:
+        return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
+    elif not '@' in msg.text:
+        return await msg.answer("Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
+
     logger.info(f"getted email, email {msg.text}")
     async with state.proxy() as data:
-        if ' ' in msg.text:
-            return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
-        elif not '@' in msg.text:
-            return await msg.answer("Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
         data["email"] = msg.text
-
 
     await msg.answer("Теперь ввидите ваш пароль, если хотите конечно.\n Вас никто не заставляет.\n всегда есть комманда /cancel.")
     await StartState.wait_to_password.set()
@@ -64,24 +64,23 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
     """
     delete message password,
     """
+    check = re.search(r'[^\W\d]', msg.text)
+
+    if not check:
+        logger.info(f"Some one really stupid wants to type with russian words password FUCK!")
+        return await msg.answer("В строке имеются символы керилицы!")
+    elif ' ' in msg.text:
+        return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
+    elif len(msg.text) <= 8:
+        return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
+
     logger.info('password handler activated')
     async with state.proxy() as data:
-        # checking to cirilic in text
-        check = re.search(r'[^\W\d]', msg.text)
-        # cheking for spaces in password and etc.
-        if not check:
-            logger.info(f"Some one really stupid wants to type with russian words password FUCK!")
-            return await msg.answer("В строке имеются символы керилицы!")
-        elif ' ' in msg.text:
-            return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
-        elif len(msg.text) <= 8:
-            return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
-        else:
-            data["password"] = msg.text
+        data["password"] = msg.text
 
-    await StartState.wait_to_verify_pass.set()
     await msg.delete()
     await msg.answer("Теперь ввидите ваш пароль снова! Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
+    await StartState.wait_to_verify_pass.set()
 
 
 async def bot_auth_password_verify(msg: types.Message, state: FSMContext):

@@ -29,7 +29,7 @@ WEBHOOK_URL = f"https://{DOMAIN}{WEBHOOK_PATH}"
 
 BOT_TOKEN = dstr("BOT_TOKEN")
 ADMIN_IDS = [
-    dint("ADMIN_IDS")
+    os.getenv("ADMIN_IDS"),
 ]
 TELEGRAM_PORT = dint("TELEGRAM_PORT", default=5000)
 LOGS_BASE_PATH = str(Path(__name__).parent.parent / "logs")

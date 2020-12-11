@@ -2,8 +2,7 @@ from aiogram import types
 
 from src.models.models import DBCommands
 
-db = DBCommands()
-
+from src.loader import db
 
 async def get_refferals_bot(msg: types.Message):
     user = await db.get_user(user_id=msg.from_user.id)

@@ -6,12 +6,16 @@ from loguru import logger
 
 from src.loader import db
 from src.states.user.cng_pass import ChangePassword
+from src.utils.misc import rate_limit
 
-async def get_password(user_id: int) -> Union[str, None]:
+
+async def get_password(user_id: int):
     user = await db.get_user(user_id)
+    if not user:
+        return
     return user.password
 
-
+@rate_limit(5, 'change_password')
 async def start_change_password(msg: types.Message):
     """
     starting change password
@@ -44,11 +48,14 @@ async def change_password(msg: types.Message, state: FSMContext):
     checks msg.text for long and spaces in text
     refistered on 51 line of __init__.py
     """
+    if len(msg.text) <= 8:
+        return await msg.answer("Недопустимый пароль, он должен прывышать длинну 8 знаков")
+    elif ' ' in msg.text:
+        return await msg.answer("Недопустимый пароль, он содержит пробелы, это недпоустимо!")
+    elif len(msg.text) >= 200:
+        return await msg.answer("Недопустимый пароль, он прывышает 200 сиволов")
+
     async with state.proxy() as data:
-        if len(msg.text) <= 8:
-            return await msg.answer("Недопустимый пароль, он должен прывышать длинну 8 знаков")
-        elif ' ' in msg.text:
-            return await msg.answer("Недопустимый пароль, он содержит пробелы, это недпоустимо!")
         data["password"] = msg.text
 
         await msg.delete()
