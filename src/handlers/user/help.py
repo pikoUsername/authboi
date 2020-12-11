@@ -9,8 +9,7 @@ async def bot_help(msg: types.Message):
     getting tg_user and user by id,
     registered 42 line of __init__.py
     """
-    tg_user = types.User.get_current()
-    user = await db.get_user(tg_user.id)
+    user = await db.get_user(msg.from_user.id)
 
     if not user:
         text = [
@@ -30,10 +29,12 @@ async def bot_help(msg: types.Message):
         '/cancel - отменяет вход',
         "/back - ход назад",
         '/about - показывает гитхаб бота',
-        '/change_password - Смена пароля',
         '/profile - Показывает ваш профиль',
+        '/ref - Получить рефералку',
+        '/change_password - Смена пароля',
         '/change_description - Смена описания',
-        '/ref - Получить рефералку'
+        '/change_name - Смена Имени профиля',
+        '/change_email - Смена Эмейла профиля'
     ]
     return await msg.answer("\n".join(text))
 

@@ -141,6 +141,5 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
     elif msg.text in ["N", "n", "no"]:
         await msg.answer("Вы отменили авторизацию!")
         logger.info("cancelled authorization")
-        await state.finish()
-    else:
-        await msg.answer("Попробуйте снова!")
+        return await state.finish()
+    await msg.answer("Попробуйте снова!")

@@ -9,6 +9,7 @@ from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
 from .profile import get_user_profile
 from .what_can import bot_what_can, back_to_reg_menu
+from .name import start_change_name, wait_to_name_, accept_to_change_name
 from .password import (
     start_change_password,
     change_password,
@@ -35,12 +36,16 @@ from .auth import (
 from src.states.user.desc import DescriptionChange
 from src.states.user.auth import StartState
 from src.states.user.cng_pass import ChangePassword
+from src.states.user.cng_name import ChangeName
 
 def setup(dp: Dispatcher):
     # just handlers with any state
     dp.register_message_handler(register_user, CommandStart(), state="*")
     dp.register_message_handler(bot_help, CommandHelp())
-    dp.register_message_handler(get_refferals_bot, Command(commands=["ref", "refferal"]), state="*")
+    dp.register_message_handler(start_change_name, Command(["change_name", "cng_name"]), state="*")
+    dp.register_message_handler(wait_to_name_, state=ChangeName.wait_to_name)
+    dp.register_message_handler(accept_to_change_name, state=ChangeName.wait_to_accept)
+    dp.register_message_handler(get_refferals_bot, Command(commands=["ref", "referral"]), state="*")
     dp.register_message_handler(bot_about, Command("about"))
     dp.register_message_handler(bot_cancel_handler, Text("cancel", ignore_case=True), state="*")
     dp.register_message_handler(bot_cancel_handler, Command("cancel"), state="*")
