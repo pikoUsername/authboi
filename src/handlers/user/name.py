@@ -28,11 +28,14 @@ async def accept_to_change_name(msg: types.Message, state: FSMContext):
         user = await db.get_user(msg.from_user.id)
         async with state.proxy() as data:
             name = data["Name"]
+
         await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
+
         return await user.update(name=name).apply()
     elif msg.text.lower() == "n":
         await msg.answer("Вы отменили действие")
         return await state.finish()
+
     return await msg.answer("Повторите действие или выйдите /cancel или N")
 
 

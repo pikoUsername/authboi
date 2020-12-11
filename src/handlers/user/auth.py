@@ -22,22 +22,29 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     await msg.answer("Действие было Отмменено!")
 
 
-async def bot_auth_login(msg: types.Message, state: FSMContext):
+async def bot_start_auth(call_back: types.CallbackQuery):
+    await StartState.wait_to_login.set()
+
+    logger.info("Some one started authorization")
+    await call_back.message.edit_text("Вы начали Авторизацию! так что ввидите Имя или Логин")
+
+
+async def bot_auth_login(message: types.Message, state: FSMContext):
     """
     checks for space and commits this changes
     registered in 67 line __init__.py
 
     """
     async with state.proxy() as data:
-        if ' ' in msg.text:
-            return await msg.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
+        if ' ' in message.text:
+            return await message.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
 
-        data["login"] = msg.text
+        data["login"] = message.text
 
-        logger.info("seme one getted login", msg.text)
+        logger.info("seme one getted login", message.text)
 
     await StartState.wait_to_email.set()
-    await msg.answer("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
+    await message.answer("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
 
 
 async def bot_auth_email(msg: types.Message, state: FSMContext):

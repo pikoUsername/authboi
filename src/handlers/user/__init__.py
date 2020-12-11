@@ -4,7 +4,7 @@ from aiogram.types import ContentTypes
 
 # handlers
 from .help import bot_help, bot_about
-from .start import register_user, log_in_user
+from .start import register_user, log_in_user, back_to_main_menus
 from .ref import get_refferals_bot
 from .exit import remove_user, user_exit
 from .profile import get_user_profile
@@ -29,6 +29,7 @@ from .auth import (
     bot_auth_back,
     bot_auth_email,
     bot_auth_password_verify,
+    bot_start_auth,
 )
 from .email import accept_and_complete_emailcng, change_email_input, start_change_email
 # end list of handlers
@@ -63,6 +64,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(start_change_password,
                                 Command(commands=["change_password", "cng_pass"]),
                                 state="*")
+    dp.register_callback_query_handler(back_to_main_menus, text="back_to_main_menu", state="*")
     dp.register_callback_query_handler(back_to_reg_menu, text="back_to_reg_menu")
     dp.register_callback_query_handler(bot_what_can, text="what_can")
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
@@ -73,6 +75,11 @@ def setup(dp: Dispatcher):
         bot_auth_password_verify,
         state=StartState.wait_to_verify_pass,
         content_types=ContentTypes.TEXT,
+    )
+    dp.register_callback_query_handler(
+        bot_start_auth,
+        text="start_login",
+        state="*",
     )
     dp.register_message_handler(
         bot_auth_login,
