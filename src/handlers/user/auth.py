@@ -5,9 +5,8 @@ from aiogram.dispatcher import FSMContext
 from loguru import logger
 
 from src.states.user.auth import StartState
-from src.models.models import DBCommands
+from src.loader import db
 
-db = DBCommands()
 
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     """
@@ -142,4 +141,5 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
         await msg.answer("Вы отменили авторизацию!")
         logger.info("cancelled authorization")
         return await state.finish()
-    await msg.answer("Попробуйте снова!")
+    else:
+        await msg.answer("Попробуйте снова!")

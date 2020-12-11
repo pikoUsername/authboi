@@ -26,7 +26,7 @@ async def wait_to_name_(msg: types.Message, state: FSMContext):
 async def accept_to_change_name(msg: types.Message, state: FSMContext):
     if msg.text.lower() == "y":
         user = await db.get_user(msg.from_user.id)
-        with state.proxy() as data:
+        async with state.proxy() as data:
             name = data["Name"]
         await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
         return await user.update(name=name).apply()

@@ -30,6 +30,7 @@ from .auth import (
     bot_auth_email,
     bot_auth_password_verify,
 )
+from .email import accept_and_complete_emailcng, change_email_input, start_change_email
 # end list of handlers
 
 # states
@@ -37,6 +38,8 @@ from src.states.user.desc import DescriptionChange
 from src.states.user.auth import StartState
 from src.states.user.cng_pass import ChangePassword
 from src.states.user.cng_name import ChangeName
+from src.states.user.cng_email import ChangeEmail
+
 
 def setup(dp: Dispatcher):
     # just handlers with any state
@@ -51,6 +54,9 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(bot_cancel_handler, Command("cancel"), state="*")
     dp.register_message_handler(bot_auth_back, Command("back"), state="*")
     dp.register_message_handler(get_user_profile, Command("profile"), state="*")
+    dp.register_message_handler(start_change_email, Command("change_email"), state="*")
+    dp.register_message_handler(change_email_input, state=ChangeEmail.wait_to_email)
+    dp.register_message_handler(accept_and_complete_emailcng, state=ChangeEmail.wait_to_accept)
     dp.register_message_handler(start_change_description, Command("change_desc"))
     dp.register_callback_query_handler(log_in_user, text="log_in", state="*")
     dp.register_message_handler(change_password, state=ChangePassword.wait_to_password)
