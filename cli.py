@@ -12,7 +12,7 @@ async def on_startup(dp):
     from src import middlewares
     from src.handlers import user, errors, admins
     
-    await asyncio.sleep(3)
+    await asyncio.sleep(2)
 
     log.setup()
     admins.setup(dp)

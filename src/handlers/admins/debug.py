@@ -32,7 +32,7 @@ def delete_all_logs():
             pass
 
 async def get_logs(message: types.Message):
-    if not message.from_user.id in ADMIN_IDS:
+    if message.from_user.id in ADMIN_IDS:
         return
 
     file_ = last_log()
@@ -47,7 +47,7 @@ async def get_logs(message: types.Message):
         await message.answer(lines)
 
 async def remove_logs(msg: types.Message):
-    if not msg.from_user.id in ADMIN_IDS:
+    if msg.from_user.id in ADMIN_IDS:
         return
     try:
         delete_all_logs()

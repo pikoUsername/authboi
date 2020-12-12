@@ -26,7 +26,7 @@ async def start_change_password(msg: types.Message):
     logger.info(f"Starting to changing password: {tg_user.full_name}")
 
     if not pass_:
-        return await msg.answer("Вы не авторизованы,\n из за этого вы не можете использвать эту комманду")
+        return
 
     await ChangePassword.wait_to_accept_with_password.set()
     await msg.answer("Хорошо, Напишите ваш пароль для доказательства что это вы")

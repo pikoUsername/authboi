@@ -4,7 +4,12 @@ from aiogram.dispatcher import FSMContext
 from src.states.user.cng_name import ChangeName
 from src.loader import db
 
-async def start_change_name(msg: types.Message):
+async def start_change_name(msg: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+
+    if current_state:
+        return
+
     user = await db.get_user(msg.from_user.id)
 
     if not user:
@@ -31,11 +36,11 @@ async def accept_to_change_name(msg: types.Message, state: FSMContext):
 
         await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
 
-        return await user.update(name=name).apply()
+        return await user.update(login=name).apply()
     elif msg.text.lower() == "n":
         await msg.answer("Вы отменили действие")
         return await state.finish()
-
-    return await msg.answer("Повторите действие или выйдите /cancel или N")
+    else:
+        await msg.answer("Повторите действие или выйдите /cancel или N")
 
 

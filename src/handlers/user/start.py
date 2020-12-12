@@ -1,9 +1,7 @@
 from aiogram import types
-from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
-from src.states.user.auth import StartState
 from src.loader import db
 from src.keyboards.inline.start import choice_kb
 # from src.keyboards.inline.admin import admin_kb
@@ -23,8 +21,7 @@ async def register_user(msg: types.Message):
     #    )
     #    return
 
-    tg_user = types.User.get_current()
-    user = await db.get_user(tg_user.id)
+    user = await db.get_user(msg.from_user.id)
 
     if user and user.is_authed is True:
         return await msg.answer("Вы уже авторизованы как польветель!")
