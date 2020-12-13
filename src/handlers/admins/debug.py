@@ -34,7 +34,7 @@ def delete_all_logs():
 
 
 async def get_logs(message: types.Message):
-    if message.from_user.id in ADMIN_IDS:
+    if not message.from_user.id in ADMIN_IDS:
         return
 
     file_ = last_log()
@@ -50,13 +50,14 @@ async def get_logs(message: types.Message):
 
 
 async def remove_logs(msg: types.Message):
-    if msg.from_user.id in ADMIN_IDS:
+    if not msg.from_user.id in ADMIN_IDS:
         return
     try:
         delete_all_logs()
     except Exception as e:
         logger.exception(e)
         return await msg.answer(str(e))
+
     logger.info("All logs removed from logs base path!")
     await msg.answer(f"Удлаены все логи в Директории, {LOGS_BASE_PATH}/")
 
