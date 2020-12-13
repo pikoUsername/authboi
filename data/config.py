@@ -31,7 +31,7 @@ BOT_TOKEN = dstr("BOT_TOKEN")
 ADMIN_IDS = [
     os.getenv("ADMIN_IDS"),
 ]
-TELEGRAM_PORT = dint("TELEGRAM_PORT", default=5000)
+TELEGRAM_PORT = dint("TELEGRAM_PORT", default=8443)
 LOGS_BASE_PATH = str(Path(__name__).parent.parent / "logs")
 
 POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"

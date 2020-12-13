@@ -1,3 +1,5 @@
+# This admin module not using in bot!
+
 from aiogram import types
 from aiogram.utils.callback_data import CallbackData
 
@@ -18,15 +20,15 @@ async def get_users(call_back: types.CallbackQuery): # registered in 7 line __in
 
     await call_back.message.edit_reply_markup(all_users_keyboard)
 
+
 async def from_all_users_back(call_back: types.CallbackQuery): # refister in __init__.py 8 line
     await call_back.message.edit_text("Админка: ", reply_markup=admin_kb)
 
-async def some_notFeature(): # register in
-    pass
 
 async def back_admin_kb(call_back: types.CallbackQuery):
     admin_choice = choice_kb.add(types.InlineKeyboardButton("<< В админку", call_back="again_admin"))
     await call_back.message.edit_text("Выбирите: ", reply_markup=admin_choice)
+
 
 async def again_to_admin_menu(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Админка: ", reply_markup=admin_kb)

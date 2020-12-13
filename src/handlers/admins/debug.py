@@ -29,7 +29,9 @@ def delete_all_logs():
         try:
             os.remove(files)
         except PermissionError:
+            logger.info("PErmissio error, cant delete file")
             pass
+
 
 async def get_logs(message: types.Message):
     if message.from_user.id in ADMIN_IDS:
@@ -45,6 +47,7 @@ async def get_logs(message: types.Message):
     with open(name_file, "r") as file:
         lines = file.read()
         await message.answer(lines)
+
 
 async def remove_logs(msg: types.Message):
     if msg.from_user.id in ADMIN_IDS:

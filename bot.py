@@ -2,7 +2,6 @@ from typing import List
 
 import aiojobs as aiojobs
 from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.types import ParseMode
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiohttp import web
@@ -36,8 +35,8 @@ async def on_shutdown(app: web.Application):
 
 
 async def init() -> web.Application:
-    from .src.utils.misc import log
-    from .src import web_handlers
+    from src.utils.misc import log
+    from src import web_handlers
 
     log.setup()
 

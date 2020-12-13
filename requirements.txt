@@ -5,3 +5,4 @@ loguru
 aiojobs
 python-dotenv
 sqlalchemy
+aiohttp_healthcheck
