@@ -38,6 +38,7 @@ async def user_rm_accept(msg: types.Message, state: FSMContext):
         try:
             logger.info(f"user: {msg.from_user.username} account was removed")
             await user.delete()
+            await state.finish()
             return await msg.answer("Вы успешно удалили Свою учетную запись!")
         except Exception as e:
             logger.exception(f"ERROR: {e}")
