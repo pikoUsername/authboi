@@ -36,6 +36,7 @@ async def accept_to_change_name(msg: types.Message, state: FSMContext):
 
         await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
 
+        await state.finish()
         return await user.update(login=name).apply()
     elif msg.text.lower() == "n":
         await msg.answer("Вы отменили действие")

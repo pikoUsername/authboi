@@ -1,6 +1,8 @@
 import os
 from glob import glob
 from typing import List
+from math import ceil
+import asyncio
 
 from aiogram import types
 from aiogram.dispatcher.filters import Command
@@ -31,14 +33,21 @@ def delete_all_logs():
         try:
             os.remove(files)
         except PermissionError:
-            logger.info("Permission error, cant delete file")
+            logger.exception("Permission error, cant delete file")
             pass
+
+
+def parting(xs, parts):
+    part_len = ceil(len(xs)/parts)
+    return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
+
 
 @dp.message_handler(Command("logs"), state="*")
 async def get_logs(message: types.Message):
     if not message.from_user.id in ADMIN_IDS:
         return
 
+    loop = asyncio.get_event_loop()
     file_ = last_log()
 
     if not file_:
@@ -48,7 +57,14 @@ async def get_logs(message: types.Message):
 
     with open(name_file, "r") as file:
         lines = file.read()
-        await message.answer(lines)
+
+        if len(lines) <= 4027:
+            return await message.answer(lines)
+
+        whole_log = await loop.run_in_executor(None, parting, lines, 5)
+        for peace in whole_log:
+            await message.answer(peace)
+            await asyncio.sleep(0.5)
 
 @dp.message_handler(Command("remove_all_logs"), state="*")
 async def remove_logs(msg: types.Message):
