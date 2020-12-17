@@ -8,8 +8,8 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 from loguru import logger
 
-from data.config import LOGS_BASE_PATH, ADMIN_IDS
-from src.loader import dp
+from data.config import LOGS_BASE_PATH
+from src.loader import dp, db
 
 
 def last_log():
@@ -43,15 +43,20 @@ def parting(xs, parts):
 
 
 @dp.message_handler(Command("logs"), state="*")
-async def get_logs(message: types.Message):
-    if not message.from_user.id in ADMIN_IDS:
+async def get_logs(msg: types.Message):
+    user = await db.get_user(msg.from_user.id)
+
+    if not user:
+        return await msg.answer("Авторизуйтесь для этого!")
+
+    if not user.is_admin:
         return
 
     loop = asyncio.get_event_loop()
     file_ = last_log()
 
     if not file_:
-        return await message.answer("Логов Нету ¯\_(ツ)_/¯")
+        return await msg.answer("Логов Нету ¯\_(ツ)_/¯")
 
     name_file = ''.join(file_)
 
@@ -59,17 +64,23 @@ async def get_logs(message: types.Message):
         lines = file.read()
 
         if len(lines) <= 4027:
-            return await message.answer(lines)
+            return await msg.answer(lines)
 
         whole_log = await loop.run_in_executor(None, parting, lines, 5)
         for peace in whole_log:
-            await message.answer(peace)
-            await asyncio.sleep(0.5)
+            await msg.answer(peace)
+            await asyncio.sleep(0.2)
 
 @dp.message_handler(Command("remove_all_logs"), state="*")
 async def remove_logs(msg: types.Message):
-    if not msg.from_user.id in ADMIN_IDS:
+    user = await db.get_user(msg.from_user.id)
+
+    if not user:
+        return await msg.answer("Авторизуйтесь для этого!")
+
+    if not user.is_admin:
         return
+
     try:
         delete_all_logs()
     except Exception as e:

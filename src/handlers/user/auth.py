@@ -6,6 +6,7 @@ from loguru import logger
 
 from src.states.user.auth import StartState
 from src.loader import db
+from data.config import ADMIN_IDS
 
 
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
@@ -121,26 +122,35 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
             pass_to_show = []
             logger.info(f"User authed, name:{msg.from_user.username}")
 
-            for i in range(0, password_len):
-                pass_to_show.append("*")
+        for i in range(0, password_len):
+            pass_to_show.append("*")
 
-            text = [
-                "Вы авторизованы как: ",
-                f"Имя: {login}",
-                f"email: {email}",
-                f"Пароль: ",
-                "".join(pass_to_show),
-            ]
+        text = [
+            "Вы авторизованы как: ",
+            f"Имя: {login}",
+            f"email: {email}",
+            f"Пароль: ",
+            "".join(pass_to_show),
+        ]
 
-            await msg.answer("\n".join(text))
-            logger.info('------USER AUTHORIZATION!------')
-            logger.info(f"| login: {login} | email: {email} |")
+        await msg.answer("\n".join(text))
+        logger.info('------USER AUTHORIZATION!------')
+        logger.info(f"| login: {login} | email: {email} |")
+        if msg.from_user.id in ADMIN_IDS:
             await db.add_new_user(
                 login=login,
                 email=email,
                 password=password,
-                is_authed=True,
+                is_admin=True,
             )
+            await state.finish()
+            return await msg.answer("Вы зарегестрированы как Админ")
+        await db.add_new_user(
+            login=login,
+            email=email,
+            password=password,
+            is_admin=False,
+        )
 
         await state.finish()
 

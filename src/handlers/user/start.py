@@ -4,8 +4,6 @@ from loguru import logger
 
 from src.loader import db
 from src.keyboards.inline.start import choice_kb
-# from src.keyboards.inline.admin import admin_kb
-# from data.config import ADMIN_IDS
 from src.utils.misc.throttling import rate_limit
 
 @rate_limit(5, 'start')
@@ -13,13 +11,6 @@ async def register_user(msg: types.Message):
     # here check to user exists
 
     logger.info(f"Start register_user handler user_id: {msg.from_user.id}, chat_id: {msg.chat.id}")
-    #if msg.from_user.id in ADMIN_IDS:
-    #    logger.info('Admin logged in!')
-    #    await msg.answer(
-    #        "Вы авторизованы как админ, админ панель:",
-    #        reply_markup=admin_kb,
-    #    )
-    #    return
 
     user = await db.get_user(msg.from_user.id)
 

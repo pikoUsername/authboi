@@ -28,9 +28,9 @@ class User(db_.Model):
     email = Column(String(200))
     password = Column(String(200)) # there must be hash
     referral = Column(Integer)
-    is_authed = Column(Boolean)
-    is_password_changed = Column(Boolean)
     description = Column(String(250))
+    is_admin = Column(Boolean)
+
     query: sql.Select
 
     def __repr__(self):
@@ -47,7 +47,7 @@ class DBCommands:
             login=None,
             email: str=None,
             password: str=None,
-            is_authed: bool=False
+            is_admin: bool=False,
     ):
         user = types.User.get_current()
         old_user = await self.get_user(user.id)
@@ -57,12 +57,12 @@ class DBCommands:
 
         new_user = User()
         new_user.login = login
-        new_user.is_authed = is_authed
         new_user.email = email
         new_user.password = password
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
+        new_user.is_admin = is_admin
 
         if referral:
             new_user.referral = int(referral)
