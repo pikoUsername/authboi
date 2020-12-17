@@ -5,7 +5,6 @@ from loguru import logger
 
 from data import config
 
-
 class InterceptHandler(logging.Handler):
     LEVELS_MAP = {
         logging.CRITICAL: "CRITICAL",
