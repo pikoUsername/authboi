@@ -72,7 +72,6 @@ def setup(dp: Dispatcher):
     dp.register_callback_query_handler(bot_what_can, text="what_can")
     dp.register_message_handler(check_to_really_user, state=ChangePassword.wait_to_accept_with_password)
     dp.register_message_handler(changing_fully, state=ChangePassword.wait_to_accept_pass)
-    dp.register_callback_query_handler(remove_user, text="admin_kb_delete_user")
     # handlers with states
     dp.register_message_handler(
         bot_auth_password_verify,
@@ -116,6 +115,7 @@ def setup(dp: Dispatcher):
     )
     dp.register_message_handler(
         remove_user,
+        Command(["remove_user", "exit"]),
         state="*",
     )
     dp.register_message_handler(

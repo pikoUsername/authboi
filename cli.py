@@ -15,7 +15,6 @@ async def on_startup(dp):
     await asyncio.sleep(2)
 
     log.setup()
-    admins.setup(dp)
     errors.setup(dp)
     user.setup(dp)
     filters.setup(dp)
@@ -33,6 +32,6 @@ async def on_shutdown(dp):
 
 if __name__ == '__main__':
     from aiogram import executor
-    from src.loader import dp
+    from src.handlers import dp
 
     executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown)
