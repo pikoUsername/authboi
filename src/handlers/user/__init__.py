@@ -6,7 +6,7 @@ from aiogram.types import ContentTypes
 from .help import bot_help, bot_about
 from .start import register_user, log_in_user, back_to_main_menus
 from .ref import get_refferals_bot
-from .exit import remove_user, user_exit
+from .exit import remove_user, user_pass_verify, user_rm_accept
 from .profile import get_user_profile
 from .what_can import bot_what_can, back_to_reg_menu
 from .name import start_change_name, wait_to_name_, accept_to_change_name
@@ -35,11 +35,14 @@ from .email import accept_and_complete_emailcng, change_email_input, start_chang
 # end list of handlers
 
 # states
-from src.states.user.desc import DescriptionChange
-from src.states.user.auth import StartState
-from src.states.user.cng_pass import ChangePassword
-from src.states.user.cng_name import ChangeName
-from src.states.user.cng_email import ChangeEmail
+from src.states.user import (
+    ChangePassword,
+    ChangeEmail,
+    ChangeName,
+    DescriptionChange,
+    Exit,
+    StartState
+)
 
 
 def setup(dp: Dispatcher):
@@ -109,5 +112,19 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(
         accept_change_description,
         state=DescriptionChange.wait_to_accept_change,
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        remove_user,
+        state="*",
+    )
+    dp.register_message_handler(
+        user_pass_verify,
+        state=Exit.wait_to_password,
+        content_types=ContentTypes.TEXT,
+    )
+    dp.register_message_handler(
+        user_rm_accept,
+        state=Exit.wait_to_accept,
         content_types=ContentTypes.TEXT,
     )

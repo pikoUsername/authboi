@@ -3,9 +3,11 @@ from glob import glob
 from typing import List
 
 from aiogram import types
+from aiogram.dispatcher.filters import Command
 from loguru import logger
 
 from data.config import LOGS_BASE_PATH, ADMIN_IDS
+from src.loader import dp
 
 
 def last_log():
@@ -29,10 +31,10 @@ def delete_all_logs():
         try:
             os.remove(files)
         except PermissionError:
-            logger.info("PErmissio error, cant delete file")
+            logger.info("Permission error, cant delete file")
             pass
 
-
+@dp.message_handler(Command("logs"), state="*")
 async def get_logs(message: types.Message):
     if not message.from_user.id in ADMIN_IDS:
         return
@@ -48,7 +50,7 @@ async def get_logs(message: types.Message):
         lines = file.read()
         await message.answer(lines)
 
-
+@dp.message_handler(Command("remove_all_logs"), state="*")
 async def remove_logs(msg: types.Message):
     if not msg.from_user.id in ADMIN_IDS:
         return

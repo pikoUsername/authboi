@@ -15,9 +15,9 @@ from sqlalchemy import sql
 
 from data.config import POSTGRES_URI
 
-db = Gino()
+db_ = Gino()
 
-class User(db.Model):
+class User(db_.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
@@ -70,7 +70,7 @@ class DBCommands:
         return new_user
 
     async def count_users(self) -> int:
-        total = await db.func.count(User.id).gino.scalar()
+        total = await db_.func.count(User.id).gino.scalar()
         return total
 
     async def check_referrals(self):
@@ -94,9 +94,9 @@ class DBCommands:
         return user
 
 async def create_db(drop_after_restart: bool=True):
-    await db.set_bind(POSTGRES_URI)
+    await db_.set_bind(POSTGRES_URI)
 
-    db.gino: GinoSchemaVisitor
+    db_.gino: GinoSchemaVisitor
     if drop_after_restart:
-        await db.gino.drop_all()
-    await db.gino.create_all()
+        await db_.gino.drop_all()
+    await db_.gino.create_all()
