@@ -33,7 +33,6 @@ def delete_all_logs():
         try:
             os.remove(files)
         except PermissionError:
-            logger.exception("Permission error, cant delete file")
             pass
 
 
@@ -42,7 +41,7 @@ def parting(xs, parts):
     return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
 
 
-@dp.message_handler(Command("logs"), state="*")
+@dp.message_handler(Command("logs"), chat_type ='private', state="*")
 async def get_logs(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
 

@@ -34,9 +34,12 @@ async def bot_help(msg: types.Message):
         '/change_password - Смена пароля',
         '/change_description - Смена описания',
         '/change_name - Смена Имени профиля',
-        '/change_email - Смена Эмейла профиля'
+        '/change_email - Смена Эмейла профиля',
+        '/logs - Показать все логи(Админ)',
+        '/remove_all_logs - Удалить все логи(Админ)',
     ]
-    return await msg.answer("\n".join(text))
+
+    return await msg.answer("\n".join(str(v) for v in text))
 
 
 async def bot_about(msg: types.Message):

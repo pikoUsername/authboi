@@ -61,7 +61,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(start_change_email, Command("change_email"), state="*")
     dp.register_message_handler(change_email_input, state=ChangeEmail.wait_to_email)
     dp.register_message_handler(accept_and_complete_emailcng, state=ChangeEmail.wait_to_accept)
-    dp.register_message_handler(start_change_description, Command("change_desc"))
+    dp.register_message_handler(start_change_description, Command("change_description"))
     dp.register_callback_query_handler(log_in_user, text="log_in", state="*")
     dp.register_message_handler(change_password, state=ChangePassword.wait_to_password)
     dp.register_message_handler(start_change_password,
