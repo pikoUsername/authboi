@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.utils.exceptions import MessageIsTooLong
 
 from src.loader import db
 from src.utils.throttling import rate_limit
@@ -11,10 +12,13 @@ async def get_user_profile(msg: types.Message):
         return await msg.answer("Вы не авторизованы!")
 
     text = [
+        f"{user.description} - Описание",
         f"Имя: {user.username}",
         f"Email: {user.email}",
         "пароль: не даем",
-        f"Описание: {user.description}",
     ]
 
-    return await msg.answer("\n".join(text))
+    try:
+        return await msg.answer("\n".join(text))
+    except MessageIsTooLong:
+        await msg.answer("Сообщение слишком Длинное, измените описание своего профиля")

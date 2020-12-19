@@ -28,7 +28,7 @@ class User(db_.Model):
     email = Column(String(200))
     password = Column(String(200)) # there must be hash
     referral = Column(Integer)
-    description = Column(String(250))
+    description = Column(String)
     is_admin = Column(Boolean)
 
     query: sql.Select
