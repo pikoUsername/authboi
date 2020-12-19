@@ -4,7 +4,7 @@ from loguru import logger
 
 from src.loader import db
 from src.keyboards.inline.start import choice_kb
-from src.utils.misc.throttling import rate_limit
+from src.utils.throttling import rate_limit
 
 @rate_limit(5, 'start')
 async def register_user(msg: types.Message):

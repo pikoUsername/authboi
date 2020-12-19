@@ -6,7 +6,7 @@ from loguru import logger
 
 from src.loader import db
 from src.states.user.cng_pass import ChangePassword
-from src.utils.misc import rate_limit
+from src.utils.throttling import rate_limit
 
 
 async def get_password(user_id: int):

@@ -1,7 +1,7 @@
 from aiogram import types
 
 from src.loader import db
-from src.utils.misc.throttling import rate_limit
+from src.utils.throttling import rate_limit
 
 @rate_limit(5, 'profile')
 async def get_user_profile(msg: types.Message):

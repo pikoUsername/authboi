@@ -1,6 +1,6 @@
 from aiogram import types
 
-from src.utils.misc import rate_limit
+from src.utils.throttling import rate_limit
 from src.loader import db
 
 @rate_limit(5, 'help')
