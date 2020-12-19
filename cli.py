@@ -3,14 +3,14 @@ import asyncio
 
 from loguru import logger
 
-from src.utils.misc import log
+from src.utils import log
 from src.models.models import create_db
 from src.loader import bot
 
 async def on_startup(dp):
     from src import filters
     from src import middlewares
-    from src.handlers import user, errors, admins
+    from src.handlers import user, errors
     
     await asyncio.sleep(2)
 
