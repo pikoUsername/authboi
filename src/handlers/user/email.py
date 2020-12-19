@@ -36,6 +36,7 @@ async def accept_and_complete_emailcng(msg: types.Message, state: FSMContext):
 
         await user.update(email=email).apply()
         await state.finish()
+        await msg.answer("Успех, Вы поменяли Свои Эмейл")
     elif msg.text.lower() == 'n':
         await state.finish()
         return await msg.answer("Действие отменено")

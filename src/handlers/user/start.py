@@ -14,7 +14,7 @@ async def register_user(msg: types.Message):
 
     user = await db.get_user(msg.from_user.id)
 
-    if user and user.is_authed is True:
+    if user:
         return await msg.answer("Вы уже авторизованы как польветель!")
 
     return await msg.answer("Выбирите:", reply_markup=choice_kb)
