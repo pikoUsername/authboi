@@ -7,8 +7,7 @@ from src.states.user.desc import DescriptionChange
 
 
 async def start_change_description(msg: types.Message):
-    tg_user = types.User.get_current()
-    user = await db.get_user(tg_user.id)
+    user = await db.get_user(msg.from_user.id)
 
     if not user:
         return await msg.answer("Вы не авторизованы как пользветель!")

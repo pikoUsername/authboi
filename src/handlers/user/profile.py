@@ -5,8 +5,8 @@ from src.utils.throttling import rate_limit
 
 @rate_limit(5, 'profile')
 async def get_user_profile(msg: types.Message):
-    tg_user = types.User.get_current()
-    user = await db.get_user(tg_user.id)
+    user = await db.get_user(msg.from_user.id)
+
     if not user:
         return await msg.answer("Вы не авторизованы!")
 

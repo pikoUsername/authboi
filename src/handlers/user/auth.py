@@ -15,10 +15,11 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     """
     # checking for corrent state!
     current_state = await state.get_state()
+
     if not current_state:
         return
 
-    logger.info(f"Cancelling {await state.get_state()}")
+    logger.info(f"Cancelling state")
     await state.finish()
     await msg.answer("Действие было Отмменено!")
 
