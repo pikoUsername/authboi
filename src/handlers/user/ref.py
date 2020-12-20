@@ -5,7 +5,7 @@ from src.loader import db, dp
 
 
 @dp.message_handler(Command(["referral", "ref"]), state="*")
-async def get_refferals_bot(msg: types.Message):
+async def get_referrals_bot(msg: types.Message):
     user = await db.get_user(user_id=msg.from_user.id)
 
     if not user:

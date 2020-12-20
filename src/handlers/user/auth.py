@@ -146,14 +146,14 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
                 password=password,
                 is_admin=True,
             )
-            await state.finish()
-            return await msg.answer("Вы зарегестрированы как Админ")
-        await db.add_new_user(
-            login=login,
-            email=email,
-            password=password,
-            is_admin=False,
-        )
+            await msg.answer("Вы зарегестрированы как Админ")
+        else:
+            await db.add_new_user(
+                login=login,
+                email=email,
+                password=password,
+                is_admin=False,
+            )
 
         await state.finish()
 

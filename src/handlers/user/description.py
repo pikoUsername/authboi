@@ -32,15 +32,14 @@ async def change_description(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
 async def accept_change_description(msg: types.Message, state: FSMContext):
-    if msg.text in ["Y", "y", "yes", "да"] or 'y' in msg.text:
+    if msg.text in ["Y", "y", "yes", "да"]:
         async with state.proxy() as data:
             description = data["description"]
-            tg_user = types.User.get_current()
-            user = await db.get_user(tg_user.id)
 
-            await user.update(description=description).apply()
+        user = await db.get_user(msg.from_user.id)
+        await user.update(description=description).apply()
 
-            await msg.answer("Вашо описание профиля было измнено")
+        await msg.answer("Вашо описание профиля было измнено")
     elif msg.text in ["N", "n", "no", "nooooo"] or 'n' in msg.text:
         await msg.answer("Вы отменили изменения описания профиля!")
     else:

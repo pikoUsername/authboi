@@ -3,14 +3,6 @@ from typing import List
 from aiogram import types, Bot
 from gino.schema import GinoSchemaVisitor
 from gino import Gino
-from sqlalchemy import (
-    Column,
-    Integer,
-    Sequence,
-    String,
-    BigInteger,
-    Boolean,
-)
 from sqlalchemy import sql
 
 from data.config import POSTGRES_URI
@@ -20,16 +12,16 @@ db_ = Gino()
 class User(db_.Model):
     __tablename__ = 'users'
 
-    id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
-    user_id = Column(BigInteger)
-    username = Column(String(50))
-    full_name = Column(String(100))
-    login = Column(String(100))
-    email = Column(String(200))
-    password = Column(String(200)) # there must be hash
-    referral = Column(Integer)
-    description = Column(String)
-    is_admin = Column(Boolean)
+    id = db_.Column(db_.Integer, db_.Sequence('user_id_seq'), primary_key=True)
+    user_id = db_.Column(db_.BigInteger)
+    username = db_.Column(db_.String(50))
+    full_name = db_.Column(db_.String(100))
+    login = db_.Column(db_.String(100))
+    email = db_.Column(db_.String(200))
+    password = db_.Column(db_.String(200)) # there must be hash
+    referral = db_.Column(db_.Integer)
+    description = db_.Column(db_.String)
+    is_admin = db_.Column(db_.Boolean)
 
     query: sql.Select
 
