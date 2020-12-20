@@ -1,13 +1,14 @@
 import datetime
 import asyncio
 
+from aiogram import Dispatcher
 from loguru import logger
 
 from src.utils import log
 from src.models.models import create_db
 from src.loader import bot
 
-async def on_startup(dp):
+async def on_startup(dp: Dispatcher):
     from src import filters
     from src import middlewares
     

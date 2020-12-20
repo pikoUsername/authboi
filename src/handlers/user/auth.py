@@ -137,25 +137,30 @@ async def bot_auth_accept(msg: types.Message, state: FSMContext):
         ]
 
         await msg.answer("\n".join(text))
-        logger.info('------USER AUTHORIZATION!------')
-        logger.info(f"| login: {login} | email: {email} |")
-        if msg.from_user.id in ADMIN_IDS:
-            await db.add_new_user(
-                login=login,
-                email=email,
-                password=password,
-                is_admin=True,
-            )
-            await msg.answer("Вы зарегестрированы как Админ")
-        else:
-            await db.add_new_user(
-                login=login,
-                email=email,
-                password=password,
-                is_admin=False,
-            )
+
+        try:
+            if msg.from_user.id in ADMIN_IDS:
+                await db.add_new_user(
+                    login=login,
+                    email=email,
+                    password=password,
+                    is_admin=True,
+                )
+                await msg.answer("Вы зарегестрированы как Админ")
+            else:
+                await db.add_new_user(
+                    login=login,
+                    email=email,
+                    password=password,
+                    is_admin=False,
+                )
+        except Exception as e:
+            logger.exception(e)
+            await msg.answer("Ошибка попробуйте снова.\n Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта")
 
         await state.finish()
+        logger.info('------USER AUTHORIZATION!------')
+        logger.info(f"| login: {login} | email: {email}")
 
     elif msg.text in ["N", "n", "no"]:
         await msg.answer("Вы отменили авторизацию!")

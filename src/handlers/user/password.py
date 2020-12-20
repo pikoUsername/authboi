@@ -77,12 +77,12 @@ async def changing_fully(msg: types.Message, state: FSMContext):
         async with state.proxy() as data:
             logger.info(f"user: {msg.from_user.username}, changed password")
             password = data["password"]
-            tg_user = types.User.get_current()
-            user = await db.get_user(tg_user.id)
 
-            await user.update(password=password).apply()
+        user = await db.get_user(msg.from_user.id)
 
-            await msg.answer("Успех вы сменили пароль!")
+        await user.update(password=password).apply()
+
+        await msg.answer("Успех вы сменили пароль!")
     elif msg.text in ["N", "n", "нет", "no"]:
         await msg.answer("Вы отменили изменение пароля!")
     else:
