@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.utils.exceptions import MessageIsTooLong
 
-from src.loader import db
+from src.loader import db, dp
 from src.utils.throttling import rate_limit
 
 @rate_limit(5, 'profile')

@@ -1,8 +1,11 @@
 from aiogram import types
+from aiogram.dispatcher.filters import CommandHelp, Command
 
 from src.utils.throttling import rate_limit
-from src.loader import db
+from src.loader import db, dp
 
+
+@dp.message_handler(CommandHelp())
 @rate_limit(5, 'help')
 async def bot_help(msg: types.Message):
     """
@@ -41,6 +44,6 @@ async def bot_help(msg: types.Message):
 
     return await msg.answer("\n".join(str(v) for v in text))
 
-
+@dp.message_handler(Command("about"))
 async def bot_about(msg: types.Message):
     await msg.answer("https://github.com/pikoUsername/authboi.git")

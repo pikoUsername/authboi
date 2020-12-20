@@ -1,12 +1,13 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Command
+from aiogram.types import ContentType
 from loguru import logger
 
 from src.states.user.exit import Exit
-from src.loader import db
-from src.models.models import db_
+from src.loader import db, dp
 
-
+@dp.message_handler(Command("remove"))
 async def remove_user(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
     if not user:
@@ -16,6 +17,7 @@ async def remove_user(msg: types.Message):
     logger.info(f"user: {user.username} started to removing account")
     await Exit.wait_to_password.set()
 
+@dp.message_handler(state=Exit.wait_to_password, content_types=ContentType.TEXT)
 async def user_pass_verify(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
 
@@ -27,10 +29,12 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
             data["user"] = user
         await Exit.wait_to_accept.set()
         await msg.delete()
-        return await msg.answer("Вы потвердили что это вы теперь Подвердите ВЫ точно хоите этого?")
-    await msg.answer("Не правльный пароль\n отмена /cancel")
+        return await msg.answer("Вы потвердили что это вы теперь Подвердите ВЫ точно хоите этого? Y/N")
+    else:
+        await msg.answer("Не правльный пароль\n отмена /cancel")
 
 
+@dp.message_handler(state=Exit.wait_to_accept, content_types=ContentType.TEXT)
 async def user_rm_accept(msg: types.Message, state: FSMContext):
     if msg.text in ['Y', 'y']:
         async with state.proxy() as data:

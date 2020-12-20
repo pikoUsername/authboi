@@ -1,7 +1,10 @@
 from aiogram import types
 
+from src.loader import dp
 from src.keyboards.inline.start import choice_kb
 
+
+@dp.message_handler(text="what_can")
 async def bot_what_can(call_back: types.CallbackQuery):
     """
     used in - __init__.py
@@ -24,5 +27,6 @@ async def bot_what_can(call_back: types.CallbackQuery):
     return await call_back.message.edit_text('\n'.join(text), reply_markup=bot_desc_kb)
 
 
+@dp.message_handler(text="back_to_reg_menu")
 async def back_to_reg_menu(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Выбирите: ", reply_markup=choice_kb)

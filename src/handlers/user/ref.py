@@ -1,9 +1,10 @@
 from aiogram import types
+from aiogram.dispatcher.filters import Command
 
-from src.models.models import DBCommands
+from src.loader import db, dp
 
-from src.loader import db
 
+@dp.message_handler(Command(["referral", "ref"]), state="*")
 async def get_refferals_bot(msg: types.Message):
     user = await db.get_user(user_id=msg.from_user.id)
 

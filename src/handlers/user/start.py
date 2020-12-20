@@ -1,11 +1,14 @@
 from aiogram import types
+from aiogram.dispatcher.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
-from src.loader import db
+from src.loader import db, dp
 from src.keyboards.inline.start import choice_kb
 from src.utils.throttling import rate_limit
 
+
+@dp.message_handler(CommandStart())
 @rate_limit(5, 'start')
 async def register_user(msg: types.Message):
     # here check to user exists
@@ -19,7 +22,7 @@ async def register_user(msg: types.Message):
 
     return await msg.answer("Выбирите:", reply_markup=choice_kb)
 
-
+@dp.callback_query_handler(text="log_in")
 async def log_in_user(call_back: types.CallbackQuery):
     back_kb = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -33,7 +36,7 @@ async def log_in_user(call_back: types.CallbackQuery):
     except Exception as e:
         logger.exception(f"Here exception 45-line, {e}")
 
-
+@dp.callback_query_handler(text="back_to_main_menu")
 async def back_to_main_menus(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Выбирите: ", reply_markup=choice_kb)
 

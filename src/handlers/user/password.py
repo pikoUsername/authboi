@@ -1,10 +1,10 @@
-from typing import Union
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Command
+from aiogram.types import ContentType
 from loguru import logger
 
-from src.loader import db
+from src.loader import db, dp
 from src.states.user.cng_pass import ChangePassword
 from src.utils.throttling import rate_limit
 
@@ -15,6 +15,7 @@ async def get_password(user_id: int):
         return
     return user.password
 
+@dp.message_handler(Command("change_password"), state="*")
 @rate_limit(5, 'change_password')
 async def start_change_password(msg: types.Message):
     """
@@ -32,6 +33,7 @@ async def start_change_password(msg: types.Message):
     await msg.answer("Хорошо, Напишите ваш пароль для доказательства что это вы")
 
 
+@dp.message_handler(state=ChangePassword.wait_to_accept_with_password)
 async def check_to_really_user(msg: types.Message):
     tg_user = types.User.get_current()
     pass_ = await get_password(tg_user.id)
@@ -43,6 +45,7 @@ async def check_to_really_user(msg: types.Message):
         await msg.answer("Теперь, напишите новый пароль на который вы хотите сменить:")
 
 
+@dp.message_handler(state=ChangePassword.wait_to_password, content_types=ContentType.TEXT)
 async def change_password(msg: types.Message, state: FSMContext):
     """
     checks msg.text for long and spaces in text
@@ -64,6 +67,7 @@ async def change_password(msg: types.Message, state: FSMContext):
     await ChangePassword.wait_to_accept_pass.set()
 
 
+@dp.message_handler(state=ChangePassword.wait_to_accept_pass, content_types=ContentType.TEXT)
 async def changing_fully(msg: types.Message, state: FSMContext):
     """
     accept and changing password for User
