@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -33,23 +33,26 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
     else:
         await msg.answer("Не правльный пароль\n отмена /cancel")
 
+@dp.message_handler(Text(["Y", "y", "yes"]), state=Exit.wait_to_accept)
+async def remove_user_fully(msg: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        user = data["user"]
+
+    try:
+        logger.info(f"user: {msg.from_user.username} account was removed")
+        await user.delete()
+        await state.finish()
+        return await msg.answer("Вы успешно удалили Свою учетную запись!")
+    except Exception as e:
+        logger.exception(f"ERROR: {e}")
+        await state.finish()
+        return await msg.answer("Пройзошла непредвиденная ошибка! 500")
+
+@dp.message_handler(Text(["N", 'n', "no"]), state=Exit.wait_to_accept)
+async def cancel_rm_user(msg: types.Message, state: FSMContext):
+    await state.finish()
+    await msg.answer("Вы отменили действие!")
 
 @dp.message_handler(state=Exit.wait_to_accept, content_types=ContentType.TEXT)
 async def user_rm_accept(msg: types.Message, state: FSMContext):
-    if msg.text in ['Y', 'y']:
-        async with state.proxy() as data:
-            user = data["user"]
-        try:
-            logger.info(f"user: {msg.from_user.username} account was removed")
-            await user.delete()
-            await state.finish()
-            return await msg.answer("Вы успешно удалили Свою учетную запись!")
-        except Exception as e:
-            logger.exception(f"ERROR: {e}")
-            await state.finish()
-            return await msg.answer("Пройзошла непредвиденная ошибка! 500")
-    elif msg.text in ["N", "n"]:
-        await state.finish()
-        await msg.answer("Вы отменили действие!")
-    else:
-        await msg.answer("Повтрите еще раз!")
+    await msg.answer("Повтрите еще раз!")

@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -30,18 +30,21 @@ async def change_description(msg: types.Message, state: FSMContext):
     return await msg.answer("Теперь вы уверены в своем выборе? Y|N")
 
 
+@dp.message_handler(Text(["Y", "y", "yes"]), state=DescriptionChange.wait_to_accept_change)
+async def yes_change_desc(msg: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        description = data["description"]
+
+    user = await db.get_user(msg.from_user.id)
+    await user.update(description=description).apply()
+
+    await msg.answer("Вашо описание профиля было измнено")
+
+@dp.message_handler(Text(["N", "no", "n"]), state=DescriptionChange.wait_to_accept_change)
+async def cancel_change_desc(msg: types.Message, state: FSMContext):
+    await msg.answer("Вы отменили изменения описания профиля!")
+
+
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
 async def accept_change_description(msg: types.Message, state: FSMContext):
-    if msg.text in ["Y", "y", "yes", "да"]:
-        async with state.proxy() as data:
-            description = data["description"]
-
-        user = await db.get_user(msg.from_user.id)
-        await user.update(description=description).apply()
-
-        await msg.answer("Вашо описание профиля было измнено")
-    elif msg.text in ["N", "n", "no", "nooooo"] or 'n' in msg.text:
-        await msg.answer("Вы отменили изменения описания профиля!")
-    else:
-        return await msg.answer("НЕправльные аргумент, попробуйте снова!")
-    await state.finish()
+    return await msg.answer("НЕправльные аргумент, попробуйте снова!")
