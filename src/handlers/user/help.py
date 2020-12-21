@@ -44,6 +44,7 @@ async def bot_help(msg: types.Message):
 
     return await msg.answer("\n".join(str(v) for v in text))
 
+
 @dp.message_handler(Command("about"))
 async def bot_about(msg: types.Message):
     await msg.answer("https://github.com/pikoUsername/authboi.git")

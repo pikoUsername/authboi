@@ -1,7 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
+from loguru import logger
 
 from src.states.user.cng_name import ChangeName
 from src.loader import db, dp
@@ -34,20 +35,29 @@ async def wait_to_name_(msg: types.Message, state: FSMContext):
     await ChangeName.wait_to_accept.set()
 
 
+@dp.message_handler(Text(["Y", "y"]), state=ChangeName.wait_to_accept)
+async def accept_change_name(msg: types.Message, state: FSMContext):
+    user = await db.get_user(msg.from_user.id)
+    async with state.proxy() as data:
+        name = data["Name"]
+
+    try:
+        await user.update(login=name).apply()
+        await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
+    except Exception as e:
+        logger.exception(e)
+        await msg.answer("Измение прошла плохо, попробуйте снова")
+    await state.finish()
+
+
+@dp.message_handler(Text(["N", "n"]), state=ChangeName.wait_to_accept)
+async def cancel_change_name(msg: types.Message, state: FSMContext):
+    await msg.answer("Вы отменили действие")
+    await state.finish()
+
+
 @dp.message_handler(state=ChangeName.wait_to_accept)
 async def accept_to_change_name(msg: types.Message, state: FSMContext):
-    if msg.text.lower() == "y":
-        user = await db.get_user(msg.from_user.id)
-        async with state.proxy() as data:
-            name = data["Name"]
+    return await msg.answer("Повторите действие или выйдите /cancel или N")
 
-        await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
-
-        await user.update(login=name).apply()
-    elif msg.text.lower() == "n":
-        await msg.answer("Вы отменили действие")
-        await state.finish()
-    else:
-        return await msg.answer("Повторите действие или выйдите /cancel или N")
-    await state.finish()
 
