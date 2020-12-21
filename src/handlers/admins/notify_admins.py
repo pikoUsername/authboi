@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 from loguru import logger
 
 from src.loader import bot
-from data.config import ADMIN_IDS
+from src.data.config import ADMIN_IDS
 
 async def notify_admins(dp: Dispatcher):
     for admins in ADMIN_IDS:

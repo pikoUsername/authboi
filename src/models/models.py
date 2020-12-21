@@ -5,7 +5,7 @@ from gino.schema import GinoSchemaVisitor
 from gino import Gino
 from sqlalchemy import sql
 
-from data.config import POSTGRES_URI
+from src.data.config import POSTGRES_URI
 
 db_ = Gino()
 

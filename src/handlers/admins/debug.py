@@ -8,7 +8,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 from loguru import logger
 
-from data.config import LOGS_BASE_PATH
+from src.data.config import LOGS_BASE_PATH
 from src.loader import dp, db
 
 

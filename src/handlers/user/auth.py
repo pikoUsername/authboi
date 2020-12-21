@@ -8,7 +8,7 @@ from aiogram.dispatcher.filters.builtin import Command, Text
 
 from src.states.user.auth import StartState
 from src.loader import db, dp
-from data.config import ADMIN_IDS
+from src.data.config import ADMIN_IDS
 
 @dp.message_handler(Command("cancel"), state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
