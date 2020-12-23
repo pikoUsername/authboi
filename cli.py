@@ -9,13 +9,11 @@ from src.models.models import create_db
 from src.loader import bot
 
 async def on_startup(dp: Dispatcher):
-    from src import filters
     from src import middlewares
     
     await asyncio.sleep(2)
 
     log.setup()
-    filters.setup(dp)
     middlewares.setup(dp)
     await create_db()
 

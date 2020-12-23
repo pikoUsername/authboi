@@ -49,7 +49,7 @@ async def get_logs(msg: types.Message):
         return await msg.answer("Авторизуйтесь для этого!")
 
     if not user.is_admin:
-        return
+        return await msg.answer("Вы не Админ")
 
     loop = asyncio.get_event_loop()
     file_ = last_log()

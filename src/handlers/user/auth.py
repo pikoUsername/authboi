@@ -12,9 +12,6 @@ from src.data.config import ADMIN_IDS
 
 @dp.message_handler(Command("cancel"), state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
-    """
-    registered in 45 65 line __init__.py
-    """
     # checking for corrent state!
     current_state = await state.get_state()
 
@@ -36,11 +33,6 @@ async def bot_start_auth(call_back: types.CallbackQuery):
 
 @dp.message_handler(state=StartState.wait_to_login, content_types=ContentTypes.TEXT)
 async def bot_auth_login(message: types.Message, state: FSMContext):
-    """
-    checks for space and commits this changes
-    registered in 67 line __init__.py
-
-    """
     async with state.proxy() as data:
         if ' ' in message.text:
             return await message.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
@@ -55,11 +47,6 @@ async def bot_auth_login(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=StartState.wait_to_email, content_types=ContentTypes.TEXT)
 async def bot_auth_email(msg: types.Message, state: FSMContext):
-    """
-    Checks for space and '@' if exists in text
-    registered in 82 line __init__.py
-
-    """
     if ' ' in msg.text:
         return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
     elif not '@' in msg.text:
@@ -75,15 +62,7 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state=StartState.wait_to_password, content_types=ContentTypes.TEXT)
 async def bot_auth_password(msg: types.Message, state: FSMContext):
-    """
-    delete message password,
-    """
-    check = re.search(r'[^\W\d]', msg.text)
-
-    if not check:
-        logger.info(f"Some one really stupid wants to type with russian words password FUCK!")
-        return await msg.answer("В строке имеются символы керилицы!")
-    elif ' ' in msg.text:
+    if ' ' in msg.text:
         return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
     elif len(msg.text) <= 8:
         return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
