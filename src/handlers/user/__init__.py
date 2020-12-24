@@ -1,7 +1,6 @@
 # handlers
 from .help import dp
 from .start import dp
-from .ref import dp
 from .exit import dp
 from .profile import dp
 from .what_can import dp

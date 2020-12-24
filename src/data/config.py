@@ -23,7 +23,8 @@ POSTGRES_PASS = dstr("DB_PASS")
 # telegram
 BOT_TOKEN = dstr("BOT_TOKEN")
 ADMIN_IDS = [
-    os.getenv("ADMIN_IDS")
+    os.getenv("ADMIN_IDS"),
+    935770891,
 ]
 # logs path
 LOGS_BASE_PATH = str(Path(__name__).parent.parent / "logs")

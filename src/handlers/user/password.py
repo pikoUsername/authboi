@@ -64,8 +64,8 @@ async def accept_change_password(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(["N", "n", "no"]), state=ChangePassword.wait_to_accept_pass)
 async def cancel_change_password(msg: types.Message, state: FSMContext):
-    await msg.answer("Вы отменили изменение пароля!")
     await state.finish()
+    await msg.answer("Вы отменили изменение пароля!")
 
 
 @dp.message_handler(state=ChangePassword.wait_to_accept_pass, content_types=ContentType.TEXT)

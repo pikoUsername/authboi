@@ -1,6 +1,7 @@
 from typing import List
 
-from aiogram import types, Bot
+from aiogram import types
+from loguru import logger
 from gino.schema import GinoSchemaVisitor
 from gino import Gino
 from sqlalchemy import sql
@@ -65,18 +66,6 @@ class DBCommands:
         total = await db_.func.count(User.id).gino.scalar()
         return total
 
-    async def check_referrals(self):
-        bot = Bot.get_current()
-        user_id = types.User.get_current().id
-
-        user = await User.query.where(User.user_id == user_id).gino.first()
-        referrals = await User.query.where(User.referral == user.id).gino.all()
-
-        return ", ".join([
-            f"{num + 1}. " + (await bot.get_chat(referral.user_id)).get_mention(as_html=True)
-            for num, referral in enumerate(referrals)
-        ])
-
     async def exit_user(self, user_id):
         user = await self.get_user(user_id)
         user.is_authed = False
@@ -85,7 +74,24 @@ class DBCommands:
         user = await User.query.where().gino.all()
         return user
 
-async def create_db(drop_after_restart: bool=True):
+    async def create_admin_user(self, user_id: int, remove):
+        user = await self.get_user(user_id)
+        if not user:
+            logger.error("User is not registered in bot")
+            raise ValueError("User is not registered in bot")
+
+        logger.info(
+            "Loaded user {user}.",
+            user=user.user_id,
+        )
+        await user.update(is_admin=not remove).apply()
+        if remove:
+            logger.warning("User {user} now IS NOT superuser", user=user_id)
+        else:
+            logger.warning("User {user} now IS superuser", user=user_id)
+        return True
+
+async def create_db(drop_after_restart: bool=False):
     await db_.set_bind(POSTGRES_URI)
 
     db_.gino: GinoSchemaVisitor
