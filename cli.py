@@ -5,8 +5,8 @@ from aiogram import Dispatcher
 from loguru import logger
 
 from src.utils import log
-from src.models.models import create_db
-from src.loader import bot
+from src.models.models import create_db, close_db
+from src.loader import bot, telegraph
 
 async def on_startup(dp: Dispatcher):
     from src import middlewares
@@ -24,7 +24,9 @@ async def on_startup(dp: Dispatcher):
 
 async def on_shutdown(dp):
     logger.info("Goodbye!.")
+    await telegraph.close()
     await bot.close()
+    await close_db()
 
 if __name__ == '__main__':
     from aiogram import executor

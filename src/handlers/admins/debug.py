@@ -41,7 +41,7 @@ def parting(xs, parts):
     return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
 
 
-@dp.message_handler(Command(["logs", "get_logs"]), chat_type ='private', state="*")
+@dp.message_handler(Command(["logs", "get_logs"]), chat_type='private', state="*")
 async def get_logs(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
 
@@ -51,6 +51,7 @@ async def get_logs(msg: types.Message):
     if not user.is_admin:
         return await msg.answer("Вы не Админ")
 
+    logger.info("Logs getted")
     loop = asyncio.get_event_loop()
     file_ = last_log()
 
@@ -63,15 +64,16 @@ async def get_logs(msg: types.Message):
         lines = file.read()
 
         if len(lines) <= 4027:
-            return await msg.answer(f"```{lines}```")
+            return await msg.answer(f"{lines}")
 
         whole_log = await loop.run_in_executor(None, parting, lines, 5)
         for peace in whole_log:
-            await msg.answer(f"```{peace}```")
-            await asyncio.sleep(0.2)
+            await msg.answer(f"{peace}")
+            await asyncio.sleep(0.1)
 
 @dp.message_handler(Command("remove_all_logs"), state="*")
 async def remove_logs(msg: types.Message):
+    logger.info("removing logs...")
     user = await db.get_user(msg.from_user.id)
 
     if not user:

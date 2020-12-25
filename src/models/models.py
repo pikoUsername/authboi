@@ -29,10 +29,35 @@ class User(db_.Model):
     def __repr__(self):
         return f"<User(id='{self.id}', fullname='{self.full_name}', username='{self.username}')>"
 
+class Event(db_.Model):
+    __tablename__ = "Event"
+
+    id = db_.Column(db_.BigInteger, primary_key=True, index=True)
+    text = db_.Column(db_.String)
+    link_img = db_.Column(db_.String(300))
+    inline_text = db_.Column(db_.String)
+    inline_btn_link = db_.Column(db_.String)
+
 class DBCommands:
     async def get_user(self, user_id):
         user = await User.query.where(User.user_id == user_id).gino.first()
         return user
+
+    async def create_event(self,
+                           text: str,
+                           link: str,
+                           inline_text: str=None,
+                           inline_btn_link:
+                           str=None):
+        new_event = Event()
+
+        new_event.text = text
+        new_event.link_img = link
+        new_event.inline_text = inline_text
+        new_event.inline_btn_link = inline_btn_link
+
+        await new_event.create()
+        return new_event
 
     async def add_new_user(
             self,
@@ -71,8 +96,8 @@ class DBCommands:
         user.is_authed = False
 
     async def get_all_users(self) -> List:
-        user = await User.query.where().gino.all()
-        return user
+        all_user = await db_.all(User.query)
+        return all_user
 
     async def create_admin_user(self, user_id: int, remove):
         user = await self.get_user(user_id)
@@ -98,3 +123,9 @@ async def create_db(drop_after_restart: bool=False):
     if drop_after_restart:
         await db_.gino.drop_all()
     await db_.gino.create_all()
+
+async def close_db():
+    bind = db_.pop_bind()
+    if bind:
+        logger.info("Closing DB...")
+        await bind.close()
