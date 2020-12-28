@@ -6,7 +6,7 @@ from src.loader import db, dp
 
 
 @dp.message_handler(CommandHelp())
-@rate_limit(5, 'help')
+@rate_limit(5, "help")
 async def bot_help(msg: types.Message):
     """
     getting tg_user and user by id,
@@ -16,30 +16,31 @@ async def bot_help(msg: types.Message):
 
     if not user:
         text = [
-            'Список команд: ',
-            '/start - Начать диалог',
-            '/help - Получить справку',
-            '/cancel - отменяет вход',
-            '/about - показывает гитхаб проекта',
+            "Список команд: ",
+            "/start - Начать диалог",
+            "/help - Получить справку",
+            "/cancel - отменяет вход",
+            "/about - показывает гитхаб проекта",
             "/back - ход назад",
             "Если хотите полный список комманд, то вы должны пройти авторизацию, коммандой /start",
         ]
-        return await msg.answer('\n'.join(text))
+        return await msg.answer("\n".join(text))
     text = [
-        'Список команд: ',
-        '/start - Начать диалог',
-        '/help - Получить справку',
-        '/cancel - отменяет вход',
-        "/back - ход назад",
-        '/about - показывает гитхаб бота',
-        '/profile - Показывает ваш профиль',
-        '/ref - Получить рефералку',
-        '/change_password - Смена пароля',
-        '/change_description - Смена описания',
-        '/change_name - Смена Имени профиля',
-        '/change_email - Смена Эмейла профиля',
-        '/logs - Показать все логи(Админ)',
-        '/remove_all_logs - Удалить все логи(Админ)',
+        "Список команд: \n",
+        "/start - Начать диалог.",
+        "/help - Получить справку.",
+        "/cancel - отменяет вход.",
+        "/back - ход назад.",
+        "/remove - удалить аккаунт.",
+        "/about - показывает гитхаб бота.",
+        "/profile - Показывает ваш профиль.",
+        "/change_password - Смена пароля.",
+        "/change_description - Смена описания.",
+        "/change_name - Смена Имени профиля.",
+        "/change_email - Смена Эмейла профиля.",
+        "/logs - Показать все логи(Админ).",
+        "/remove_all_logs - Удалить все логи(Админ).",
+        "/start_event - Создать Ивент."
     ]
 
     return await msg.answer("\n".join(str(v) for v in text))

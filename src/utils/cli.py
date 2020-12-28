@@ -4,13 +4,15 @@ import asyncio
 from aiogram import Dispatcher
 from loguru import logger
 
-from src.utils import log
-from src.models.models import create_db, close_db
-from src.loader import bot, telegraph
+from . import log
+from ..models.models import create_db, close_db
+from ..loader import bot, telegraph, db
+from ..config import ADMIN_IDS
+
 
 async def on_startup(dp: Dispatcher):
     from src import middlewares
-    
+
     await asyncio.sleep(2)
 
     log.setup()
@@ -22,13 +24,15 @@ async def on_startup(dp: Dispatcher):
     from src.handlers.admins.notify_admins import notify_admins
     await notify_admins(dp)
 
+
 async def on_shutdown(dp):
     logger.info("Goodbye!.")
     await telegraph.close()
     await bot.close()
     await close_db()
 
-if __name__ == '__main__':
+
+def start_bot():
     from aiogram import executor
     from src.handlers import dp
 

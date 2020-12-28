@@ -3,7 +3,8 @@ import sys
 
 from loguru import logger
 
-from src.data import config
+from src import config
+
 
 class InterceptHandler(logging.Handler):
     LEVELS_MAP = {

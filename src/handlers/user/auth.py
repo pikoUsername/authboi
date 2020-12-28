@@ -1,5 +1,3 @@
-import re
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ContentTypes
@@ -8,7 +6,7 @@ from aiogram.dispatcher.filters.builtin import Command, Text
 
 from src.states.user.auth import StartState
 from src.loader import db, dp
-from src.data.config import ADMIN_IDS
+from src.config import ADMIN_IDS
 
 @dp.message_handler(Command("cancel"), state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
@@ -112,6 +110,7 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
     try:
         if msg.from_user.id in ADMIN_IDS:
             await db.add_new_user(
+                user=msg.from_user,
                 login=login,
                 email=email,
                 password=password,
@@ -120,6 +119,7 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
             await msg.answer("Вы зарегестрированы как Админ")
         else:
             await db.add_new_user(
+                user=msg.from_user,
                 login=login,
                 email=email,
                 password=password,

@@ -8,7 +8,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 from loguru import logger
 
-from src.data.config import LOGS_BASE_PATH
+from src.config import LOGS_BASE_PATH
 from src.loader import dp, db
 
 
@@ -70,6 +70,7 @@ async def get_logs(msg: types.Message):
         for peace in whole_log:
             await msg.answer(f"{peace}")
             await asyncio.sleep(0.1)
+
 
 @dp.message_handler(Command("remove_all_logs"), state="*")
 async def remove_logs(msg: types.Message):

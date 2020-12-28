@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiograph import Telegraph
 
-from src.data import config
+from src import config
 from src.models.models import DBCommands
 
 db = DBCommands()

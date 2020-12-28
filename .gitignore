@@ -1,10 +1,13 @@
 # very important info here
 /src/*.env
-.env
+src/.env
 # pycharm's trash
 /.idea
 .idea/*
 .idea
+.env
+venv/
+venv/*
 # logs
 logs/
 
@@ -21,4 +24,4 @@ data/__pycache__/config.cpython-38.pyc
 src/handlers/User/__pycache__/*
 data/__pycache__/
 #
-authboi/*
+

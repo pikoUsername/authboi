@@ -6,9 +6,10 @@ from gino.schema import GinoSchemaVisitor
 from gino import Gino
 from sqlalchemy import sql
 
-from src.data.config import POSTGRES_URI
+from src.config import POSTGRES_URI
 
 db_ = Gino()
+
 
 class User(db_.Model):
     __tablename__ = 'users'
@@ -19,7 +20,7 @@ class User(db_.Model):
     full_name = db_.Column(db_.String(100))
     login = db_.Column(db_.String(100))
     email = db_.Column(db_.String(200))
-    password = db_.Column(db_.String(200)) # there must be hash
+    password = db_.Column(db_.String(200))  # there must be hash
     referral = db_.Column(db_.Integer)
     description = db_.Column(db_.String)
     is_admin = db_.Column(db_.Boolean)
@@ -28,6 +29,7 @@ class User(db_.Model):
 
     def __repr__(self):
         return f"<User(id='{self.id}', fullname='{self.full_name}', username='{self.username}')>"
+
 
 class Event(db_.Model):
     __tablename__ = "Event"
@@ -38,6 +40,7 @@ class Event(db_.Model):
     inline_text = db_.Column(db_.String)
     inline_btn_link = db_.Column(db_.String)
 
+
 class DBCommands:
     async def get_user(self, user_id):
         user = await User.query.where(User.user_id == user_id).gino.first()
@@ -46,9 +49,9 @@ class DBCommands:
     async def create_event(self,
                            text: str,
                            link: str,
-                           inline_text: str=None,
+                           inline_text: str = None,
                            inline_btn_link:
-                           str=None):
+                           str = None):
         new_event = Event()
 
         new_event.text = text
@@ -61,13 +64,13 @@ class DBCommands:
 
     async def add_new_user(
             self,
+            user: types.User,
             referral=None,
             login=None,
-            email: str=None,
-            password: str=None,
-            is_admin: bool=False,
+            email: str = None,
+            password: str = None,
+            is_admin: bool = False,
     ):
-        user = types.User.get_current()
         old_user = await self.get_user(user.id)
 
         if old_user:
@@ -116,13 +119,13 @@ class DBCommands:
             logger.warning("User {user} now IS superuser", user=user_id)
         return True
 
-async def create_db(drop_after_restart: bool=False):
+
+async def create_db():
     await db_.set_bind(POSTGRES_URI)
 
     db_.gino: GinoSchemaVisitor
-    if drop_after_restart:
-        await db_.gino.drop_all()
     await db_.gino.create_all()
+
 
 async def close_db():
     bind = db_.pop_bind()
