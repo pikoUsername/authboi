@@ -1,4 +1,5 @@
 from aiogram import types
+from loguru import logger
 
 from src.loader import db, bot
 
@@ -14,5 +15,6 @@ async def send_to_all_users(text: str, img_link: str=None, inline_kb: types.Inli
             for user in all_users:
                 await bot.send_message(user.user_id, text=text)
     except Exception as e:
+        logger.info(e)
         raise e
 

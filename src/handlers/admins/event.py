@@ -11,8 +11,7 @@ from src.loader import db, dp
 from src.keyboards.inline.event import inline_choice_event
 from src.states.user.event import EventState
 from src.states.user.inline import InlineStates
-# from src.utils.photo_link import photo_link_aiograph
-from src.utils.spamer import send_to_all_users
+from src.utils import send_to_all_users
 
 
 @dp.message_handler(ChatTypeFilter(chat_type="private"), commands="start_event", state="*")

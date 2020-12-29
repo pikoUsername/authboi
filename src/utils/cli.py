@@ -6,8 +6,7 @@ from loguru import logger
 
 from . import log
 from ..models.models import create_db, close_db
-from ..loader import bot, telegraph, db
-from ..config import ADMIN_IDS
+from ..loader import bot, telegraph
 
 
 async def on_startup(dp: Dispatcher):

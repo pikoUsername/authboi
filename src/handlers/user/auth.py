@@ -8,7 +8,7 @@ from src.states.user.auth import StartState
 from src.loader import db, dp
 from src.config import ADMIN_IDS
 
-@dp.message_handler(Command("cancel"), state="*")
+@dp.message_handler(commands="cancel", state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     # checking for corrent state!
     current_state = await state.get_state()
