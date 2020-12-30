@@ -72,7 +72,7 @@ async def get_logs(msg: types.Message):
             await asyncio.sleep(0.1)
 
 
-@dp.message_handler(Command("remove_all_logs"), state="*")
+@dp.message_handler(commands="remove_all_logs", state="*")
 async def remove_logs(msg: types.Message):
     logger.info("removing logs...")
     user = await db.get_user(msg.from_user.id)
@@ -83,13 +83,14 @@ async def remove_logs(msg: types.Message):
     if not user.is_admin:
         return
 
+    loop = asyncio.get_event_loop()
     try:
-        delete_all_logs()
+        await loop.run_in_executor(None, delete_all_logs)
     except Exception as e:
         logger.exception(e)
         return await msg.answer(str(e))
 
-    logger.info("All logs removed from logs base path!")
+    logger.warning("All logs removed from logs base path!")
     await msg.answer(f"Удлаены все логи в Директории, {LOGS_BASE_PATH}/")
 
 

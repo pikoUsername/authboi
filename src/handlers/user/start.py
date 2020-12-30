@@ -27,11 +27,7 @@ async def log_in_user(call_back: types.CallbackQuery):
             InlineKeyboardButton("Начать >>", callback_data="start_login"),
         ],
     ])
-
-    try:
-        await call_back.message.edit_text("Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя", reply_markup=back_kb)
-    except Exception as e:
-        logger.exception(f"Here exception 45-line, {e}")
+    await call_back.message.edit_text("Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя", reply_markup=back_kb)
 
 
 @dp.callback_query_handler(text="back_to_main_menu")

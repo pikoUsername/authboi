@@ -5,6 +5,7 @@ from aiogram import types
 
 from src.loader import bot, telegraph
 
+
 # https://telegra.ph/Pryamaya-ssylka-na-foto-s-telegraph-12-19
 async def photo_link(photo: types.photo_size.PhotoSize) -> str:
     with await photo.download(BytesIO()) as file:

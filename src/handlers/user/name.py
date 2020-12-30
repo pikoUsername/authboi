@@ -1,16 +1,14 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
 from loguru import logger
 
 from src.states.user.cng_name import ChangeName
 from src.loader import db, dp
 
-@dp.message_handler(Command("change_name"), state="*")
+@dp.message_handler(commands="change_name", state="*")
 async def start_change_name(msg: types.Message, state: FSMContext):
     current_state = await state.get_state()
-
     if current_state:
         return
 
@@ -35,7 +33,7 @@ async def wait_to_name_(msg: types.Message, state: FSMContext):
     await ChangeName.wait_to_accept.set()
 
 
-@dp.message_handler(Text(["Y", "y"]), state=ChangeName.wait_to_accept)
+@dp.message_handler(text=("Y", "y"), state=ChangeName.wait_to_accept)
 async def accept_change_name(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
     async with state.proxy() as data:
@@ -50,7 +48,7 @@ async def accept_change_name(msg: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(Text(["N", "n"]), state=ChangeName.wait_to_accept)
+@dp.message_handler(text=("N", "n"), state=ChangeName.wait_to_accept)
 async def cancel_change_name(msg: types.Message, state: FSMContext):
     await msg.answer("Вы отменили действие")
     await state.finish()

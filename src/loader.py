@@ -3,7 +3,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiograph import Telegraph
 
 from src import config
-from src.models.models import DBCommands
+from src.models import DBCommands
 
 db = DBCommands()
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)

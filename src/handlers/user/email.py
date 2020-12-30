@@ -1,13 +1,12 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
 
 from src.loader import db, dp
 from src.states.user.cng_email import ChangeEmail
 
 
-@dp.message_handler(Command("change_email"), state="*")
+@dp.message_handler(commands="change_email", state="*")
 async def start_change_email(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
 
@@ -33,7 +32,7 @@ async def change_email_input(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь вы Уверены в этом ? Y/N")
 
 
-@dp.message_handler(Text(["Y", "y", "yes"]), state=ChangeEmail.wait_to_accept)
+@dp.message_handler(text=("Y", "y", "yes"), state=ChangeEmail.wait_to_accept)
 async def accept_change_email(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
 
@@ -45,7 +44,7 @@ async def accept_change_email(msg: types.Message, state: FSMContext):
     await msg.answer("Успех, Вы поменяли Свои Эмейл")
 
 
-@dp.message_handler(Text(["N", "n", "no"]), state=ChangeEmail.wait_to_accept)
+@dp.message_handler(text=("N", "n", "no"), state=ChangeEmail.wait_to_accept)
 async def cancel_change_email(msg: types.Message, state: FSMContext):
     await state.finish()
     return await msg.answer("Действие отменено")

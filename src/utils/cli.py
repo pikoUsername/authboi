@@ -5,7 +5,7 @@ from aiogram import Dispatcher
 from loguru import logger
 
 from . import log
-from ..models.models import create_db, close_db
+from ..models.base import create_db, close_db
 from ..loader import bot, telegraph
 
 

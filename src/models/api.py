@@ -2,49 +2,27 @@ from typing import List
 
 from aiogram import types
 from loguru import logger
-from gino.schema import GinoSchemaVisitor
-from gino import Gino
-from sqlalchemy import sql
 
-from src.config import POSTGRES_URI
-
-db_ = Gino()
-
-
-class User(db_.Model):
-    __tablename__ = 'users'
-
-    id = db_.Column(db_.Integer, db_.Sequence('user_id_seq'), primary_key=True)
-    user_id = db_.Column(db_.BigInteger)
-    username = db_.Column(db_.String(50))
-    full_name = db_.Column(db_.String(100))
-    login = db_.Column(db_.String(100))
-    email = db_.Column(db_.String(200))
-    password = db_.Column(db_.String(200))  # there must be hash
-    referral = db_.Column(db_.Integer)
-    description = db_.Column(db_.String)
-    is_admin = db_.Column(db_.Boolean)
-
-    query: sql.Select
-
-    def __repr__(self):
-        return f"<User(id='{self.id}', fullname='{self.full_name}', username='{self.username}')>"
-
-
-class Event(db_.Model):
-    __tablename__ = "Event"
-
-    id = db_.Column(db_.BigInteger, primary_key=True, index=True)
-    text = db_.Column(db_.String)
-    link_img = db_.Column(db_.String(300))
-    inline_text = db_.Column(db_.String)
-    inline_btn_link = db_.Column(db_.String)
+from .base import db_
+from .user import User
+from .event import Event
 
 
 class DBCommands:
-    async def get_user(self, user_id):
+    @staticmethod
+    async def get_user(user_id: int) -> 'User':
         user = await User.query.where(User.user_id == user_id).gino.first()
         return user
+
+    async def remove_user(self, user_id: int) -> bool:
+        user = await self.get_user(user_id)
+
+        if not user:
+            logger.error("User doesnt exits")
+            raise ValueError("User doesnt exits")
+        await user.delete()
+        return False
+
 
     async def create_event(self,
                            text: str,
@@ -118,17 +96,3 @@ class DBCommands:
         else:
             logger.warning("User {user} now IS superuser", user=user_id)
         return True
-
-
-async def create_db():
-    await db_.set_bind(POSTGRES_URI)
-
-    db_.gino: GinoSchemaVisitor
-    await db_.gino.create_all()
-
-
-async def close_db():
-    bind = db_.pop_bind()
-    if bind:
-        logger.info("Closing DB...")
-        await bind.close()

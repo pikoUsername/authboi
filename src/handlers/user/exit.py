@@ -36,7 +36,7 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
         await msg.answer("Не правльный пароль\n отмена /cancel")
 
 
-@dp.message_handler(Text(["Y", "y", "yes"]), state=Exit.wait_to_accept)
+@dp.message_handler(text=("Y", "y", "yes"), state=Exit.wait_to_accept)
 async def remove_user_fully(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         user = data["user"]

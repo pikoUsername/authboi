@@ -1,6 +1,5 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -8,7 +7,7 @@ from src.loader import db, dp
 from src.states.user.cng_pass import ChangePassword
 from src.utils.throttling import rate_limit
 
-@dp.message_handler(Command("change_password"), state="*")
+@dp.message_handler(commands="change_password", state="*")
 @rate_limit(5, 'change_password')
 async def start_change_password(msg: types.Message):
     pass_ = await db.get_user(msg.from_user.id)
@@ -49,20 +48,18 @@ async def change_password(msg: types.Message, state: FSMContext):
     await msg.answer(f"Теперь вы уверены в этом ? Y | N: \nПароль на который вы хотите изменить: {msg.text}")
     await ChangePassword.wait_to_accept_pass.set()
 
-@dp.message_handler(Text(["Y", "y", "yes"]), state=ChangePassword.wait_to_accept_pass)
+@dp.message_handler(text=("Y", "y", "yes"), state=ChangePassword.wait_to_accept_pass)
 async def accept_change_password(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         logger.info(f"user: {msg.from_user.username}, changed password")
         password = data["password"]
 
     user = await db.get_user(msg.from_user.id)
-
     await user.update(password=password).apply()
-
     await msg.answer("Успех вы сменили пароль!")
 
 
-@dp.message_handler(Text(["N", "n", "no"]), state=ChangePassword.wait_to_accept_pass)
+@dp.message_handler(text=("N", "n", "no"), state=ChangePassword.wait_to_accept_pass)
 async def cancel_change_password(msg: types.Message, state: FSMContext):
     await state.finish()
     await msg.answer("Вы отменили изменение пароля!")

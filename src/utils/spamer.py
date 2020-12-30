@@ -3,6 +3,7 @@ from loguru import logger
 
 from src.loader import db, bot
 
+
 async def send_to_all_users(text: str, img_link: str=None, inline_kb: types.InlineKeyboardMarkup=None):
     # TODO - make more beatiful and more better
     all_users = await db.get_all_users()
