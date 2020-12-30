@@ -11,4 +11,4 @@ from .description import dp
 from .email import dp
 # end list of handlers
 
-__all__ = ["dp"]
+__all__ = ("dp",)

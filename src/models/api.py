@@ -15,7 +15,7 @@ class DBCommands:
         return user
 
     async def remove_user(self, user_id: int) -> bool:
-        user = await self.get_user(user_id)
+        user = await User.query.where(User.user_id == user_id).gino.first()
 
         if not user:
             logger.error("User doesnt exits")

@@ -1,14 +1,17 @@
 from aiogram import types
 
 from src.loader import dp, db
-from src.utils import is_admin
+from src.utils import check_for_admin
 
 @dp.message_handler(commands="delete_user", state="*")
-@is_admin
 async def delete_user_from_db(msg: types.Message):
-    args = msg.get_args()
-    user_id = args[0]
+    await check_for_admin(msg, msg.from_user.id)
 
+    args = msg.get_args()
+    try:
+        user_id = int(args[1])
+    except IndexError:
+        return await msg.answer("Не Указан Обезательный Аргумент")
     try:
         result = await db.remove_user(user_id)
     except ValueError:

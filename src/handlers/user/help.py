@@ -25,7 +25,7 @@ async def bot_help(msg: types.Message):
             "Если хотите полный список комманд, то вы должны пройти авторизацию, коммандой /start",
         ]
         return await msg.answer("\n".join(text))
-    text = [
+    text = (
         "Список команд: \n",
         "/start - Начать диалог.",
         "/help - Получить справку.",
@@ -40,8 +40,9 @@ async def bot_help(msg: types.Message):
         "/change_email - Смена Эмейла профиля.",
         "/logs - Показать все логи(Админ).",
         "/remove_all_logs - Удалить все логи(Админ).",
-        "/start_event - Создать Ивент."
-    ]
+        "/start_event - Создать Ивент.",
+        "/delete_user - Удалить Пользветеля",
+    )
 
     return await msg.answer("\n".join(str(v) for v in text))
 

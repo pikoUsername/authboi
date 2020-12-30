@@ -2,17 +2,12 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 
 from src.loader import dp, db
+from src.utils import check_for_admin
 
 
-@dp.message_handler(Command("set_admin"))
+@dp.message_handler(commands="set_admin")
 async def set_admin_user(msg: types.Message):
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return await msg.answer("Вы не Авторизованы")
-
-    if not user.is_admin:
-        return False
+    await check_for_admin(msg, msg.from_user.id)
 
     args = msg.get_args()
     if not args or not args[0].isdigit():
