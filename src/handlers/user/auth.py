@@ -2,11 +2,11 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ContentTypes
 from loguru import logger
-from aiogram.dispatcher.filters.builtin import Command, Text
 
 from src.states.user.auth import StartState
 from src.loader import db, dp
 from src.config import ADMIN_IDS
+from src.utils import fill_auth_final
 
 @dp.message_handler(commands="cancel", state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
@@ -81,12 +81,12 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
         password_verify = data["password"]
         if password_verify != msg.text:
             return await msg.answer("Не правильный Пароль, Повторите еще раз!")
-        await StartState.wait_to_accept.set()
-        await msg.delete()
-        await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+    await StartState.wait_to_accept.set()
+    await msg.delete()
+    await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
 
-@dp.message_handler(Command("back"), state="*")
+@dp.message_handler(commands="back", state="*")
 async def bot_auth_back(msg: types.Message, state: FSMContext):
     current_state = await state.get_state()
     if not current_state:
@@ -97,15 +97,13 @@ async def bot_auth_back(msg: types.Message, state: FSMContext):
     await msg.answer(f"Вы сделали шаг назад, это непримелимо.\n Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
 
 
-@dp.message_handler(Text(["Y", "y", "yes"]), state=StartState.wait_to_accept)
+@dp.message_handler(text=("Y", "y", "yes"), state=StartState.wait_to_accept)
 async def yes_auth_password(msg: types.Message, state: FSMContext):
     await msg.answer("Вы теперь авторизованы как полноправный пользветель!")
     async with state.proxy() as data:
         login = data["login"]
         password = data["password"]
         email = data["email"]
-        password_len = len(data["password"])
-        pass_to_show = []
         logger.info(f"User authed, name:{msg.from_user.username}")
     try:
         if msg.from_user.id in ADMIN_IDS:
@@ -128,28 +126,18 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
     except Exception as e:
         logger.exception(e)
         await msg.answer(
-            "Ошибка попробуйте снова.\n Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта")
+            "Ошибка попробуйте снова.\n Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта"
+        )
 
-
-    for i in range(0, password_len):
-        pass_to_show.append("*")
-
-    text = [
-        "Вы авторизованы как: ",
-        f"Имя: {login}",
-        f"email: {email}",
-        f"Пароль: ",
-        "".join(pass_to_show),
-    ]
-
-    await msg.answer("\n".join(text))
+    text = fill_auth_final(password, login, email)
+    await msg.answer(text)
 
     await state.finish()
     logger.info('------USER AUTHORIZATION!------')
     logger.info(f"| login: {login} | email: {email}")
 
 
-@dp.message_handler(Text(["n", "N"]), state=StartState.wait_to_accept)
+@dp.message_handler(text=("n", "N"), state=StartState.wait_to_accept)
 async def cancel_auth(msg: types.Message, state: FSMContext):
     await msg.answer("Вы отменили авторизацию!")
     logger.info("cancelled authorization")
