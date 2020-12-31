@@ -1,12 +1,12 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentTypes
 from loguru import logger
 
 from src.states.user.auth import StartState
 from src.loader import db, dp
-from src.config import ADMIN_IDS
-from src.utils import fill_auth_final
+from src.utils.misc import fill_auth_final
 
 @dp.message_handler(commands="cancel", state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
@@ -40,7 +40,7 @@ async def bot_auth_login(message: types.Message, state: FSMContext):
         logger.info("seme one getted login", message.text)
 
     await StartState.wait_to_email.set()
-    await message.answer("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
+    return SendMessage("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
 
 
 @dp.message_handler(state=StartState.wait_to_email, content_types=ContentTypes.TEXT)
@@ -54,8 +54,8 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["email"] = msg.text
 
-    await msg.answer("Теперь ввидите ваш пароль, если хотите конечно.\n Вас никто не заставляет.\n всегда есть комманда /cancel.")
     await StartState.wait_to_password.set()
+    return SendMessage("Теперь ввидите ваш пароль, если хотите конечно.\n Вас никто не заставляет.\n всегда есть комманда /cancel.")
 
 
 @dp.message_handler(state=StartState.wait_to_password, content_types=ContentTypes.TEXT)
@@ -70,8 +70,9 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
         data["password"] = msg.text
 
     await msg.delete()
-    await msg.answer("Теперь ввидите ваш пароль снова! Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
+
     await StartState.wait_to_verify_pass.set()
+    return SendMessage("Теперь ввидите ваш пароль снова! Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
 
 
 @dp.message_handler(state=StartState.wait_to_verify_pass, content_types=ContentTypes.TEXT)
@@ -83,7 +84,7 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
             return await msg.answer("Не правильный Пароль, Повторите еще раз!")
     await StartState.wait_to_accept.set()
     await msg.delete()
-    await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+    return SendMessage("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
 
 @dp.message_handler(commands="back", state="*")
@@ -106,23 +107,12 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
         email = data["email"]
         logger.info(f"User authed, name:{msg.from_user.username}")
     try:
-        if msg.from_user.id in ADMIN_IDS:
-            await db.add_new_user(
-                user=msg.from_user,
-                login=login,
-                email=email,
-                password=password,
-                is_admin=True,
-            )
-            await msg.answer("Вы зарегестрированы как Админ")
-        else:
-            await db.add_new_user(
-                user=msg.from_user,
-                login=login,
-                email=email,
-                password=password,
-                is_admin=False,
-            )
+        await db.add_new_user(
+            user=msg.from_user,
+            login=login,
+            email=email,
+            password=password,
+        )
     except Exception as e:
         logger.exception(e)
         await msg.answer(

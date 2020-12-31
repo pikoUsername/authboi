@@ -1,7 +1,7 @@
 from aiogram import types
 
 from src.loader import dp, db
-from src.utils import check_for_admin
+from src.utils.checks import check_for_admin
 
 @dp.message_handler(commands="delete_user", state="*")
 async def delete_user_from_db(msg: types.Message):

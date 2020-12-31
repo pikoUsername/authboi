@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -55,9 +56,9 @@ async def remove_user_fully(msg: types.Message, state: FSMContext):
 @dp.message_handler(Text(["N", 'n', "no"]), state=Exit.wait_to_accept)
 async def cancel_rm_user(msg: types.Message, state: FSMContext):
     await state.finish()
-    await msg.answer("Вы отменили действие!")
+    return SendMessage(chat_id=msg.chat.id, text="Вы отменили действие!")
 
 
 @dp.message_handler(state=Exit.wait_to_accept, content_types=ContentType.TEXT)
 async def user_rm_accept(msg: types.Message, state: FSMContext):
-    await msg.answer("Повтрите еще раз!")
+    return SendMessage(chat_id=msg.chat.id, text="Повтрите еще раз!")

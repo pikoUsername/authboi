@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -39,13 +40,14 @@ async def yes_change_desc(msg: types.Message, state: FSMContext):
     await user.update(description=description).apply()
 
     await msg.answer("Вашо описание профиля было измнено")
+    await state.finish()
 
 
 @dp.message_handler(text=("N", "no", "n"), state=DescriptionChange.wait_to_accept_change)
 async def cancel_change_desc(msg: types.Message, state: FSMContext):
-    await msg.answer("Вы отменили изменения описания профиля!")
+    return SendMessage(chat_id=msg.chat.id, text="Вы отменили изменения описания профиля!")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
 async def accept_change_description(msg: types.Message, state: FSMContext):
-    return await msg.answer("НЕправльные аргумент, попробуйте снова!")
+    return SendMessage(chat_id=msg.chat.id, text="НЕправльные аргумент, попробуйте снова!")

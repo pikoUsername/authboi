@@ -1,3 +1,3 @@
-from .not_modified import dp
+from . import not_modified
 
 __all__ = ["dp"]

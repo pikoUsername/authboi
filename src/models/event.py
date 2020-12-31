@@ -13,3 +13,6 @@ class Event(db_.Model):
     link_img = db_.Column(db_.String(300))
     inline_text = db_.Column(db_.String)
     inline_btn_link = db_.Column(db_.String)
+
+    def __str__(self):
+        return f"<Event text={self.text}>"

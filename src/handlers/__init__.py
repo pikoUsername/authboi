@@ -1,5 +1,3 @@
-from .errors import dp
-from .user import dp
-from .admins import dp
-
-__all__ = ("dp",)
+from . import errors
+from . import user
+from . import admins

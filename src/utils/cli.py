@@ -1,38 +1,52 @@
-import datetime
-import asyncio
-
-from aiogram import Dispatcher
+import click
 from loguru import logger
 
-from . import log
-from ..models.base import create_db, close_db
-from ..loader import bot, telegraph
-
-
-async def on_startup(dp: Dispatcher):
-    from src import middlewares
-
-    await asyncio.sleep(2)
+# https://github.com/aiogram/bot/blob/master/app/utils/cli.py
+@click.group()
+def cli():
+    from .. import loader
+    from . import log
 
     log.setup()
-    middlewares.setup(dp)
-    await create_db()
-
-    logger.info(f"Bot started | time: {datetime.datetime.today()}")
-
-    from src.handlers.admins.notify_admins import notify_admins
-    await notify_admins(dp)
+    loader.setup()
 
 
-async def on_shutdown(dp):
-    logger.info("Goodbye!.")
-    await telegraph.close()
-    await bot.close()
-    await close_db()
+@cli.command()
+@click.option("--skip-updates", is_flag=True, default=False, help="Skip pending updates")
+def polling(skip_updates: bool):
+    """
+    Start application in polling mode
+    """
+
+    from src.utils.executor import runner
+
+    runner.skip_updates = skip_updates
+    runner.start_polling(reset_webhook=True)
 
 
-def start_bot():
-    from aiogram import executor
-    from src.handlers import dp
+@cli.command()
+def webhook():
+    """
+    Run application in webhook mode
+    """
+    from ..utils.executor import runner
+    from .. import config
 
-    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown)
+    runner.start_webhook(webhook_path=config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT)
+
+
+@cli.command()
+@click.argument("user_id", type=int)
+@click.option("--remove", "--rm", is_flag=True, default=False, help="Remove superuser rights")
+def add_admin(user_id: int, remove: bool):
+    from .executor import runner
+    from ..loader import db
+
+    try:
+        result = runner.start(db.create_admin_user(user_id, remove))
+    except Exception as e:
+        logger.exception("Failed to create admin: {e}", e=e)
+        result = None
+
+    if not result:
+        exit(1)

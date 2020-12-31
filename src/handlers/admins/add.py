@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 
 from src.loader import dp, db
-from src.utils import check_for_admin
+from src.utils.checks import check_for_admin
 
 
 @dp.message_handler(commands="set_admin")
@@ -19,7 +19,7 @@ async def set_admin_user(msg: types.Message):
     try:
         result = await db.create_admin_user(user_id, remove)
     except ValueError:
-        result = False
+        result = None
 
     if result:
         return await msg.answer(

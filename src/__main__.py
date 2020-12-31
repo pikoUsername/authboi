@@ -1,4 +1,4 @@
-from .utils.cli import start_bot
+from .utils.cli import cli
 
 if __name__ == '__main__':
-    start_bot()
+    cli()

@@ -19,5 +19,5 @@ class User(db_.Model):
 
     query: sql.Select
 
-    def __repr__(self):
+    def __str__(self):
         return f"<User(id='{self.id}', fullname='{self.full_name}', username='{self.username}')>"

@@ -6,6 +6,7 @@ from loguru import logger
 from .base import db_
 from .user import User
 from .event import Event
+from ..config import ADMIN_IDS
 
 
 class DBCommands:
@@ -43,11 +44,9 @@ class DBCommands:
     async def add_new_user(
             self,
             user: types.User,
-            referral=None,
-            login=None,
-            email: str = None,
+            login,
+            email: str,
             password: str = None,
-            is_admin: bool = False,
     ):
         old_user = await self.get_user(user.id)
 
@@ -61,10 +60,11 @@ class DBCommands:
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
-        new_user.is_admin = is_admin
+        if user.id in ADMIN_IDS:
+            new_user.is_admin = True
+        else:
+            new_user.is_admin = False
 
-        if referral:
-            new_user.referral = int(referral)
         await new_user.create()
         return new_user
 

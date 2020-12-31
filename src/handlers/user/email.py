@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 
 from src.loader import db, dp
@@ -47,9 +48,9 @@ async def accept_change_email(msg: types.Message, state: FSMContext):
 @dp.message_handler(text=("N", "n", "no"), state=ChangeEmail.wait_to_accept)
 async def cancel_change_email(msg: types.Message, state: FSMContext):
     await state.finish()
-    return await msg.answer("Действие отменено")
+    return SendMessage(chat_id=msg.chat.id, text="Действие отменено")
 
 
 @dp.message_handler(state=ChangeEmail.wait_to_accept, content_types=ContentType.TEXT)
 async def accept_and_complete_emailcng(msg: types.Message, state: FSMContext):
-    await msg.answer("Ошибка в вводе!")
+    return SendMessage(chat_id=msg.chat.id, text="Ошибка в вводе!")

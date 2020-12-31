@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.dispatcher.webhook import EditMessageText
 
 from src.loader import dp
 from src.keyboards.inline.start import choice_kb
@@ -23,9 +24,9 @@ async def bot_what_can(call_back: types.CallbackQuery):
     ]
     bot_desc_kb = types.InlineKeyboardMarkup(inline_keyboard=bot_desc)
 
-    return await call_back.message.edit_text('\n'.join(text), reply_markup=bot_desc_kb)
+    return EditMessageText(chat_id=call_back.message.chat.id, text='\n'.join(text), reply_markup=bot_desc_kb)
 
 
 @dp.callback_query_handler(text="back_to_reg_menu", state="*")
 async def back_to_reg_menu(call_back: types.CallbackQuery):
-    await call_back.message.edit_text("Выбирите: ", reply_markup=choice_kb)
+    return EditMessageText(chat_id=call_back.message.chat.id, text="Выбирите: ", reply_markup=choice_kb)

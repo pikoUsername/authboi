@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -22,9 +23,9 @@ async def start_change_password(msg: types.Message):
 
 @dp.message_handler(state=ChangePassword.wait_to_accept_with_password)
 async def check_to_really_user(msg: types.Message):
-    pass_ = await db.get_user(msg.from_user.id)
+    user = await db.get_user(msg.from_user.id)
 
-    if pass_ != msg.text:
+    if user.password != msg.text:
         return await msg.answer("Ваш пароль, не верный попробуйте еще разок.\n Может тогда получится")
     else:
         await ChangePassword.wait_to_password.set()
@@ -57,15 +58,16 @@ async def accept_change_password(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
     await user.update(password=password).apply()
     await msg.answer("Успех вы сменили пароль!")
+    await state.finish()
 
 
 @dp.message_handler(text=("N", "n", "no"), state=ChangePassword.wait_to_accept_pass)
 async def cancel_change_password(msg: types.Message, state: FSMContext):
     await state.finish()
-    await msg.answer("Вы отменили изменение пароля!")
+    return SendMessage(chat_id=msg.chat.id, text="Вы отменили изменение пароля!")
 
 
 @dp.message_handler(state=ChangePassword.wait_to_accept_pass, content_types=ContentType.TEXT)
 async def changing_fully(msg: types.Message, state: FSMContext):
-    return await msg.answer("Некорректный ввод! Y | N:")
+    return SendMessage(chat_id=msg.chat.id, text="Некорректный ввод! Y | N:")
 

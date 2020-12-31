@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
@@ -29,8 +30,8 @@ async def wait_to_name_(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["Name"] = msg.text
 
-    await msg.answer("Вы точно уверены об Этом? Y/N:")
     await ChangeName.wait_to_accept.set()
+    return SendMessage(chat_id=msg.chat.id, text="Вы точно уверены об Этом? Y/N:")
 
 
 @dp.message_handler(text=("Y", "y"), state=ChangeName.wait_to_accept)
@@ -50,12 +51,12 @@ async def accept_change_name(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(text=("N", "n"), state=ChangeName.wait_to_accept)
 async def cancel_change_name(msg: types.Message, state: FSMContext):
-    await msg.answer("Вы отменили действие")
     await state.finish()
+    return SendMessage(chat_id=msg.chat.id, text="Вы отменили действие")
 
 
 @dp.message_handler(state=ChangeName.wait_to_accept)
 async def accept_to_change_name(msg: types.Message, state: FSMContext):
-    return await msg.answer("Повторите действие или выйдите /cancel или N")
+    return SendMessage(chat_id=msg.chat.id, text="Повторите действие или выйдите /cancel или N")
 
 

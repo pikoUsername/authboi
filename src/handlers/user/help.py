@@ -1,8 +1,9 @@
 from aiogram import types
-from aiogram.dispatcher.filters import CommandHelp, Command
+from aiogram.dispatcher.filters import CommandHelp
+from aiogram.dispatcher.webhook import SendMessage
 
 from src.utils.throttling import rate_limit
-from src.loader import db, dp
+from src.loader import db, dp, bot
 
 
 @dp.message_handler(CommandHelp())
@@ -24,7 +25,7 @@ async def bot_help(msg: types.Message):
             "/back - ход назад",
             "Если хотите полный список комманд, то вы должны пройти авторизацию, коммандой /start",
         ]
-        return await msg.answer("\n".join(text))
+        return await msg.answer(text="\n".join(text))
     text = (
         "Список команд: \n",
         "/start - Начать диалог.",
@@ -44,9 +45,9 @@ async def bot_help(msg: types.Message):
         "/delete_user - Удалить Пользветеля",
     )
 
-    return await msg.answer("\n".join(str(v) for v in text))
+    return await bot.send_message(chat_id=msg.chat.id, text="\n".join(str(v) for v in text))
 
 
-@dp.message_handler(Command("about"))
+@dp.message_handler(commands="about")
 async def bot_about(msg: types.Message):
-    await msg.answer("https://github.com/pikoUsername/authboi.git")
+    return SendMessage(chat_id=msg.chat.id, text="(https://github.com/pikoUsername/authboi.git)")
