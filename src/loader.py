@@ -12,6 +12,7 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 telegraph = Telegraph()
 
+
 def setup():
     from . import middlewares
     from .utils import executor
