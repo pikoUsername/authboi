@@ -1,5 +1,4 @@
 from aiogram import types
-from aiogram.dispatcher.filters import Command
 
 from src.loader import dp, db
 from src.utils.checks import check_for_admin

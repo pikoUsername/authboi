@@ -1,6 +1,8 @@
 import click
 from loguru import logger
 
+from .. import config
+
 
 @click.group()
 def cli():
@@ -22,6 +24,18 @@ def polling(skip_updates: bool):
 
     runner.skip_updates = skip_updates
     runner.start_polling(reset_webhook=True)
+
+
+@cli.command()
+@click.option("--skip-updates", is_flag=True, default=False, help="Skip pending updates")
+def webhook(skip_updates: bool):
+    """
+    Start Webhook
+    """
+    from src.utils.executor import runner
+
+    runner.skip_updates = skip_updates
+    runner.start_webhook(config.WEBHOOK_PATH)
 
 
 @cli.command()

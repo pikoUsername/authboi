@@ -5,11 +5,11 @@ from math import ceil
 import asyncio
 
 from aiogram import types
-from aiogram.dispatcher.filters import Command
 from loguru import logger
 
 from src.config import LOGS_BASE_PATH
 from src.loader import dp, db
+from src.utils.checks import check_for_admin
 
 
 def last_log():
@@ -41,7 +41,7 @@ def parting(xs, parts):
     return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
 
 
-@dp.message_handler(Command(["logs", "get_logs"]), chat_type='private', state="*")
+@dp.message_handler(commands=("logs", "get_logs"), chat_type='private', state="*")
 async def get_logs(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
 
@@ -56,7 +56,7 @@ async def get_logs(msg: types.Message):
     file_ = last_log()
 
     if not file_:
-        return await msg.answer("Логов Нету ¯\_(ツ)_/¯")
+        return await msg.answer("Логов Нету")
 
     name_file = ''.join(file_)
 
@@ -75,12 +75,8 @@ async def get_logs(msg: types.Message):
 @dp.message_handler(commands="remove_all_logs", state="*")
 async def remove_logs(msg: types.Message):
     logger.info("removing logs...")
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return await msg.answer("Авторизуйтесь для этого!")
-
-    if not user.is_admin:
+    res = await check_for_admin(msg, msg.from_user.id)
+    if not res:
         return
 
     loop = asyncio.get_event_loop()

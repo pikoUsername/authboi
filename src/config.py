@@ -25,12 +25,14 @@ POSTGRES_PORT = dint("DB_PORT")
 POSTGRES_USER = dstr("DB_USER")
 POSTGRES_PASS = dstr("DB_PASS")
 
+
 # webhook
 DOMAIN = dstr("DOMAIN", default="localhost")
 SECRET_KEY = secrets.token_urlsafe(48)
 WEBHOOK_BASE_PATH = dstr("WEBHOOK_BASE_PATH", default="/webhook")
 WEBHOOK_PATH = f"{WEBHOOK_BASE_PATH}/{SECRET_KEY}"
 WEBHOOK_URL = f"https://{DOMAIN}{WEBHOOK_PATH}"
+
 
 # telegram
 BOT_TOKEN = dstr("BOT_TOKEN")
