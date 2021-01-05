@@ -20,7 +20,7 @@ async def on_startup(dp):
 async def on_shutdown(dp):
     bind = db_.pop_bind()
     if bind:
-        logger.info("Closing DB...")
+        logger.info("Closing Postgres Connection...")
         await bind.close()
 
 

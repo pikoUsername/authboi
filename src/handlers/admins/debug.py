@@ -75,7 +75,7 @@ async def get_logs(msg: types.Message):
 @dp.message_handler(commands="remove_all_logs", state="*")
 async def remove_logs(msg: types.Message):
     logger.info("removing logs...")
-    res = await check_for_admin(msg, msg.from_user.id)
+    res = await check_for_admin(msg.from_user.id)
     if not res:
         return
 

@@ -1,6 +1,5 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentTypes
 from loguru import logger
 
@@ -8,9 +7,10 @@ from src.states.user.auth import StartState
 from src.loader import db, dp
 from src.utils.misc import fill_auth_final
 
+
 @dp.message_handler(commands="cancel", state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
-    # checking for corrent state!
+    # checking for corrent state
     current_state = await state.get_state()
 
     if not current_state:
@@ -40,14 +40,15 @@ async def bot_auth_login(message: types.Message, state: FSMContext):
         logger.info("seme one getted login", message.text)
 
     await StartState.wait_to_email.set()
-    return SendMessage("Теперь ввидите ваш эмейл, если можно\n Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
+    return await message.answer("Теперь ввидите ваш эмейл, если можно\n"
+                                "Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
 
 
 @dp.message_handler(state=StartState.wait_to_email, content_types=ContentTypes.TEXT)
 async def bot_auth_email(msg: types.Message, state: FSMContext):
     if ' ' in msg.text:
         return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
-    elif not '@' in msg.text:
+    elif '@' not in msg.text:
         return await msg.answer("Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
 
     logger.info(f"getted email, email {msg.text}")
@@ -55,7 +56,8 @@ async def bot_auth_email(msg: types.Message, state: FSMContext):
         data["email"] = msg.text
 
     await StartState.wait_to_password.set()
-    return SendMessage("Теперь ввидите ваш пароль, если хотите конечно.\n Вас никто не заставляет.\n всегда есть комманда /cancel.")
+    return await msg.answer("Теперь ввидите ваш пароль, если хотите конечно.\n "
+                            "Вас никто не заставляет.\n всегда есть комманда /cancel.")
 
 
 @dp.message_handler(state=StartState.wait_to_password, content_types=ContentTypes.TEXT)
@@ -72,7 +74,8 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
     await msg.delete()
 
     await StartState.wait_to_verify_pass.set()
-    return SendMessage("Теперь ввидите ваш пароль снова! Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
+    return await msg.answer("Теперь ввидите ваш пароль снова!\n"
+                            "Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
 
 
 @dp.message_handler(state=StartState.wait_to_verify_pass, content_types=ContentTypes.TEXT)
@@ -84,7 +87,8 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
             return await msg.answer("Не правильный Пароль, Повторите еще раз!")
     await StartState.wait_to_accept.set()
     await msg.delete()
-    return SendMessage("Теперь вы уверены, вы этом Y/N, если нет,\n то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+    return await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n "
+                            "то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
 
 @dp.message_handler(commands="back", state="*")
@@ -116,7 +120,8 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
     except Exception as e:
         logger.exception(e)
         await msg.answer(
-            "Ошибка попробуйте снова.\n Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта"
+            "Ошибка попробуйте снова.\n"
+            " Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта"
         )
 
     text = fill_auth_final(password, login, email)
@@ -135,5 +140,5 @@ async def cancel_auth(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=StartState.wait_to_accept, content_types=ContentTypes.TEXT)
-async def bot_auth_accept(msg: types.Message, state: FSMContext):
+async def bot_auth_accept(msg: types.Message):
     await msg.answer("Попробуйте снова!")

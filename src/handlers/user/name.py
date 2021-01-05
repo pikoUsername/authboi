@@ -7,6 +7,7 @@ from loguru import logger
 from src.states.user.cng_name import ChangeName
 from src.loader import db, dp
 
+
 @dp.message_handler(commands="change_name", state="*")
 async def start_change_name(msg: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -58,5 +59,3 @@ async def cancel_change_name(msg: types.Message, state: FSMContext):
 @dp.message_handler(state=ChangeName.wait_to_accept)
 async def accept_to_change_name(msg: types.Message, state: FSMContext):
     return SendMessage(chat_id=msg.chat.id, text="Повторите действие или выйдите /cancel или N")
-
-

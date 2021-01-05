@@ -24,15 +24,13 @@ async def remove_user(msg: types.Message):
 async def user_pass_verify(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
 
-    current_password = user.password
-
-    if current_password == msg.text:
+    if user.password == msg.text:
         logger.info("user verified password")
         async with state.proxy() as data:
             data["user"] = user
         await Exit.wait_to_accept.set()
         await msg.delete()
-        return await msg.answer("Вы потвердили что это вы теперь Подвердите ВЫ точно хоите этого? Y/N")
+        await msg.answer("Вы потвердили что это вы теперь Подвердите ВЫ точно хоите этого? Y/N")
     else:
         await msg.answer("Не правльный пароль\n отмена /cancel")
 
@@ -45,12 +43,11 @@ async def remove_user_fully(msg: types.Message, state: FSMContext):
     try:
         logger.info(f"user: {msg.from_user.username} account was removed")
         await user.delete()
-        await state.finish()
-        return await msg.answer("Вы успешно удалили Свою учетную запись!")
+        await msg.answer("Вы успешно удалили Свою учетную запись!")
     except Exception as e:
         logger.exception(f"ERROR: {e}")
-        await state.finish()
-        return await msg.answer("Пройзошла непредвиденная ошибка! 500")
+        await msg.answer("Пройзошла непредвиденная ошибка! 500")
+    await state.finish()
 
 
 @dp.message_handler(Text(["N", 'n', "no"]), state=Exit.wait_to_accept)

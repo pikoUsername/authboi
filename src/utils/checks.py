@@ -14,11 +14,11 @@ def is_admin(func):  # idk why not working
     return check
 
 
-async def check_for_admin(msg: types.Message, user_id: int):
+async def check_for_admin(user_id: int):
     user = await db.get_user(user_id)
 
     if not user:
-        return await msg.reply("Пользветель Не найден")
+        return False
     elif not user.is_admin:
-        return await msg.reply("Пользветель Не Админ")
+        return False
     return True

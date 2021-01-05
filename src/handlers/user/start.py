@@ -32,7 +32,7 @@ async def log_in_user(call_back: types.CallbackQuery):
                            message_id=call_back.message.message_id,
                            text="Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя",
                            reply_markup=back_kb
-                            )
+                        )
 
 
 @dp.callback_query_handler(text="back_to_main_menu")

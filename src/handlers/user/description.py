@@ -7,6 +7,7 @@ from loguru import logger
 from src.loader import db, dp
 from src.states.user.desc import DescriptionChange
 
+
 @dp.message_handler(commands="change_description", state="*")
 async def start_change_description(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
@@ -45,9 +46,10 @@ async def yes_change_desc(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(text=("N", "no", "n"), state=DescriptionChange.wait_to_accept_change)
 async def cancel_change_desc(msg: types.Message, state: FSMContext):
+    await state.finish()
     return SendMessage(chat_id=msg.chat.id, text="Вы отменили изменения описания профиля!")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
-async def accept_change_description(msg: types.Message, state: FSMContext):
+async def accept_change_description(msg: types.Message):
     return SendMessage(chat_id=msg.chat.id, text="НЕправльные аргумент, попробуйте снова!")

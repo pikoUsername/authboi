@@ -7,6 +7,7 @@ from src.loader import dp
 async def message_not_modified(update: types.Update, error: exceptions.MessageNotModified):
     return True
 
+
 @dp.errors_handler(exceptions.MessageToDeleteNotFound)
 async def message_to_delete_not_found(update: types.Update, error: exceptions.MessageToDeleteNotFound):
     return True

@@ -6,7 +6,7 @@ from src.utils.checks import check_for_admin
 
 @dp.message_handler(commands="delete_user", state="*")
 async def delete_user_from_db(msg: types.Message):
-    res = await check_for_admin(msg, msg.from_user.id)
+    res = await check_for_admin(msg.from_user.id)
     if not res:
         return
     args = msg.get_args()

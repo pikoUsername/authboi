@@ -8,6 +8,7 @@ from src.loader import db, dp
 from src.states.user.cng_pass import ChangePassword
 from src.utils.throttling import rate_limit
 
+
 @dp.message_handler(commands="change_password", state="*")
 @rate_limit(5, 'change_password')
 async def start_change_password(msg: types.Message):
@@ -27,9 +28,8 @@ async def check_to_really_user(msg: types.Message):
 
     if user.password != msg.text:
         return await msg.answer("Ваш пароль, не верный попробуйте еще разок.\n Может тогда получится")
-    else:
-        await ChangePassword.wait_to_password.set()
-        await msg.answer("Теперь, напишите новый пароль на который вы хотите сменить:")
+    await msg.answer("Теперь, напишите новый пароль на который вы хотите сменить:")
+    await ChangePassword.wait_to_password.set()
 
 
 @dp.message_handler(state=ChangePassword.wait_to_password, content_types=ContentType.TEXT)
@@ -48,6 +48,7 @@ async def change_password(msg: types.Message, state: FSMContext):
 
     await msg.answer(f"Теперь вы уверены в этом ? Y | N: \nПароль на который вы хотите изменить: {msg.text}")
     await ChangePassword.wait_to_accept_pass.set()
+
 
 @dp.message_handler(text=("Y", "y", "yes"), state=ChangePassword.wait_to_accept_pass)
 async def accept_change_password(msg: types.Message, state: FSMContext):
@@ -68,6 +69,5 @@ async def cancel_change_password(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=ChangePassword.wait_to_accept_pass, content_types=ContentType.TEXT)
-async def changing_fully(msg: types.Message, state: FSMContext):
+async def changing_fully(msg: types.Message):
     return SendMessage(chat_id=msg.chat.id, text="Некорректный ввод! Y | N:")
-

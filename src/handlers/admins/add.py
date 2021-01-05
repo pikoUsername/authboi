@@ -6,7 +6,7 @@ from src.utils.checks import check_for_admin
 
 @dp.message_handler(commands="set_admin")
 async def set_admin_user(msg: types.Message):
-    await check_for_admin(msg, msg.from_user.id)
+    await check_for_admin(msg.from_user.id)
 
     args = msg.get_args()
     if not args or not args[0].isdigit():

@@ -39,10 +39,15 @@ async def accept_change_email(msg: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         email = data["email"]
-
-    await user.update(email=email).apply()
+    try:
+        result = await user.update(email=email).apply()
+    except TypeError:
+        result = None
+    if not result:
+        await msg.answer("Ошибка, Невозможно Сменить Эмейл")
+    else:
+        await msg.answer("Успех, Вы поменяли Свои Эмейл")
     await state.finish()
-    await msg.answer("Успех, Вы поменяли Свои Эмейл")
 
 
 @dp.message_handler(text=("N", "n", "no"), state=ChangeEmail.wait_to_accept)
@@ -52,5 +57,5 @@ async def cancel_change_email(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=ChangeEmail.wait_to_accept, content_types=ContentType.TEXT)
-async def accept_and_complete_emailcng(msg: types.Message, state: FSMContext):
+async def email_not(msg: types.Message):
     return SendMessage(chat_id=msg.chat.id, text="Ошибка в вводе!")
