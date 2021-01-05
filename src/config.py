@@ -8,13 +8,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def dstr(key: str, default: Optional[str] = None):
     return str(os.getenv(key, default))
+
 
 def dint(key: str, default: Optional[int] = 0):
     return os.getenv(key, default)
 
-ON_STARTUP_NOTIFY = os.getenv("ON_STARTUP_NOTIFY", True)
+
+ON_STARTUP_NOTIFY = os.getenv("ON_STARTUP_NOTIFY", False)
 # psql
 POSTGRES_NAME = dstr("DB_NAME")
 POSTGRES_HOST = dstr("DB_HOST")

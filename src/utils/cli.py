@@ -1,7 +1,7 @@
 import click
 from loguru import logger
 
-# https://github.com/aiogram/bot/blob/master/app/utils/cli.py
+
 @click.group()
 def cli():
     from .. import loader
@@ -22,17 +22,6 @@ def polling(skip_updates: bool):
 
     runner.skip_updates = skip_updates
     runner.start_polling(reset_webhook=True)
-
-
-@cli.command()
-def webhook():
-    """
-    Run application in webhook mode
-    """
-    from ..utils.executor import runner
-    from .. import config
-
-    runner.start_webhook(webhook_path=config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT)
 
 
 @cli.command()
