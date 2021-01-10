@@ -9,7 +9,6 @@ from loguru import logger
 
 from src.config import LOGS_BASE_PATH
 from src.loader import dp, db
-from src.utils.checks import check_for_admin
 
 
 def last_log():
@@ -75,10 +74,6 @@ async def get_logs(msg: types.Message):
 @dp.message_handler(commands="remove_all_logs", is_admin=True, state="*")
 async def remove_logs(msg: types.Message):
     logger.info("removing logs...")
-    res = await check_for_admin(msg.from_user.id)
-    if not res:
-        return
-
     loop = asyncio.get_event_loop()
     try:
         await loop.run_in_executor(None, delete_all_logs)
@@ -88,5 +83,3 @@ async def remove_logs(msg: types.Message):
 
     logger.warning("All logs removed from logs base path!")
     await msg.answer(f"Удлаены все логи в Директории, {LOGS_BASE_PATH}/")
-
-

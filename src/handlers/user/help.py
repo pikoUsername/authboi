@@ -44,6 +44,7 @@ async def bot_help(msg: types.Message):
             "/remove_all_logs - Удалить все логи.\n"
             "/start_event - Создать Ивент.\n"
             "/delete_user - Удалить Пользветеля\n"
+            "/set_admin - Улучшить Права Пользветеля\n"
         )
 
     return SendMessage(msg.chat.id, "\n".join(str(v) for v in text))

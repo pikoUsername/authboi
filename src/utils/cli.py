@@ -34,8 +34,7 @@ def webhook(skip_updates: bool):
     """
     from src.utils.executor import runner
 
-    runner.skip_updates = skip_updates
-    runner.start_webhook(config.WEBHOOK_PATH)
+    runner.start_webhook(webhook_path=config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT)
 
 
 @cli.command()

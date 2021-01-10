@@ -22,7 +22,7 @@ from src.utils.spamer import send_to_all_users
 )
 async def start_event(msg: types.Message):
     await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=inline_choice_event)
-    logger.info(f"Admin start create event, user_id {user.user_id}")
+    logger.info(f"Admin start create event, user_id {msg.from_user.id}")
     await EventState.wait_for_inline.set()
 
 

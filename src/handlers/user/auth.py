@@ -1,5 +1,8 @@
+import time
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentTypes
 from loguru import logger
@@ -9,17 +12,13 @@ from src.loader import db, dp
 from src.utils.misc import fill_auth_final
 
 
-@dp.message_handler(commands="cancel", state="*")
+@dp.message_handler(Command("cancel"), state="*")
 async def bot_cancel_handler(msg: types.Message, state: FSMContext):
-    # checking for corrent state
     current_state = await state.get_state()
-
     if not current_state:
         return
-
-    logger.info(f"Cancelling state")
     await state.finish()
-    return SendMessage(msg.chat.id, "Действие было Отмменено!")
+    return SendMessage(msg.chat.id, f"Действие было Отмменено!")
 
 
 @dp.callback_query_handler(text="start_login")
@@ -93,10 +92,10 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
                        "то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
 
-@dp.message_handler(commands="back", state="*")
+@dp.message_handler(Command("back"), state="*")
 async def bot_auth_back(msg: types.Message, state: FSMContext):
     current_state = await state.get_state()
-    if not current_state:
+    if current_state:
         return
 
     logger.info(f"Someone was backed to {current_state}")

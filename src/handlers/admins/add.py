@@ -1,13 +1,12 @@
 from aiogram import types
+from aiogram.dispatcher.webhook import SendMessage
 
 from src.loader import dp, db
-from src.utils.checks import check_for_admin
+from src.utils.spamer import notify_all_admins
 
 
-@dp.message_handler(commands="set_admin", is_admin=True)
+@dp.message_handler(commands="set_admin", is_authed=True, is_admin=True)
 async def set_admin_user(msg: types.Message):
-    await check_for_admin(msg.from_user.id)
-
     args = msg.get_args()
     if not args or not args[0].isdigit():
         return False
@@ -16,14 +15,10 @@ async def set_admin_user(msg: types.Message):
     remove = len(args) == 2 and args[1] == "-rm"
 
     try:
-        result = await db.create_admin_user(user_id, remove)
+        await db.create_admin_user(user_id, remove)
     except ValueError:
-        result = None
+        return SendMessage(msg.chat.id, "Такого Пользветеля Не Существует")
+    await msg.answer("Успех, Статус пользветеля Обновлен. Высылается Всем Админом о Созданий Добовления Админа")  # for no waiting after adding
 
-    if result:
-        return await msg.answer(
-            f"Успех, Вы дали {user_id} Админ Права"
-        )
-    return await msg.answer(
-        f"Ошибка Не смог дать {user_id} Админ Права"
-    )
+    result = await notify_all_admins(text=f"Был Обновлен Статус Пользветелья с именем {msg.from_user.last_name}")
+    return SendMessage(msg.chat.id, "\n".join(result))
