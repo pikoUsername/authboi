@@ -1,7 +1,7 @@
 # handlers
 from . import (
-    password,
     auth,
+    password,
     description,
     email,
     help,

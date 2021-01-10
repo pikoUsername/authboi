@@ -29,7 +29,6 @@ async def start_event(msg: types.Message):
 @dp.callback_query_handler(text="admin_event_inline_choice_yes", state=EventState.wait_for_inline)
 async def admin_event_choice_yes(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Хорошо Теперь Ввидите текст для инлайн кнопки")
-    logger.info("Yes Event")
     await InlineStates.wait_for_inline_text.set()
 
 
