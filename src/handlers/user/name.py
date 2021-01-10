@@ -8,7 +8,7 @@ from src.states.user.cng_name import ChangeName
 from src.loader import db, dp
 
 
-@dp.message_handler(commands="change_name", state="*")
+@dp.message_handler(commands="change_name", is_authed=True, state="*")
 async def start_change_name(msg: types.Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state:

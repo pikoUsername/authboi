@@ -7,30 +7,27 @@ from aiogram.types import ContentType
 from aiogram.utils.exceptions import BadRequest
 from loguru import logger
 
-from src.loader import db, dp
+from src.loader import dp
 from src.keyboards.inline.event import inline_choice_event
 from src.states.user.event import EventState
 from src.states.user.inline import InlineStates
 from src.utils.spamer import send_to_all_users
 
 
-@dp.message_handler(ChatTypeFilter(chat_type="private"), commands="start_event", state="*")
+@dp.message_handler(
+    ChatTypeFilter(chat_type="private"),
+    commands="start_event",
+    is_authed=True,
+    is_admin=True, state="*"
+)
 async def start_event(msg: types.Message):
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return False
-
-    if not user.is_admin:
-        return False
-
     await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=inline_choice_event)
     logger.info(f"Admin start create event, user_id {user.user_id}")
     await EventState.wait_for_inline.set()
 
 
 @dp.callback_query_handler(text="admin_event_inline_choice_yes", state=EventState.wait_for_inline)
-async def admin_event_choice_yes(call_back: types.CallbackQuery, state: FSMContext):
+async def admin_event_choice_yes(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Хорошо Теперь Ввидите текст для инлайн кнопки")
     logger.info("Yes Event")
     await InlineStates.wait_for_inline_text.set()
@@ -55,7 +52,7 @@ async def write_reference_inline(msg: types.Message, state: FSMContext):
 
 
 @dp.callback_query_handler(text="admin_event_inline_choice_no", state=EventState.wait_for_inline)
-async def admin_event_choice_no(call_back: types.CallbackQuery, state: FSMContext):
+async def admin_event_choice_no(call_back: types.CallbackQuery):
     await call_back.message.edit_text("Теперь Пришлите Изображение,\n Вы можете просто Пропустить этап написав /skip.\n Отмена /cancel")
     await EventState.wait_for_image.set()
 
@@ -72,7 +69,7 @@ async def event_get_image(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(Text(["skip", "s", "/skip"]), state=EventState.wait_for_image, content_types=ContentType.TEXT)
-async def skip_photo_upload(msg: types.Message, state: FSMContext):
+async def skip_photo_upload(msg: types.Message):
     await msg.answer("Теперь Напишите текст который там будет")
     await EventState.wait_for_text.set()
 
@@ -149,5 +146,5 @@ async def cancel_event(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=EventState.wait_for_accept)
-async def what_event(msg: types.Message, state: FSMContext):
+async def what_event(msg: types.Message):
     return await msg.answer("Повторите Снова!")

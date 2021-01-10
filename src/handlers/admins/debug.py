@@ -41,7 +41,7 @@ def parting(xs, parts):
     return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
 
 
-@dp.message_handler(commands=("logs", "get_logs"), chat_type='private', state="*")
+@dp.message_handler(commands=("logs", "get_logs"), is_admin=True, chat_type='private', state="*")
 async def get_logs(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
 
@@ -72,7 +72,7 @@ async def get_logs(msg: types.Message):
             await asyncio.sleep(0.1)
 
 
-@dp.message_handler(commands="remove_all_logs", state="*")
+@dp.message_handler(commands="remove_all_logs", is_admin=True, state="*")
 async def remove_logs(msg: types.Message):
     logger.info("removing logs...")
     res = await check_for_admin(msg.from_user.id)

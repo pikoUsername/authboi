@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentTypes
 from loguru import logger
 
@@ -18,7 +19,7 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
 
     logger.info(f"Cancelling state")
     await state.finish()
-    await msg.answer("Действие было Отмменено!")
+    return SendMessage(msg.chat.id, "Действие было Отмменено!")
 
 
 @dp.callback_query_handler(text="start_login")
@@ -33,39 +34,40 @@ async def bot_start_auth(call_back: types.CallbackQuery):
 async def bot_auth_login(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if ' ' in message.text:
-            return await message.answer("Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
+            return SendMessage(message.chat.id,
+                               "Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
 
         data["login"] = message.text
 
         logger.info("seme one getted login", message.text)
 
     await StartState.wait_to_email.set()
-    return await message.answer("Теперь ввидите ваш эмейл, если можно\n"
-                                "Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
+    return SendMessage(message.chat.id, "Теперь ввидите ваш эмейл, если можно\n"
+                       "Всегда будет и всегда с нами комманда /cancel,\n и его брат /back")
 
 
 @dp.message_handler(state=StartState.wait_to_email, content_types=ContentTypes.TEXT)
 async def bot_auth_email(msg: types.Message, state: FSMContext):
     if ' ' in msg.text:
-        return await msg.answer("Вы не правильно ввели эмейл, Там не должно быть пробелов")
+        return SendMessage(msg.chat.id, "Вы не правильно ввели эмейл, Там не должно быть пробелов")
     elif '@' not in msg.text:
-        return await msg.answer("Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
+        return SendMessage(msg.chat.id, "Вы не правльно ввели эмейл,\n так как Эмейл не имеет знака - '@'")
 
     logger.info(f"getted email, email {msg.text}")
     async with state.proxy() as data:
         data["email"] = msg.text
 
     await StartState.wait_to_password.set()
-    return await msg.answer("Теперь ввидите ваш пароль, если хотите конечно.\n "
-                            "Вас никто не заставляет.\n всегда есть комманда /cancel.")
+    return SendMessage(msg.chat.id, "Теперь ввидите ваш пароль, если хотите конечно.\n "
+                       "Вас никто не заставляет.\n всегда есть комманда /cancel.")
 
 
 @dp.message_handler(state=StartState.wait_to_password, content_types=ContentTypes.TEXT)
 async def bot_auth_password(msg: types.Message, state: FSMContext):
     if ' ' in msg.text:
-        return await msg.answer("В пароле содержатся символ пробел. Это недопустимо!")
+        return SendMessage(msg.chat.id, "В пароле содержатся символ пробел. Это недопустимо!")
     elif len(msg.text) <= 8:
-        return await msg.answer("Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
+        return SendMessage(msg.chat.id, "Пароль Ненадежный, Это недопустимо!\n Он должен прывышать 8 символов")
 
     logger.info('password handler activated')
     async with state.proxy() as data:
@@ -74,8 +76,8 @@ async def bot_auth_password(msg: types.Message, state: FSMContext):
     await msg.delete()
 
     await StartState.wait_to_verify_pass.set()
-    return await msg.answer("Теперь ввидите ваш пароль снова!\n"
-                            "Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
+    return SendMessage(msg.chat.id, "Теперь ввидите ваш пароль снова!\n"
+                       "Если вы забыли его то ввидите /cancel и авторизуйтесь снова!")
 
 
 @dp.message_handler(state=StartState.wait_to_verify_pass, content_types=ContentTypes.TEXT)
@@ -84,11 +86,11 @@ async def bot_auth_password_verify(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         password_verify = data["password"]
         if password_verify != msg.text:
-            return await msg.answer("Не правильный Пароль, Повторите еще раз!")
+            return SendMessage(msg.chat.id, "Не правильный Пароль, Повторите еще раз!")
     await StartState.wait_to_accept.set()
     await msg.delete()
-    return await msg.answer("Теперь вы уверены, вы этом Y/N, если нет,\n "
-                            "то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
+    return SendMessage(msg.chat.id, "Теперь вы уверены, вы этом Y/N, если нет,\n "
+                       "то можете посто написать комманду /cancel,\n или если хотите что то изменить то /back")
 
 
 @dp.message_handler(commands="back", state="*")
@@ -99,12 +101,12 @@ async def bot_auth_back(msg: types.Message, state: FSMContext):
 
     logger.info(f"Someone was backed to {current_state}")
     await StartState.previous()
-    await msg.answer(f"Вы сделали шаг назад, это непримелимо.\n Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
+    return SendMessage(msg.chat.id,
+                       f"Вы сделали шаг назад, это непримелимо.\n Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=StartState.wait_to_accept)
 async def yes_auth_password(msg: types.Message, state: FSMContext):
-    await msg.answer("Вы теперь авторизованы как полноправный пользветель!")
     async with state.proxy() as data:
         login = data["login"]
         password = data["password"]
@@ -119,26 +121,24 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
         )
     except Exception as e:
         logger.exception(e)
-        await msg.answer(
-            "Ошибка попробуйте снова.\n"
-            " Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта"
-        )
+        return SendMessage(msg.chat.id,
+                           "Ошибка попробуйте снова.\n"
+                           "Может быть вашы данные совпали с другими аккаунтами!\n или ошибка в созданий аккаунта")
 
     text = fill_auth_final(password, login, email)
-    await msg.answer(text)
-
     await state.finish()
     logger.info('------USER AUTHORIZATION!------')
     logger.info(f"| login: {login} | email: {email}")
+    return SendMessage(msg.chat.id, text)
 
 
 @dp.message_handler(text=("n", "N"), state=StartState.wait_to_accept)
 async def cancel_auth(msg: types.Message, state: FSMContext):
-    await msg.answer("Вы отменили авторизацию!")
+    await state.finish()
     logger.info("cancelled authorization")
-    return await state.finish()
+    return SendMessage(msg.chat.id, "Вы отменили авторизацию!")
 
 
 @dp.message_handler(state=StartState.wait_to_accept, content_types=ContentTypes.TEXT)
 async def bot_auth_accept(msg: types.Message):
-    await msg.answer("Попробуйте снова!")
+    return SendMessage(msg.chat.id, "Попробуйте снова!")

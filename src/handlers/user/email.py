@@ -1,61 +1,55 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 
-from src.loader import db, dp
+from src.loader import dp
 from src.states.user.cng_email import ChangeEmail
 
 
-@dp.message_handler(commands="change_email", state="*")
+@dp.message_handler(commands="change_email", is_authed=True, state="*")
 async def start_change_email(msg: types.Message):
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return
-
-    await msg.answer("Хорошо Ввидите Емейл на который вы хотите Сменить")
     await ChangeEmail.wait_to_email.set()
+    return SendMessage(msg.chat.id, "Хорошо Ввидите Емейл на который вы хотите Сменить")
 
 
 @dp.message_handler(state=ChangeEmail.wait_to_email, content_types=ContentType.TEXT)
 async def change_email_input(msg: types.Message, state: FSMContext):
     if len(msg.text) >= 200:
-        return await msg.answer("Лимит в 200 сиволов, больше нельзя!")
+        return SendMessage(msg.chat.id, "Лимит в 200 сиволов, больше нельзя!")
 
-    if not '@' in msg.text:
-        return await msg.answer("Некорректный эмейл, не содержится знака '@' в эмейле")
+    if '@' not in msg.text:
+        return SendMessage(msg.chat.id, "Некорректный эмейл, не содержится знака '@' в эмейле")
 
     async with state.proxy() as data:
         data["email"] = msg.text
 
     await ChangeEmail.wait_to_accept.set()
-    await msg.answer("Теперь вы Уверены в этом ? Y/N")
+    return SendMessage(msg.chat.id, "Теперь вы Уверены в этом ? Y/N")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=ChangeEmail.wait_to_accept)
 async def accept_change_email(msg: types.Message, state: FSMContext):
-    user = await db.get_user(msg.from_user.id)
+    data = ctx_data.get()
+    user = data["user"]
 
     async with state.proxy() as data:
         email = data["email"]
     try:
-        result = await user.update(email=email).apply()
+        await user.update(email=email).apply()
     except TypeError:
-        result = None
-    if not result:
-        await msg.answer("Ошибка, Невозможно Сменить Эмейл")
-    else:
-        await msg.answer("Успех, Вы поменяли Свои Эмейл")
+        return SendMessage(msg.chat.id, "Ошибка, Невозможно Сменить Эмейл")
     await state.finish()
+    return SendMessage(msg.chat.id, "Успех, Вы поменяли Свои Эмейл")
 
 
 @dp.message_handler(text=("N", "n", "no"), state=ChangeEmail.wait_to_accept)
 async def cancel_change_email(msg: types.Message, state: FSMContext):
     await state.finish()
-    return SendMessage(chat_id=msg.chat.id, text="Действие отменено")
+    return SendMessage(msg.chat.id, "Действие отменено")
 
 
 @dp.message_handler(state=ChangeEmail.wait_to_accept, content_types=ContentType.TEXT)
 async def email_not(msg: types.Message):
-    return SendMessage(chat_id=msg.chat.id, text="Ошибка в вводе!")
+    return SendMessage(msg.chat.id, "Ошибка в вводе!")

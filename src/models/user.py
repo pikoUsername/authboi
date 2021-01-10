@@ -6,7 +6,7 @@ from .base import db_
 class User(db_.Model):
     __tablename__ = 'users'
 
-    id = db_.Column(db_.Integer, db_.Sequence('user_id_seq'), primary_key=True)
+    id = db_.Column(db_.Integer, primary_key=True, index=True, unique=True)
     user_id = db_.Column(db_.BigInteger)
     username = db_.Column(db_.String(50))
     full_name = db_.Column(db_.String(100))

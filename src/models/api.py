@@ -3,7 +3,6 @@ from typing import List
 from aiogram import types
 from loguru import logger
 
-from .base import db_
 from .user import User
 from .event import Event
 from ..config import ADMIN_IDS
@@ -24,13 +23,11 @@ class DBCommands:
         await user.delete()
         return False
 
-
     async def create_event(self,
                            text: str,
                            link: str,
                            inline_text: str = None,
-                           inline_btn_link:
-                           str = None):
+                           inline_btn_link: str = None):
         new_event = Event()
 
         new_event.text = text
@@ -68,16 +65,12 @@ class DBCommands:
         await new_user.create()
         return new_user
 
-    async def count_users(self) -> int:
-        total = await db_.func.count(User.id).gino.scalar()
-        return total
-
     async def exit_user(self, user_id):
         user = await self.get_user(user_id)
         user.is_authed = False
 
-    async def get_all_users(self) -> List:
-        all_user = await db_.all(User.query)
+    async def get_all_users(self) -> List[User]:
+        all_user = await User.query.gino.all()
         return all_user
 
     async def create_admin_user(self, user_id: int, remove):

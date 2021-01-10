@@ -4,7 +4,7 @@ from aiogram import Dispatcher
 from aiogram.utils.executor import Executor
 from loguru import logger
 
-from ..models import User
+from ..models.user import User
 from ..models import base
 from .. import config
 from ..loader import dp

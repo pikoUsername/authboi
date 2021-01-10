@@ -4,7 +4,7 @@ from src.loader import dp, db
 from src.utils.checks import check_for_admin
 
 
-@dp.message_handler(commands="set_admin")
+@dp.message_handler(commands="set_admin", is_admin=True)
 async def set_admin_user(msg: types.Message):
     await check_for_admin(msg.from_user.id)
 

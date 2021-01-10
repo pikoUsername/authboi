@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters import CommandHelp
+from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 
 from src.utils.throttling import rate_limit
@@ -9,11 +10,8 @@ from src.loader import db, dp, bot
 @dp.message_handler(CommandHelp())
 @rate_limit(5, "help")
 async def bot_help(msg: types.Message):
-    """
-    getting tg_user and user by id,
-    registered 42 line of __init__.py
-    """
-    user = await db.get_user(msg.from_user.id)
+    data = ctx_data.get()
+    user = data['user']
 
     if not user:
         text = [
@@ -25,7 +23,7 @@ async def bot_help(msg: types.Message):
             "/back - ход назад",
             "Если хотите полный список комманд, то вы должны пройти авторизацию, коммандой /start",
         ]
-        return await msg.answer(text="\n".join(text))
+        return SendMessage(msg.chat.id, "\n".join(text))
     text = [
         "Список команд: \n",
         "/start - Начать диалог.",
@@ -48,9 +46,9 @@ async def bot_help(msg: types.Message):
             "/delete_user - Удалить Пользветеля\n"
         )
 
-    return await msg.answer("\n".join(str(v) for v in text))
+    return SendMessage(msg.chat.id, "\n".join(str(v) for v in text))
 
 
 @dp.message_handler(commands="about")
 async def bot_about(msg: types.Message):
-    return SendMessage(chat_id=msg.chat.id, text="(https://github.com/pikoUsername/authboi.git)")
+    return SendMessage(msg.chat.id, "(https://github.com/pikoUsername/authboi.git)")

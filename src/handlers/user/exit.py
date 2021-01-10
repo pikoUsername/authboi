@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.filters import Text, Command
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
@@ -9,7 +9,7 @@ from src.states.user.exit import Exit
 from src.loader import db, dp
 
 
-@dp.message_handler(commands="remove")
+@dp.message_handler(Command("remove"), is_authed=True)
 async def remove_user(msg: types.Message):
     user = await db.get_user(msg.from_user.id)
     if not user:

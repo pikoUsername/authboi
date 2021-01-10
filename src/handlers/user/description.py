@@ -8,16 +8,11 @@ from src.loader import db, dp
 from src.states.user.desc import DescriptionChange
 
 
-@dp.message_handler(commands="change_description", state="*")
+@dp.message_handler(commands="change_description", is_authed=True, state="*")
 async def start_change_description(msg: types.Message):
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return await msg.answer("Вы не авторизованы как пользветель!")
-
     logger.info("here changing description")
     await DescriptionChange.wait_to_description.set()
-    await msg.answer("Теперь ввидите Описание вашего профиля!")
+    return SendMessage(msg.chat.id, "Теперь ввидите Описание вашего профиля!")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_description, content_types=ContentType.TEXT)
@@ -29,7 +24,7 @@ async def change_description(msg: types.Message, state: FSMContext):
         data["description"] = msg.text
 
     await DescriptionChange.wait_to_accept_change.set()
-    return await msg.answer("Теперь вы уверены в своем выборе? Y|N")
+    return SendMessage(msg.chat.id, "Теперь вы уверены в своем выборе? Y|N")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=DescriptionChange.wait_to_accept_change)
@@ -40,16 +35,16 @@ async def yes_change_desc(msg: types.Message, state: FSMContext):
     user = await db.get_user(msg.from_user.id)
     await user.update(description=description).apply()
 
-    await msg.answer("Вашо описание профиля было измнено")
     await state.finish()
+    return SendMessage(msg.chat.id, "Вашо описание профиля было измнено")
 
 
 @dp.message_handler(text=("N", "no", "n"), state=DescriptionChange.wait_to_accept_change)
 async def cancel_change_desc(msg: types.Message, state: FSMContext):
     await state.finish()
-    return SendMessage(chat_id=msg.chat.id, text="Вы отменили изменения описания профиля!")
+    return SendMessage(msg.chat.id, "Вы отменили изменения описания профиля!")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
 async def accept_change_description(msg: types.Message):
-    return SendMessage(chat_id=msg.chat.id, text="НЕправльные аргумент, попробуйте снова!")
+    return SendMessage(msg.chat.id, "НЕправльные аргумент, попробуйте снова!")

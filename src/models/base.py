@@ -1,8 +1,5 @@
-import asyncio
-
 from aiogram.utils.executor import Executor
 from loguru import logger
-from gino.schema import GinoSchemaVisitor
 from gino import Gino
 
 from src.config import POSTGRES_URI
@@ -11,10 +8,9 @@ db_ = Gino()
 
 
 async def on_startup(dp):
-    await db_.set_bind(POSTGRES_URI)
+    bind = await db_.set_bind(POSTGRES_URI)
 
-    db_.gino: GinoSchemaVisitor
-    await db_.gino.create_all()
+    await db_.gino.create_all(bind=bind)
 
 
 async def on_shutdown(dp):
