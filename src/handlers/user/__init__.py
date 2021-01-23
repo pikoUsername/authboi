@@ -1,4 +1,3 @@
-# handlers
 from . import (
     auth,
     password,
@@ -11,4 +10,3 @@ from . import (
     what_can,
     exit,
 )
-# end list of handlers

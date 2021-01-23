@@ -4,7 +4,7 @@ from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 
 from src.utils.throttling import rate_limit
-from src.loader import db, dp, bot
+from src.loader import dp
 
 
 @dp.message_handler(CommandHelp())

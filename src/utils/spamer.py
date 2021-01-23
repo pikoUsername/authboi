@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Tuple, Dict
+from typing import List
 
 from aiogram import types
 from aiogram import exceptions
@@ -15,18 +15,18 @@ async def send_message(chat_id: int,
         if message_params.get('photo'):
             await bot.send_photo(chat_id, *args, **message_params)
         else:
-            await bot.send_message(chat_id,  *args, **message_params)
-    except exceptions.BotBlocked as e:
+            await bot.send_message(chat_id, *args, **message_params)
+    except exceptions.BotBlocked:
         log.error(f"Target [ID:{chat_id}]: blocked by user")
-    except exceptions.ChatNotFound as e:
+    except exceptions.ChatNotFound:
         log.error(f"Target [ID:{chat_id}]: invalid user ID")
     except exceptions.RetryAfter as e:
         log.error(f"Target [ID:{chat_id}]: Flood limit is exceeded. Sleep {e.timeout} seconds.")
         await asyncio.sleep(e.timeout)
         return await send_message(chat_id, *args, **message_params)  # Recursive call
-    except exceptions.UserDeactivated as e:
+    except exceptions.UserDeactivated:
         log.error(f"Target [ID:{chat_id}]: user is deactivated")
-    except exceptions.TelegramAPIError as e:
+    except exceptions.TelegramAPIError:
         log.exception(f"Target [ID:{chat_id}]: failed")
     else:
         log.info(f"Target [ID:{chat_id}]: success")

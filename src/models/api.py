@@ -14,14 +14,9 @@ class DBCommands:
         user = await User.query.where(User.user_id == user_id).gino.first()
         return user
 
-    async def remove_user(self, user_id: int) -> bool:
+    async def remove_user(self, user_id: int):
         user = await User.query.where(User.user_id == user_id).gino.first()
-
-        if not user:
-            logger.error("User doesnt exits")
-            raise ValueError("User doesnt exits")
         await user.delete()
-        return False
 
     async def create_event(self,
                            text: str,

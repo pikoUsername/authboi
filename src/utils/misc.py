@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 
 def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
@@ -11,7 +11,7 @@ def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
         "Вы авторизованы как: ",
         f"Имя: {login}",
         f"email: {email}",
-        f"Пароль: ",
+        "Пароль: ",
         "".join(pass_to_show),
     ]
     return "\n".join(text)

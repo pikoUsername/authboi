@@ -8,7 +8,7 @@ from aiogram import types
 from loguru import logger
 
 from src.config import LOGS_BASE_PATH
-from src.loader import dp, db
+from src.loader import dp
 
 
 def last_log():
@@ -42,14 +42,6 @@ def parting(xs, parts):
 
 @dp.message_handler(commands=("logs", "get_logs"), is_admin=True, chat_type='private', state="*")
 async def get_logs(msg: types.Message):
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
-        return await msg.answer("Авторизуйтесь для этого!")
-
-    if not user.is_admin:
-        return await msg.answer("Вы не Админ")
-
     logger.info("Logs getted")
     loop = asyncio.get_event_loop()
     file_ = last_log()

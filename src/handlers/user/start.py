@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters import CommandStart
+from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import EditMessageText, SendMessage
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
@@ -11,7 +12,7 @@ from src.keyboards.inline.start import choice_kb
 @dp.message_handler(CommandStart())
 async def register_user(msg: types.Message):
     # here check to user exists
-    user = await db.get_user(msg.from_user.id)
+    user = ctx_data.get()['user']
 
     if user:
         return await msg.answer("Вы уже авторизованы как польветель!")
@@ -42,6 +43,3 @@ async def back_to_main_menus(call_back: types.CallbackQuery):
                            reply_markup=choice_kb,
                            message_id=call_back.message.message_id,
                            )
-
-
-

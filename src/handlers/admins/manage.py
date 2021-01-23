@@ -13,8 +13,8 @@ async def delete_user_from_db(msg: types.Message):
         return SendMessage(msg.chat.id, "Не Указан Обезательный Аргумент")
     try:
         result = await db.remove_user(user_id)
-    except ValueError:
-        result = False
+    except AttributeError:
+        result = None
 
     if not result:
         return await msg.answer("Пользветель Не Найден!")

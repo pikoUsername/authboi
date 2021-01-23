@@ -15,4 +15,3 @@ class AuthRequired(BoundFilter):
         if user is None:
             return False
         return True
-

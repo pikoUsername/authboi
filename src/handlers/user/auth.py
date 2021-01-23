@@ -1,9 +1,7 @@
-import time
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
-from aiogram.dispatcher.webhook import SendMessage
+from aiogram.dispatcher.webhook import SendMessage, EditMessageText
 from aiogram.types import ContentTypes
 from loguru import logger
 
@@ -26,7 +24,9 @@ async def bot_start_auth(call_back: types.CallbackQuery):
     await StartState.wait_to_login.set()
 
     logger.info("Some one started authorization")
-    await call_back.message.edit_text("Вы начали Авторизацию! так что ввидите Имя или Логин")
+    return EditMessageText("Вы начали Авторизацию! так что ввидите Имя или Логин",
+                           call_back.message.chat.id,
+                           message_id=call_back.message.message_id)
 
 
 @dp.message_handler(state=StartState.wait_to_login, content_types=ContentTypes.TEXT)

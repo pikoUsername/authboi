@@ -18,8 +18,7 @@ from src.utils.spamer import send_to_all_users
     ChatTypeFilter(chat_type="private"),
     commands="start_event",
     is_authed=True,
-    is_admin=True, state="*"
-)
+    is_admin=True, state="*")
 async def start_event(msg: types.Message):
     await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=inline_choice_event)
     logger.info(f"Admin start create event, user_id {msg.from_user.id}")
@@ -52,7 +51,8 @@ async def write_reference_inline(msg: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(text="admin_event_inline_choice_no", state=EventState.wait_for_inline)
 async def admin_event_choice_no(call_back: types.CallbackQuery):
-    await call_back.message.edit_text("Теперь Пришлите Изображение,\n Вы можете просто Пропустить этап написав /skip.\n Отмена /cancel")
+    await call_back.message.edit_text(
+        "Теперь Пришлите Изображение,\n Вы можете просто Пропустить этап написав /skip.\n Отмена /cancel")
     await EventState.wait_for_image.set()
 
 

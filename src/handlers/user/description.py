@@ -1,10 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
-from src.loader import db, dp
+from src.loader import dp
 from src.states.user.desc import DescriptionChange
 
 
@@ -18,7 +19,7 @@ async def start_change_description(msg: types.Message):
 @dp.message_handler(state=DescriptionChange.wait_to_description, content_types=ContentType.TEXT)
 async def change_description(msg: types.Message, state: FSMContext):
     if not msg.text:
-        return await msg.answer("ВЫ нечего не ввели, это не допустимо!")
+        return SendMessage(msg.chat.id, "ВЫ нечего не ввели, это не допустимо!")
 
     async with state.proxy() as data:
         data["description"] = msg.text
@@ -32,7 +33,7 @@ async def yes_change_desc(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         description = data["description"]
 
-    user = await db.get_user(msg.from_user.id)
+    user = ctx_data.get()['user']
     await user.update(description=description).apply()
 
     await state.finish()

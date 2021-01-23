@@ -12,4 +12,7 @@ class IsAdminFilter(BoundFilter):
     async def check(self, obj) -> bool:
         data = ctx_data.get()
         user = data["user"]
-        return user.is_admin
+        try:
+            return user.is_admin
+        except AttributeError:
+            return False
