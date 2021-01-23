@@ -24,9 +24,11 @@ async def bot_what_can(call_back: types.CallbackQuery):
     ]
     bot_desc_kb = types.InlineKeyboardMarkup(inline_keyboard=bot_desc)
 
-    return await call_back.message.edit_text(text='\n'.join(text), reply_markup=bot_desc_kb)
+    return EditMessageText('\n'.join(text), call_back.message.chat.id,
+                           reply_markup=bot_desc_kb, message_id=call_back.message.message_id)
 
 
 @dp.callback_query_handler(text="back_to_reg_menu", state="*")
 async def back_to_reg_menu(call_back: types.CallbackQuery):
-    return await call_back.message.edit_text(text="Выбирите: ", reply_markup=choice_kb)
+    return EditMessageText("Выбирите: ", call_back.message.chat.id,
+                           message_id=call_back.message.message_id, reply_markup=choice_kb)
