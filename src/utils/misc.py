@@ -1,5 +1,7 @@
 from typing import Optional
 
+from aiogram import Dispatcher
+
 
 def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
     password_len = len(password)
@@ -15,3 +17,9 @@ def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
         "".join(pass_to_show),
     ]
     return "\n".join(text)
+
+
+async def close_webhook(dp: Dispatcher):
+    await dp.bot.delete_webhook()
+    await dp.storage.close()
+    await dp.storage.wait_closed()

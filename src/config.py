@@ -41,7 +41,7 @@ ADMIN_IDS = [
     os.getenv("ADMIN_IDS"),
     935770891,
 ]
-BOT_PUBLIC_PORT = dint("BOT_PUBLIC_PORT", default=8080)
+BOT_PUBLIC_PORT = dint("BOT_PUBLIC_PORT", default=3030)
 # logs path
 LOGS_BASE_PATH = str(Path(__name__).parent.parent / "logs")
 POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"

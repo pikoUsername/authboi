@@ -2,6 +2,7 @@ import click
 from loguru import logger
 
 from .. import config
+from . import misc
 
 
 @click.group()
@@ -35,7 +36,8 @@ def webhook(skip_updates: bool):
     from src.utils.executor import runner
 
     runner.skip_updates = skip_updates
-    runner.start_webhook(config.WEBHOOK_PATH)
+    runner.on_shutdown(misc.close_webhook, polling=False, webhook=True)
+    runner.start_webhook(config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT, host="localhost")
 
 
 @cli.command()

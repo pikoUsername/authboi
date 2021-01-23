@@ -15,4 +15,4 @@ class Event(db_.Model):
     inline_btn_link = db_.Column(db_.String(300))
 
     def __str__(self):
-        return f"<Event text={self.text}>"
+        return self.text
