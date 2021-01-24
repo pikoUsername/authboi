@@ -22,7 +22,7 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
     user = ctx_data.get()['user']
 
     if user.password != msg.text:
-        await msg.answer("Не правльный пароль\n отмена /cancel")
+        return SendMessage(msg.chat.id, "Не правльный пароль\n отмена /cancel")
     logger.info("user verified password")
     async with state.proxy() as data:
         data["user"] = user
@@ -35,6 +35,8 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
 @dp.message_handler(text=("Y", "y", "yes"), state=Exit.wait_to_accept)
 async def remove_user_fully(msg: types.Message, state: FSMContext):
     try:
+        user = ctx_data.get()['user']
+        await user.delete()
         logger.info(f"user: {msg.from_user.username} account was removed")
         await msg.delete()
         await msg.answer("Вы успешно удалили Свою учетную запись!")
