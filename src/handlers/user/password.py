@@ -46,7 +46,7 @@ async def change_password(msg: types.Message, state: FSMContext):
 
     await ChangePassword.wait_to_accept_pass.set()
     return SendMessage(msg.chat.id,
-                       f"Теперь вы уверены в этом ? Y | N:")
+                       "Теперь вы уверены в этом ? Y | N:")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=ChangePassword.wait_to_accept_pass)

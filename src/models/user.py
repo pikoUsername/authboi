@@ -20,4 +20,4 @@ class User(db_.Model):
     query: sql.Select
 
     def __str__(self):
-        return f"<User(id='{self.id}', fullname='{self.full_name}', username='{self.username}')>"
+        return f"<User({self.id=}, {self.full_name=}, {self.username=})>"

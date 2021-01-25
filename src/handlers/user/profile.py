@@ -21,7 +21,7 @@ async def get_user_profile(msg: types.Message):
     ]
 
     if user.is_admin:
-        text.append("Вы Админ")
+        text.append("Вы Админ.")
 
     try:
         return SendMessage(msg.chat.id, "\n".join(text))

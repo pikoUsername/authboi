@@ -13,13 +13,13 @@ from src.states.user.desc import DescriptionChange
 async def start_change_description(msg: types.Message):
     logger.info("here changing description")
     await DescriptionChange.wait_to_description.set()
-    return SendMessage(msg.chat.id, "Теперь ввидите Описание вашего профиля!")
+    return SendMessage(msg.chat.id, "Теперь ввидите Описание вашего профиля.")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_description, content_types=ContentType.TEXT)
 async def change_description(msg: types.Message, state: FSMContext):
     if not msg.text:
-        return SendMessage(msg.chat.id, "ВЫ нечего не ввели, это не допустимо!")
+        return SendMessage(msg.chat.id, "Вы нечего не ввели, это не допустимо!")
 
     async with state.proxy() as data:
         data["description"] = msg.text
@@ -37,15 +37,15 @@ async def yes_change_desc(msg: types.Message, state: FSMContext):
     await user.update(description=description).apply()
 
     await state.finish()
-    return SendMessage(msg.chat.id, "Вашо описание профиля было измнено")
+    return SendMessage(msg.chat.id, "Вашо описание профиля было измнено.")
 
 
 @dp.message_handler(text=("N", "no", "n"), state=DescriptionChange.wait_to_accept_change)
 async def cancel_change_desc(msg: types.Message, state: FSMContext):
     await state.finish()
-    return SendMessage(msg.chat.id, "Вы отменили изменения описания профиля!")
+    return SendMessage(msg.chat.id, "Вы отменили изменения описания профиля.")
 
 
 @dp.message_handler(state=DescriptionChange.wait_to_accept_change, content_types=ContentType.TEXT)
 async def accept_change_description(msg: types.Message):
-    return SendMessage(msg.chat.id, "НЕправльные аргумент, попробуйте снова!")
+    return SendMessage(msg.chat.id, "Неправльные аргумент, попробуйте снова!")

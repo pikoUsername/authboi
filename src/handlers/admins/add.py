@@ -18,7 +18,8 @@ async def set_admin_user(msg: types.Message):
         await db.create_admin_user(user_id, remove)
     except ValueError:
         return SendMessage(msg.chat.id, "Такого Пользветеля Не Существует")
-    await msg.answer("Успех, Статус пользветеля Обновлен. Высылается Всем Админом о Созданий Добовления Админа")  # for no waiting after adding
+    await msg.answer(
+        "Успех, Статус пользветеля Обновлен. Высылается Всем Админом о Созданий Добовления Админа")
 
     result = await notify_all_admins(text=f"Был Обновлен Статус Пользветелья с именем {msg.from_user.last_name}")
     return SendMessage(msg.chat.id, "\n".join(result))

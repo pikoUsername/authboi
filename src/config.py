@@ -26,7 +26,6 @@ POSTGRES_PORT = dint("DB_PORT")
 POSTGRES_USER = dstr("DB_USER")
 POSTGRES_PASS = dstr("DB_PASS")
 
-
 # webhook
 DOMAIN = str(os.getenv("DOMAIN", default="localhost/"))
 SECRET_KEY = secrets.token_urlsafe(48)

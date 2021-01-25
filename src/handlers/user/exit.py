@@ -29,7 +29,7 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
     await Exit.wait_to_accept.set()
     DeleteMessage(msg.chat.id, msg.message_id)
     return SendMessage(msg.chat.id,
-                       "Вы потвердили что это вы теперь Подвердите ВЫ точно хоите этого? Y/N")
+                       "Вы потвердили что это вы, теперь Подвердите Вы точно хоите этого? Y/N")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=Exit.wait_to_accept)
@@ -39,10 +39,10 @@ async def remove_user_fully(msg: types.Message, state: FSMContext):
         await user.delete()
         logger.info(f"user: {msg.from_user.username} account was removed")
         await msg.delete()
-        await msg.answer("Вы успешно удалили Свою учетную запись!")
+        await msg.answer("Вы успешно удалили Свою учетную запись.")
     except Exception as e:
         logger.exception(f"ERROR: {e}")
-        await msg.answer("Пройзошла непредвиденная ошибка! 500")
+        await msg.answer("Пройзошла непредвиденная ошибка!")
     await state.finish()
 
 

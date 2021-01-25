@@ -31,7 +31,7 @@ async def log_in_user(call_back: types.CallbackQuery):
     ])
     return EditMessageText(chat_id=call_back.message.chat.id,
                            message_id=call_back.message.message_id,
-                           text="Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя",
+                           text="Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя.",
                            reply_markup=back_kb
                            )
 
@@ -39,7 +39,7 @@ async def log_in_user(call_back: types.CallbackQuery):
 @dp.callback_query_handler(text="back_to_main_menu")
 async def back_to_main_menus(call_back: types.CallbackQuery):
     return EditMessageText(chat_id=call_back.message.chat.id,
-                           text="Выбирите: ",
+                           text="Меню: ",
                            reply_markup=choice_kb,
                            message_id=call_back.message.message_id,
                            )

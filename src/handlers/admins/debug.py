@@ -36,8 +36,8 @@ def delete_all_logs():
 
 
 def parting(xs, parts):
-    part_len = ceil(len(xs)/parts)
-    return [xs[part_len*k:part_len*(k+1)] for k in range(parts)]
+    part_len = ceil(len(xs) / parts)
+    return [xs[part_len * k:part_len * (k + 1)] for k in range(parts)]
 
 
 @dp.message_handler(commands=("logs", "get_logs"), is_admin=True, chat_type='private', state="*")

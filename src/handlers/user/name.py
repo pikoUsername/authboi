@@ -43,19 +43,19 @@ async def accept_change_name(msg: types.Message, state: FSMContext):
 
     try:
         await user.update(login=name).apply()
-        await msg.answer(f"Успех Вы поменяли свое Имя! теперь вы {name}")
+        await msg.answer(f"Успех Вы поменяли свое Имя! теперь ваше имя: {name}")
     except Exception as e:
         logger.exception(e)
-        await msg.answer("Измение прошла плохо, попробуйте снова")
+        await msg.answer("Изменние Вызвали ошибки в СУБД, попробуйте снова!")
     await state.finish()
 
 
 @dp.message_handler(text=("N", "n"), state=ChangeName.wait_to_accept)
 async def cancel_change_name(msg: types.Message, state: FSMContext):
     await state.finish()
-    return SendMessage(chat_id=msg.chat.id, text="Вы отменили действие")
+    return SendMessage(chat_id=msg.chat.id, text="Вы отменили действие.")
 
 
 @dp.message_handler(state=ChangeName.wait_to_accept)
 async def accept_to_change_name(msg: types.Message, state: FSMContext):
-    return SendMessage(chat_id=msg.chat.id, text="Повторите действие или выйдите /cancel или N")
+    return SendMessage(chat_id=msg.chat.id, text="Повторите действие или выйдите /cancel или N.")

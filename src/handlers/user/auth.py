@@ -16,7 +16,7 @@ async def bot_cancel_handler(msg: types.Message, state: FSMContext):
     if not current_state:
         return
     await state.finish()
-    return SendMessage(msg.chat.id, f"Действие было Отмменено!")
+    return SendMessage(msg.chat.id, "Действие было Отмменено!")
 
 
 @dp.callback_query_handler(text="start_login")
@@ -34,7 +34,7 @@ async def bot_auth_login(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if ' ' in message.text:
             return SendMessage(message.chat.id,
-                               "Не правльный Имя, пробелы должны быть заменены на - или что то подобное!")
+                               "Не правльное Имя, пробелы должны быть заменены на - или что то подобное.")
 
         data["login"] = message.text
 
@@ -101,7 +101,8 @@ async def bot_auth_back(msg: types.Message, state: FSMContext):
     logger.info(f"Someone was backed to {current_state}")
     await StartState.previous()
     return SendMessage(msg.chat.id,
-                       f"Вы сделали шаг назад, это непримелимо.\n Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
+                       f"Вы сделали шаг назад, это непримелимо.\n "
+                       f"Но терпимо если вы ошиблись!\n Вы на шаге {current_state[11:]}")
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=StartState.wait_to_accept)
