@@ -4,3 +4,5 @@ from . import (
     manage,
     debug,
 )
+
+__all__ = ('add', "event", "manage", "debug")

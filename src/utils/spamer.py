@@ -58,7 +58,7 @@ async def notify_all_admins(*args, **message_params):
     admin_ids = []
     for admin in admins:
         admin_ids.append(admin.user_id)
-    print(admin_ids)
+
     result = await send_to_given_users(admin_ids, *args, **message_params)  # MAYBE shity code but idk
     return result
 

@@ -43,7 +43,6 @@ def parting(xs, parts):
 @dp.message_handler(commands=("logs", "get_logs"), is_admin=True, chat_type='private', state="*")
 async def get_logs(msg: types.Message):
     logger.info("Logs getted")
-    loop = asyncio.get_event_loop()
     file_ = last_log()
 
     if not file_:
@@ -57,7 +56,7 @@ async def get_logs(msg: types.Message):
         if len(lines) <= 4027:
             return await msg.answer(f"{lines}")
 
-        whole_log = await loop.run_in_executor(None, parting, lines, 5)
+        whole_log = parting(lines, 5)
         for peace in whole_log:
             await msg.answer(f"{peace}")
             await asyncio.sleep(0.1)
