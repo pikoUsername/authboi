@@ -25,6 +25,7 @@ def polling(skip_updates: bool):
 
     runner.skip_updates = skip_updates
     runner.start_polling(reset_webhook=True)
+    return 0
 
 
 @cli.command()
@@ -38,6 +39,7 @@ def webhook(skip_updates: bool):
     runner.skip_updates = skip_updates
     runner.on_shutdown(misc.close_webhook, polling=False, webhook=True)
     runner.start_webhook(config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT, host="localhost")
+    return 0
 
 
 @cli.command()

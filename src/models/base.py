@@ -16,6 +16,7 @@ async def get_pool(*args, **kwargs) -> GinoEngine:
 
 async def on_startup(dp):
     bind = await get_pool()
+    dp.bot['db_pool'] = bind
     logger.info("created Postgres Connection")
     await db_.gino.create_all(bind=bind)  # bind or pool nvm honestly
 

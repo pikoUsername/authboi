@@ -35,7 +35,7 @@ async def send_message(chat_id: int,
 
 
 async def send_to_given_users(user_ids: List[int], *args, **message_params):
-    success = ['Успешно']
+    success = []
     unsuccessful = {}
     for user_id in user_ids:
         try:
@@ -45,7 +45,7 @@ async def send_to_given_users(user_ids: List[int], *args, **message_params):
             unsuccessful[user_id] = str(e)
 
     if unsuccessful:
-        fmt = ["Здесь Немного Ошибок, Чуточку"]
+        fmt = []
         for key, value in unsuccessful.items():
             error = f"{key} - {value}"
             fmt.append(error)

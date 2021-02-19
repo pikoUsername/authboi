@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List
 
 from aiogram import types
@@ -9,20 +10,25 @@ from ..config import ADMIN_IDS
 
 
 class DBCommands:
+    __slots__ = ()
+
     @staticmethod
-    async def get_user(user_id: int) -> 'User':
+    async def get_user(user_id: int) -> User:
         user = await User.query.where(User.user_id == user_id).gino.first()
         return user
 
-    async def remove_user(self, user_id: int):
+    @staticmethod
+    async def remove_user(user_id: int) -> None:
         user = await User.query.where(User.user_id == user_id).gino.first()
         await user.delete()
 
-    async def create_event(self,
-                           text: str,
-                           link: str,
-                           inline_text: str = None,
-                           inline_btn_link: str = None):
+    @staticmethod
+    async def create_event(
+        text: str,
+        link: str,
+        inline_text: str = None,
+        inline_btn_link: str = None
+    ) -> Event:
         new_event = Event()
 
         new_event.text = text
@@ -33,13 +39,19 @@ class DBCommands:
         await new_event.create()
         return new_event
 
+    @staticmethod
+    async def get_all_users() -> List[User]:
+        # todo optimaze this
+        all_user = await User.query.gino.all()
+        return all_user
+
     async def add_new_user(
-            self,
-            user: types.User,
-            login,
-            email: str,
-            password: str = None,
-    ):
+        self,
+        user: types.User,
+        login: str,
+        email: str,
+        password: str = None,
+    ) -> User:
         old_user = await self.get_user(user.id)
 
         if old_user:
@@ -52,6 +64,7 @@ class DBCommands:
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
+
         if user.id in ADMIN_IDS:
             new_user.is_admin = True
         else:
@@ -60,13 +73,13 @@ class DBCommands:
         await new_user.create()
         return new_user
 
-    async def exit_user(self, user_id):
+    async def exit_user(self, user_id: int) -> None:
+        import warnings
+
+        warnings.warn("this Function is deprectaed.")
         user = await self.get_user(user_id)
         user.is_authed = False
-
-    async def get_all_users(self) -> List[User]:
-        all_user = await User.query.gino.all()
-        return all_user
+        await user.update().apply()
 
     async def create_admin_user(self, user_id: int, remove):
         user = await self.get_user(user_id)

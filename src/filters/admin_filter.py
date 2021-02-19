@@ -9,10 +9,6 @@ class IsAdminFilter(BoundFilter):
     key = "is_admin"
     is_admin: bool
 
-    async def check(self, obj) -> bool:
-        data = ctx_data.get()
-        user = data["user"]
-        try:
-            return user.is_admin
-        except AttributeError:
-            return False
+    async def check(self, _) -> bool:
+        # get is_admin from user model
+        return ctx_data.get()["user"].is_admin or False

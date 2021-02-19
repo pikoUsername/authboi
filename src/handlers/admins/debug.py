@@ -54,7 +54,7 @@ async def get_logs(msg: types.Message):
         lines = file.read()
 
         if len(lines) <= 4027:
-            return await msg.answer(f"{lines}")
+            return await msg.answer(lines)
 
         whole_log = parting(lines, 5)
         for peace in whole_log:
@@ -64,8 +64,8 @@ async def get_logs(msg: types.Message):
 
 @dp.message_handler(commands="remove_all_logs", is_admin=True, state="*")
 async def remove_logs(msg: types.Message):
-    logger.info("removing logs...")
     loop = asyncio.get_event_loop()
+
     try:
         await loop.run_in_executor(None, delete_all_logs)
     except Exception as e:

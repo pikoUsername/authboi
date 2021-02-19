@@ -18,7 +18,8 @@ from src.utils.spamer import send_to_all_users
     ChatTypeFilter(chat_type="private"),
     commands="start_event",
     is_authed=True,
-    is_admin=True, state="*")
+    is_admin=True, state="*"
+)
 async def start_event(msg: types.Message):
     await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=inline_choice_event)
     logger.info(f"Admin start create event, user_id {msg.from_user.id}")
@@ -75,7 +76,13 @@ async def skip_photo_upload(msg: types.Message):
 
 @dp.message_handler(state=EventState.wait_for_text)
 async def write_text_file(msg: types.Message, state: FSMContext):
-    first_time = time.monotonic()
+    """
+    For text, and its bad code
+
+    :param msg:
+    :param state:
+    :return:
+    """
     if not msg.text:
         return await msg.answer("Отствует текст")
 
@@ -86,16 +93,9 @@ async def write_text_file(msg: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data["text"] = msg.text
-        try:
-            link = data["link"]
-        except KeyError:
-            link = None
-        try:
-            inline_text = data["inline_text"]
-            inline_url = data["inline_reference"]
-        except KeyError:
-            inline_text = None
-            inline_url = None
+        link = data.get("link", None)
+        inline_text = data.get("inline_text", None)
+        inline_url = data.get("inline_reference", None)
 
     # creating inline text and etc.
     if inline_text and inline_url:
@@ -108,7 +108,6 @@ async def write_text_file(msg: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data["inline_kb"] = to_show_inline
 
-        logger.info(f"Time handled of func write_text_file: {(first_time - time.monotonic()) * 1000} ")
         if not link:
             try:
                 return await msg.answer(safed_text, reply_markup=to_show_inline)
@@ -121,13 +120,10 @@ async def write_text_file(msg: types.Message, state: FSMContext):
 @dp.message_handler(Text(['Y', 'y']), state=EventState.wait_for_accept)
 async def send_all_event(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        try:
-            inline_kb = data["inline_kb"]
-            link = data["link"]
-        except KeyError:
-            link = None
-            inline_kb = None
-        text = data["text"]
+        inline_kb = data.get("inline_kb", None)
+        link = data.get("link", None)
+        text = data.get("text", None)
+
     try:
         await send_to_all_users(text, link, inline_kb)
         await state.reset_data()

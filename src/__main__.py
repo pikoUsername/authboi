@@ -1,4 +1,7 @@
-from .utils.cli import cli
+import sys
+
+from .utils import cli
 
 if __name__ == '__main__':
-    cli()
+    # for exit
+    sys.exit(cli.cli())

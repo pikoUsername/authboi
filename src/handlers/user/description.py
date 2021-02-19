@@ -6,6 +6,7 @@ from aiogram.types import ContentType
 from loguru import logger
 
 from src.loader import dp
+from src.models.user import User
 from src.states.user.desc import DescriptionChange
 
 
@@ -29,11 +30,10 @@ async def change_description(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=DescriptionChange.wait_to_accept_change)
-async def yes_change_desc(msg: types.Message, state: FSMContext):
+async def yes_change_desc(msg: types.Message, state: FSMContext, user: User):
     async with state.proxy() as data:
         description = data["description"]
 
-    user = ctx_data.get()['user']
     await user.update(description=description).apply()
 
     await state.finish()

@@ -52,4 +52,4 @@ async def bot_help(msg: types.Message):
 
 @dp.message_handler(commands="about")
 async def bot_about(msg: types.Message):
-    return SendMessage(msg.chat.id, "(https://github.com/pikoUsername/authboi.git)")
+    return SendMessage(msg.chat.id, '<a href="https://github.com/pikoUsername/authboi.git)">github</a>')
