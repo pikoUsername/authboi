@@ -5,8 +5,8 @@ from aiogram import types
 from aiogram import exceptions
 from loguru import logger as log
 
-from src.loader import db, bot
-from src.models.user import User
+from ..loader import db, bot
+from ..models.user import User
 
 
 async def send_message(chat_id: int,

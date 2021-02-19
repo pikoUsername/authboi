@@ -6,7 +6,7 @@ from loguru import logger
 
 from .user import User
 from .event import Event
-from ..config import ADMIN_IDS
+from iternal.config import ADMIN_IDS
 
 
 class DBCommands:

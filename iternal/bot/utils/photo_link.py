@@ -3,7 +3,7 @@ from io import BytesIO
 import aiohttp
 from aiogram import types
 
-from src.loader import bot, telegraph
+from ..loader import bot, telegraph
 
 
 # https://telegra.ph/Pryamaya-ssylka-na-foto-s-telegraph-12-19

@@ -4,7 +4,7 @@ from aiogram.utils.executor import Executor
 from loguru import logger
 from gino import Gino, UninitializedError, GinoEngine
 
-from src.config import POSTGRES_URI
+from iternal.config import POSTGRES_URI
 
 db_ = Gino()
 

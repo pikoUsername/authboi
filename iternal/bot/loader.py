@@ -3,8 +3,16 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiograph import Telegraph
 from loguru import logger
 
-from src import config
-from src.models.api import DBCommands
+from iternal import config
+from iternal.bot.models.api import DBCommands
+
+__all__ = (
+    "db",
+    "bot",
+    "dp",
+    "setup"
+)
+
 
 db = DBCommands()
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
@@ -22,4 +30,3 @@ def setup():
     filters.setup(dp)
 
     logger.info("Configure Handlers")
-    from . import handlers

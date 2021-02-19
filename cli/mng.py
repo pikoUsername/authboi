@@ -1,17 +1,14 @@
+from aiohttp import web as aio_web
 import click
 from loguru import logger
-
-from .. import config
-from . import misc
 
 
 @click.group()
 def cli():
-    from .. import loader
-    from . import log
+    from iternal.utils import log
 
+    # logging setup
     log.setup()
-    loader.setup()
 
 
 @cli.command()
@@ -20,12 +17,12 @@ def polling(skip_updates: bool):
     """
     Start application in polling mode
     """
+    from iternal.bot import loader
+    from iternal.bot.utils import runner
 
-    from src.utils.executor import runner
-
+    loader.setup()
     runner.skip_updates = skip_updates
     runner.start_polling(reset_webhook=True)
-    return 0
 
 
 @cli.command()
@@ -34,20 +31,42 @@ def webhook(skip_updates: bool):
     """
     Start Webhook
     """
-    from src.utils.executor import runner
+    from iternal.bot import loader
+    from iternal import config
+    from iternal.bot.utils import misc, runner
 
+    loader.setup()
     runner.skip_updates = skip_updates
     runner.on_shutdown(misc.close_webhook, polling=False, webhook=True)
     runner.start_webhook(config.WEBHOOK_PATH, port=config.BOT_PUBLIC_PORT, host="localhost")
-    return 0
+
+
+@cli.command()
+def web():
+    """
+    Start Application
+    """
+    from iternal.web.app import init_app
+    from .utils import get_hostandport
+
+    app = init_app()
+
+    host_, port_ = get_hostandport(app.get('config', None))
+
+    aio_web.run_app(
+        app,
+        host=host_,
+        port=port_,
+        print=logger.info
+    )
 
 
 @cli.command()
 @click.argument("user_id", type=int)
 @click.option("--remove", "--rm", is_flag=True, default=False, help="Remove superuser rights")
 def add_admin(user_id: int, remove: bool):
-    from .executor import runner
-    from ..loader import db
+    from iternal.bot.utils import runner
+    from iternal.bot.loader import db
 
     try:
         result = runner.start(db.create_admin_user(user_id, remove))

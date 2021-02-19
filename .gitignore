@@ -1,6 +1,5 @@
 # very important info here
-/src/*.env
-src/.env
+iternal/*.env
 # pycharm's trash
 /.idea
 .idea/*

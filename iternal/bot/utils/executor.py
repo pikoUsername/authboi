@@ -6,7 +6,7 @@ from loguru import logger
 
 from ..models.user import User
 from ..models import base
-from .. import config
+from ... import config
 from ..loader import dp
 
 
