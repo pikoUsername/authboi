@@ -11,7 +11,7 @@ from src.loader import dp
 from src.keyboards.inline.event import inline_choice_event
 from src.states.user.event import EventState
 from src.states.user.inline import InlineStates
-from src.utils.spamer import send_to_all_users
+from src.utils.spammer import send_to_all_users
 
 
 @dp.message_handler(
