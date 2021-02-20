@@ -28,8 +28,6 @@ def setup(
     name: str = None,
     loop: asyncio.AbstractEventLoop = None,
 ) -> None:
-    assert prefix.startswith("/")
-
     loop = loop or asyncio.get_event_loop()
     admin = web.Application(loop=loop)  # need to test
     app[app_key] = admin

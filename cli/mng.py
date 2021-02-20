@@ -51,12 +51,12 @@ def web():
 
     app = init_app()
 
-    host_, port_ = get_hostandport(app.get('config', None))
+    host, port = get_hostandport(app.get('config', None))
 
     aio_web.run_app(
         app,
-        host=host_,
-        port=port_,
+        host=host,
+        port=port,
         print=logger.info
     )
 
