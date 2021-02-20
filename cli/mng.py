@@ -77,8 +77,10 @@ def add_admin(user_id: int, remove: bool):
     if not result:
         exit(1)
 
+
 @cli.command()
 @click.option('--test', '-t', default="web", help="runs tests for some application default ['web']\n")
 def run_tests(test: str):
-    if test is not None:
+    from .utils import run_tests
 
+    return run_tests(test)

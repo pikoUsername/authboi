@@ -6,7 +6,7 @@ from aiogram.types import ContentType
 from loguru import logger
 
 from iternal.bot.loader import dp
-from iternal.bot.models.user import User
+from iternal.store.user import User
 from iternal.bot.states.user.cng_pass import ChangePassword
 from iternal.bot.utils.throttling import rate_limit
 

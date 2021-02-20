@@ -6,7 +6,7 @@ from aiogram import exceptions
 from loguru import logger as log
 
 from ..loader import db, bot
-from ..models.user import User
+from iternal.store.user import User
 
 
 async def send_message(chat_id: int,
@@ -64,12 +64,13 @@ async def notify_all_admins(*args, **message_params):
 
 
 async def send_to_all_users(text: str, img_link: str = None, inline_kb: types.InlineKeyboardMarkup = None):
-    # TODO - make more beatyful and more better
+    # TODO - make more beatyful and more better, COMPLETED
     all_users = await db.get_all_users()
 
-    if img_link:
-        for user in all_users:
-            await bot.send_photo(user.user_id, caption=text, reply_markup=inline_kb, photo=img_link)
-    else:
-        for user in all_users:
-            await send_message(user.user_id, text=text)
+    for user in all_users:
+        # using modified aiogram
+        # there using instead of caption in send_photo:method uses just text attrubiut
+        # and this text firstly bacame a caption, and deletes
+        # bc aiogram uses **locals() for creating JSON response
+        # so its mt work, i need to test
+        await send_message(user.user_id, img_link, text=text, reply_markup=inline_kb)

@@ -6,6 +6,10 @@ __all__ = "User",
 
 
 class User(db_.Model):
+    """
+    User need for store User model,
+    uses for indentifi
+    """
     __tablename__ = 'users'
 
     id = db_.Column(db_.Integer, primary_key=True, index=True, unique=True)

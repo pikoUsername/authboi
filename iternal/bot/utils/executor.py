@@ -4,9 +4,9 @@ from aiogram import Dispatcher
 from aiogram.utils.executor import Executor
 from loguru import logger
 
-from ..models.user import User
-from ..models import base
+from iternal.store.user import User
 from ... import config
+from . import db
 from ..loader import dp as dispatcher
 
 
@@ -30,7 +30,7 @@ async def notify_admins(dp: Dispatcher):
 
 
 def setup():
-    base.setup(runner)
+    db.setup(runner)
     logger.info("Configure executor...")
     runner.on_startup(on_startup_webhook, webhook=True, polling=False)
     if config.ON_STARTUP_NOTIFY:

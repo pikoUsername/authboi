@@ -4,6 +4,9 @@ from .base import db_
 
 
 class Event(db_.Model):
+    """
+    Uses for create Event
+    """
     __tablename__ = "Event"
 
     query: sql.Select

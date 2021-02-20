@@ -4,7 +4,7 @@ from aiograph import Telegraph
 from loguru import logger
 
 from iternal import config
-from iternal.bot.models.api import DBCommands
+from iternal.store.api import DBCommands
 
 __all__ = (
     "db",
@@ -12,7 +12,6 @@ __all__ = (
     "dp",
     "setup"
 )
-
 
 db = DBCommands()
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
@@ -30,4 +29,4 @@ def setup():
     filters.setup(dp)
 
     logger.info("Configure Handlers...")
-    import iternal.bot.handlers  # pragma: no cover
+    import iternal.bot.handlers
