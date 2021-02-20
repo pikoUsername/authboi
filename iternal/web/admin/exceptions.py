@@ -1,3 +1,11 @@
+"""
+AdminRESTError:
+    ObjectNotFound
+    JsonValidationError
+    Flood
+"""
+from __future__ import annotations
+
 from typing import Any
 
 from aiohttp import web
@@ -41,5 +49,19 @@ class JsonValidationError(AdminRESTError):
 
 
 class JsonForbiddenError(AdminRESTError):
-    status_code = 401
+    status_code = 403
     error = "Access denied"
+
+
+class Flood(AdminRESTError):
+    status_code = 420
+    error = "Wait for {} second."
+
+    def __init__(self, *args, wait_time: int, **kwargs):
+        super(Flood, self).__init__(
+            message=self.error.format(wait_time),
+            *args,
+            **kwargs
+        )
+
+        self.wait_time = wait_time
