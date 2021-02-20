@@ -10,5 +10,7 @@ __all__ = (
     "fill_auth_final",
     "send_message",
     "send_to_all_users",
-    "send_to_given_users"
+    "send_to_given_users",
+    "setup",
+    "notify_all_admins"
 )

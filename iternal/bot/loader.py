@@ -29,4 +29,5 @@ def setup():
     middlewares.setup(dp)
     filters.setup(dp)
 
-    logger.info("Configure Handlers")
+    logger.info("Configure Handlers...")
+    import iternal.bot.handlers  # pragma: no cover

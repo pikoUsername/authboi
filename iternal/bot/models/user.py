@@ -2,6 +2,8 @@ from sqlalchemy import sql
 
 from .base import db_
 
+__all__ = "User",
+
 
 class User(db_.Model):
     __tablename__ = 'users'

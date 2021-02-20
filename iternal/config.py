@@ -17,6 +17,7 @@ def dstr(key: str, default: Optional[str] = None):
 def dint(key: str, default: Optional[int] = 0):
     return os.getenv(key, default)
 
+
 proj_path = Path(__name__).parent.parent
 ON_STARTUP_NOTIFY = os.getenv("ON_STARTUP_NOTIFY", False)
 # psql
@@ -44,3 +45,6 @@ BOT_PUBLIC_PORT = dint("BOT_PUBLIC_PORT", default=3030)
 # logs path
 LOGS_BASE_PATH = str(proj_path / "logs")
 POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
+
+
+DEBUG = True

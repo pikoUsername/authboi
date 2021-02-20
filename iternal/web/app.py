@@ -3,7 +3,7 @@ import aiohttp_jinja2
 import jinja2
 
 from iternal import config
-from . import admin
+# from . import admin
 
 
 def init_app() -> web.Application:

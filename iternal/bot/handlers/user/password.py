@@ -6,6 +6,7 @@ from aiogram.types import ContentType
 from loguru import logger
 
 from iternal.bot.loader import dp
+from iternal.bot.models.user import User
 from iternal.bot.states.user.cng_pass import ChangePassword
 from iternal.bot.utils.throttling import rate_limit
 
@@ -20,9 +21,7 @@ async def start_change_password(msg: types.Message):
 
 
 @dp.message_handler(state=ChangePassword.wait_to_accept_with_password)
-async def check_to_really_user(msg: types.Message):
-    data = ctx_data.get()
-    user = data["user"]
+async def check_to_really_user(msg: types.Message, user: User):
 
     if user.password != msg.text:
         return SendMessage(msg.chat.id, "Ваш пароль, не верный попробуйте еще разок.\n Может тогда получится")

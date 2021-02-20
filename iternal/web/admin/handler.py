@@ -10,7 +10,7 @@ from aiohttp_security import remember, forget
 
 from .consts import APP_KEY, TEMPLATE_APP_KEY
 from .utils import validate_payload
-from .exceptions import JsonValidationError, JsonForbiddenError, ObjectNotFound
+from .exceptions import JsonValidationError
 
 __all__ = (
     "AdminHandler",
@@ -27,14 +27,14 @@ class AdminHandler:
     """
     # using "private" settings, bc user may change this consts
     # its python, so all can be possible
-    __slots__ = (
+    __slots__ = [
         "_admin",
         "_loop",
         "_name",
         "_template",
         "_login_template",
         "_resources"
-    )
+    ]
 
     def __init__(
         self,
@@ -44,8 +44,7 @@ class AdminHandler:
         name: str = None,
         template: str = None
     ) -> None:
-        assert admin[APP_KEY] is None
-        assert template.endswith(".html")
+        assert template.endswith(".html"), "Template Name should endswith .html"
 
         self._admin = admin
         self._loop = loop if loop else asyncio.get_event_loop()
@@ -57,7 +56,9 @@ class AdminHandler:
             r.setup(self._admin, URL('/'))
         self._resources = tuple(resources)
 
+    # =========================
     # properties
+    # =========================
 
     @property
     def template(self) -> str:
@@ -77,7 +78,9 @@ class AdminHandler:
     def resources(self):
         return self._resources
 
+    # =========================
     # views for admin page
+    # =========================
 
     async def index_page(self, request: web.Request):
         t = self._template

@@ -16,5 +16,9 @@ __all__ = (
     "Exit",
     "ChangeEmail",
     "EventState",
-    "InlineStates"
+    "InlineStates",
 )
+
+
+def get_state(key: str):
+    return locals()[key]

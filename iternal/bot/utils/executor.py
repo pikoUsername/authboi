@@ -7,21 +7,22 @@ from loguru import logger
 from ..models.user import User
 from ..models import base
 from ... import config
-from ..loader import dp
+from ..loader import dp as dispatcher
 
 
-runner = Executor(dp)
+runner = Executor(dispatcher=dispatcher)
 
 
-async def on_startup_webhook(dispatcher: Dispatcher):
+async def on_startup_webhook(dp):
     logger.info("Configure Web-Hook URL to: {url}", url=config.WEBHOOK_URL)
-    await dispatcher.bot.set_webhook(config.WEBHOOK_URL, ip_address=config.DOMAIN)
+    await dp.bot.set_webhook(config.WEBHOOK_URL, ip_address=config.DOMAIN)
 
 
-async def notify_admins(dp_: Dispatcher):
+async def notify_admins(dp: Dispatcher):
+    # optimaze it
     all_admins = await User.query.where(User.is_admin is True).gino.all()
     for user in all_admins:
-        await dp_.bot.send_message(
+        await dp.bot.send_message(
             chat_id=user.user_id, text="Bot started", disable_notification=True
         )
         logger.info("Notified superuser {user} about bot is started.", user=user.id)
