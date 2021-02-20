@@ -1,3 +1,3 @@
 from . import inline
 
-__all__ = ("inline",)
+__all__ = "inline",
