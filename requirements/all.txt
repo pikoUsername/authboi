@@ -1,5 +1,3 @@
--q .
-
 # general
 aiohttp==3.7.3
 gino==1.0.1
@@ -17,4 +15,3 @@ aiograph==0.2
 aiohttp-jinja2
 jinja2
 aiohttp-security
-

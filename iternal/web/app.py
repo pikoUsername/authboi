@@ -12,6 +12,7 @@ def init_app() -> web.Application:
     app = web.Application()
 
     aiohttp_jinja2.setup(
-        app, jinja2.FileSystemLoader(config.proj_path / ""))
+        app, jinja2.FileSystemLoader(config.proj_path / "templates"))
+
 
     return app
