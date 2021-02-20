@@ -2,6 +2,15 @@ from pathlib import Path
 from typing import Union, List
 
 from iternal.web.admin.consts import TEMPLATES_ROOT
+from .exceptions import JsonValidationError
+
+
+try:
+    import ujson as json
+except ImportError or ModuleNotFoundError:
+    import json
+
+__all__ = "gather_template_folders", "validate_payload"
 
 
 def gather_template_folders(
@@ -15,3 +24,17 @@ def gather_template_folders(
     else:
         template_folders = [template_root] + template_path
     return template_folders
+
+
+def validate_payload(raw_payload, schema):
+    payload = raw_payload.decode(encoding='UTF-8')
+    try:
+        parsed = json.loads(payload)
+    except ValueError:
+        raise JsonValidationError('Payload is not json serialisable')
+
+    try:
+        data = schema(parsed)
+    except t.DataError as exc:
+        raise JsonValidationError(**as_dict(exc))
+    return data
