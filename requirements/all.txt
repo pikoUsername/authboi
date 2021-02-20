@@ -16,6 +16,3 @@ aiograph==0.2
 aiohttp-jinja2
 jinja2
 aiohttp-security
-
-# test
-pytest
