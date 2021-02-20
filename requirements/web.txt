@@ -9,3 +9,5 @@ jinja2
 aiohttp-security
 flake8
 ujson
+# NEVER GONNA GIVE YOU UP
+trafaret

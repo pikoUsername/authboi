@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Union, List
 
+import trafaret as t
+
 from iternal.web.admin.consts import TEMPLATES_ROOT
 from .exceptions import JsonValidationError
 
@@ -38,3 +40,10 @@ def validate_payload(raw_payload, schema):
     except t.DataError as exc:
         raise JsonValidationError(**as_dict(exc))
     return data
+
+
+def as_dict(exc, value=None):
+    result = exc.as_dict(value)
+    if isinstance(result, str):
+        return {"error": result}
+    return result

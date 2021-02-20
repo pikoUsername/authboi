@@ -7,3 +7,7 @@ def get_hostandport(
         host = app_config.get('host')
         port = app_config.get('port')
     return host, port
+
+
+def run_tests(type: str):  # idk how to name type instead...
+    pass
