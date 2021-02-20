@@ -4,8 +4,8 @@ from aiogram.dispatcher.webhook import SendMessage
 from aiogram.utils.exceptions import MessageIsTooLong
 from aiogram.dispatcher.handler import ctx_data
 
-from src.loader import dp
-from src.utils.throttling import rate_limit
+from iternal.bot.loader import dp
+from iternal.bot.utils.throttling import rate_limit
 
 
 @dp.message_handler(Command("profile"), is_authed=True)

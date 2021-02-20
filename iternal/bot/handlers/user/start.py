@@ -5,8 +5,8 @@ from aiogram.dispatcher.webhook import EditMessageText, SendMessage
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
-from src.loader import dp
-from src.keyboards.inline.start import choice_kb
+from iternal.bot.loader import dp
+from iternal.bot.keyboards.inline.start import choice_kb
 
 
 @dp.message_handler(CommandStart())

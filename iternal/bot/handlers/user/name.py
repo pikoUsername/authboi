@@ -4,8 +4,8 @@ from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
-from src.states.user.cng_name import ChangeName
-from src.loader import db, dp
+from iternal.bot.states.user.cng_name import ChangeName
+from iternal.bot.loader import db, dp
 
 
 @dp.message_handler(commands="change_name", is_authed=True, state="*")

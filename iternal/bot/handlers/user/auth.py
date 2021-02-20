@@ -5,9 +5,9 @@ from aiogram.dispatcher.webhook import SendMessage, EditMessageText
 from aiogram.types import ContentTypes
 from loguru import logger
 
-from src.states.user.auth import StartState
-from src.loader import db, dp
-from src.utils.misc import fill_auth_final
+from iternal.bot.states.user.auth import StartState
+from iternal.bot.loader import db, dp
+from iternal.bot.utils.misc import fill_auth_final
 
 
 @dp.message_handler(Command("cancel"), state="*")

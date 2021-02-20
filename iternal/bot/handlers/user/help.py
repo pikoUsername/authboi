@@ -3,8 +3,8 @@ from aiogram.dispatcher.filters import CommandHelp
 from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 
-from src.utils.throttling import rate_limit
-from src.loader import dp
+from iternal.bot.utils.throttling import rate_limit
+from iternal.bot.loader import dp
 
 
 @dp.message_handler(CommandHelp())

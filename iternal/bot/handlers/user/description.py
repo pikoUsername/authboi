@@ -1,13 +1,12 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
-from src.loader import dp
-from src.models.user import User
-from src.states.user.desc import DescriptionChange
+from iternal.bot.loader import dp
+from iternal.bot.models.user import User
+from iternal.bot.states.user.desc import DescriptionChange
 
 
 @dp.message_handler(commands="change_description", is_authed=True, state="*")

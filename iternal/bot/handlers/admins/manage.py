@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.webhook import SendMessage
 
-from src.loader import dp, db
+from iternal.bot.loader import dp, db
 
 
 @dp.message_handler(commands="delete_user", is_admin=True, state="*")

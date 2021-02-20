@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher.webhook import EditMessageText
 
-from src.loader import dp
-from src.keyboards.inline.start import choice_kb
+from iternal.bot.loader import dp
+from iternal.bot.keyboards.inline.start import choice_kb
 
 
 @dp.callback_query_handler(text="what_can", state="*")

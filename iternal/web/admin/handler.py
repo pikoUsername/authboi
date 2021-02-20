@@ -10,6 +10,7 @@ from aiohttp_security import remember, forget
 
 from .consts import APP_KEY, TEMPLATE_APP_KEY
 from .utils import validate_payload
+from .exceptions import JsonValidationError, JsonForbiddenError, ObjectNotFound
 
 __all__ = (
     "AdminHandler",
@@ -20,7 +21,20 @@ logger = logging.getLogger(APP_KEY)
 
 
 class AdminHandler:
-    __slots__ = "_admin", "_loop", "_name", "_template", "_login_template", "_resources"
+    """
+    Main Admin Handler.
+    Lower in Code, have rest twin
+    """
+    # using "private" settings, bc user may change this consts
+    # its python, so all can be possible
+    __slots__ = (
+        "_admin",
+        "_loop",
+        "_name",
+        "_template",
+        "_login_template",
+        "_resources"
+    )
 
     def __init__(
         self,
@@ -43,6 +57,8 @@ class AdminHandler:
             r.setup(self._admin, URL('/'))
         self._resources = tuple(resources)
 
+    # properties
+
     @property
     def template(self) -> str:
         return self._template
@@ -60,6 +76,8 @@ class AdminHandler:
     @property
     def resources(self):
         return self._resources
+
+    # views for admin page
 
     async def index_page(self, request: web.Request):
         t = self._template
@@ -85,7 +103,7 @@ class AdminHandler:
     async def logout(self, request):
         if "Authorization" not in request.headers:
             msg = "Auth header is not present, can not destroy token"
-            raise JsonValidaitonError(msg)
+            raise JsonValidationError(msg)
         router = request.app.router
         location = router["admin.login"].url_for().human_repr()
         payload = {"location": location}

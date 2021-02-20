@@ -1,5 +1,3 @@
-import time
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text, ChatTypeFilter
@@ -7,11 +5,10 @@ from aiogram.types import ContentType
 from aiogram.utils.exceptions import BadRequest
 from loguru import logger
 
-from src.loader import dp
-from src.keyboards.inline.event import inline_choice_event
-from src.states.user.event import EventState
-from src.states.user.inline import InlineStates
-from src.utils.spammer import send_to_all_users
+from iternal.bot.loader import dp
+from iternal.bot.keyboards.inline import inline_choice_event
+from iternal.bot.states.user import InlineStates, EventState
+from iternal.bot.utils import send_to_all_users
 
 
 @dp.message_handler(

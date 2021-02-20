@@ -6,8 +6,8 @@ from aiogram.dispatcher.webhook import SendMessage, DeleteMessage
 from aiogram.types import ContentType
 from loguru import logger
 
-from src.states.user.exit import Exit
-from src.loader import dp
+from iternal.bot.states.user.exit import Exit
+from iternal.bot.loader import dp
 
 
 @dp.message_handler(Command("remove"), is_authed=True)

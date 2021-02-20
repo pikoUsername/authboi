@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher.webhook import SendMessage
 
-from src.loader import dp, db
-from src.utils.spammer import notify_all_admins
+from iternal.bot.loader import dp, db
+from iternal.bot.utils.spammer import notify_all_admins
 
 
 @dp.message_handler(commands="set_admin", is_authed=True, is_admin=True)

@@ -5,9 +5,9 @@ from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 from loguru import logger
 
-from src.loader import dp
-from src.states.user.cng_pass import ChangePassword
-from src.utils.throttling import rate_limit
+from iternal.bot.loader import dp
+from iternal.bot.states.user.cng_pass import ChangePassword
+from iternal.bot.utils.throttling import rate_limit
 
 
 @dp.message_handler(commands="change_password", is_authed=True, state="*")

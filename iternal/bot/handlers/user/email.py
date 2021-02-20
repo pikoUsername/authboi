@@ -4,8 +4,8 @@ from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 
-from src.loader import dp
-from src.states.user.cng_email import ChangeEmail
+from iternal.bot.loader import dp
+from iternal.bot.states.user.cng_email import ChangeEmail
 
 
 @dp.message_handler(commands="change_email", is_authed=True, state="*")

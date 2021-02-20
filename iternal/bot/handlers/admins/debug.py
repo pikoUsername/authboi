@@ -1,14 +1,14 @@
+import asyncio
 import os
 from glob import glob
 from typing import List
 from math import ceil
-import asyncio
 
 from aiogram import types
 from loguru import logger
 
-from src.config import LOGS_BASE_PATH
-from src.loader import dp
+from iternal.config import LOGS_BASE_PATH
+from iternal.bot.loader import dp
 
 
 def last_log():

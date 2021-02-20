@@ -1,7 +1,5 @@
-import sys
-
 from . import mng
 
 
 if __name__ == '__main__':
-    sys.exit(mng.cli())
+    SystemExit(mng.cli())  # same with os.exit()
