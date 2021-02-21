@@ -42,7 +42,9 @@ def webhook(skip_updates: bool):
 
 
 @cli.command()
-def web():
+@click.option("--host", "-H", default="localhost", type=str, help="host for web application")
+@click.option("--port", "-p",default=8080, type=int, help="port whose chhosed for")
+def web(host: str, port: int):
     """
     Start Application
     """
@@ -51,7 +53,7 @@ def web():
 
     app = init_app()
 
-    host, port = get_hostandport(app.get('config', None))
+    host, port = get_hostandport(app.get('config', None), host, port)
 
     aio_web.run_app(
         app,

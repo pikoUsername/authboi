@@ -38,6 +38,7 @@ def setup(
     aiohttp_jinja2.setup(admin, loader=loader, app_key=app_key)
 
     template_name = template_name if template_name else "admin.html"
+    resources = resources if resources else tuple()
     admin_handler = AdminHandler(admin, resources=resources, name=name,
                                  template=template_name, loop=loop)
 
