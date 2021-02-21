@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, TypeVar, Type
 
 from aiogram.types import ParseMode
 
@@ -18,7 +18,7 @@ _AVAILABLE_TAGS = {
     "a"
 }  # set, idk why do use it, but i think its efficent
 
-
+T = TypeVar("T")  # slut type
 # just adds " for attrubiute
 # idk how to fix that
 # but it uses ONLY in "a" tag
@@ -34,8 +34,9 @@ def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
 
     pre_result = "<{tag} {attrs}>{text}</{tag}>"
 
-    if tags_attrubiutes:
+    if not tags_attrubiutes:
         pre_result.replace(" ", "")
+
     result = pre_result.format(
         tag=tag,
         attrs=''.join(attrs_tag),
@@ -45,7 +46,7 @@ def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
     return result
 
 
-def strong_text(text: str):
+def strong_text(text: str) -> str:
     # just wrap text with <strong> </strong>
     return wrap_text_html(text, "strong")
 
@@ -97,6 +98,15 @@ class Embed:
 
         field = Field(*args, index=self.__fields_len, **kwargs)
         return field
+
+    @classmethod
+    def from_dict(cls: Type[T], data: dict) -> T:
+        self = cls.__new__(cls)
+
+        self.title = data.get("title", None)
+        self.value = data.get("value", None)
+
+        return self
 
 
 class EmbedPaginator(Embed):
