@@ -1,10 +1,9 @@
 import unittest
 
-_ALL_TESTS = frozenset(
-    [
-        "web.admin.view_test",
-    ]
-)
+
+_ALL_TESTS = [
+    "web.admin.view_test",
+]
 
 
 def main():

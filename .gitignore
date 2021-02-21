@@ -25,5 +25,6 @@ data/__pycache__/config.cpython-38.pyc
 src/handlers/User/__pycache__/*
 data/__pycache__/
 
+# pytest cache
 tests/.pytest_cache/
 .pytest_cache/

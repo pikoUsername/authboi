@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from pathlib import Path
 
 from aiohttp import web
-from yarl import URL
 from aiohttp_jinja2 import render_template
 from aiohttp_security import remember, forget
+from yarl import URL
+from typing import Union, Optional
 
 from .consts import APP_KEY, TEMPLATE_APP_KEY
 from .utils import validate_payload
@@ -14,7 +16,7 @@ from .exceptions import JsonValidationError
 
 __all__ = (
     "AdminHandler",
-    "setup_admin_handler"
+    "setup_admin_handlers"
 )
 
 logger = logging.getLogger(APP_KEY)
@@ -115,7 +117,12 @@ class AdminHandler:
         return response
 
 
-def setup_admin_handler(app: web.Application, handler: AdminHandler) -> None:
+def setup_admin_handlers(
+    app: web.Application,
+    handler: Optional[AdminHandler],
+    static_folder: Union[str, Path],
+    prefix: Union[str, URL],
+) -> None:
     logger.debug("setuping admin handlers...")
 
     add_route = app.router.add_route

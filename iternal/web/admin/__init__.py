@@ -6,7 +6,7 @@ from typing import Union, List, Any
 from pathlib import Path
 
 from .consts import APP_KEY, PROJ_ROOT
-from .handler import AdminHandler
+from .handler import AdminHandler, setup_admin_handlers
 from .utils import gather_template_folders
 
 # based on https://github.com/aio-libs/aiohttp_admin/ or copy'n past
@@ -27,11 +27,12 @@ def setup(
     template_name: str = None,
     name: str = None,
     loop: asyncio.AbstractEventLoop = None,
-) -> None:
+) -> web.Application:
     loop = loop or asyncio.get_event_loop()
-    admin = web.Application(loop=loop)  # need to test
+    admin = web.Application()  # need to test
     app[app_key] = admin
 
+    template_folder = template_folder or Path(__file__).parent
     templatef = gather_template_folders(template_folder)
     loader = jinja2.FileSystemLoader(templatef)
     aiohttp_jinja2.setup(admin, loader=loader, app_key=app_key)

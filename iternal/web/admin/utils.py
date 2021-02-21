@@ -17,7 +17,7 @@ __all__ = "gather_template_folders", "validate_payload"
 
 def gather_template_folders(
         template_path: Union[Path, List[Path]]
-) -> List[Path]:
+) -> Union[List[Path], Path]:
     if not isinstance(template_path, list):
         template_path = [template_path]
     template_root = str(TEMPLATES_ROOT)
