@@ -10,10 +10,11 @@ from .handler import AdminHandler, setup_admin_handlers
 from .utils import gather_template_folders
 
 # based on https://github.com/aio-libs/aiohttp_admin/ or copy'n past
-__all__ = (
+__all__ = [
     "setup",
-    "get_admin"
-)
+    "get_admin",
+    "AdminHandler",
+]
 
 
 def setup(
