@@ -7,9 +7,8 @@ def test_get_admin():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     app = web.Application()
-    res = tuple()
 
-    admin_app = admin.setup(app, "./chernobill", resources=res)
+    admin_app = admin.setup(app, "./chernobill", resources=tuple())
 
     result = admin.get_admin(app)
     assert admin_app is result, "admin_app must be same when get_admin method"
@@ -19,9 +18,8 @@ def test_setup_admin():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     app = web.Application()
-    res = tuple()
 
-    admin_app = admin.setup(app, "/HAHAHAHA", resources=res)
+    admin_app = admin.setup(app, "/HAHAHAHA", resources=tuple())
 
     assert app[admin.APP_KEY] is admin_app, "oh no"
 
