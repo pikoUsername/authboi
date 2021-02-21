@@ -23,7 +23,7 @@ def setup(
     static_folder: Path = None,
     template_folder: Union[Path, List[Path]] = None,
     app_key: str = APP_KEY,
-    resources: Any = None,
+    resources: Any = tuple(),
     template_name: str = None,
     name: str = None,
     loop: asyncio.AbstractEventLoop = None,
@@ -38,7 +38,6 @@ def setup(
     aiohttp_jinja2.setup(admin, loader=loader, app_key=app_key)
 
     template_name = template_name if template_name else "admin.html"
-    resources = resources if resources else tuple()
     admin_handler = AdminHandler(admin, resources=resources, name=name,
                                  template=template_name, loop=loop)
 
