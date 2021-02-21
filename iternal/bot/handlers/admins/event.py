@@ -54,7 +54,7 @@ async def admin_event_choice_no(call_back: types.CallbackQuery):
     await EventState.wait_for_image.set()
 
 
-@dp.message_handler(state=EventState.wait_for_image, content_types=ContentType.PHOTO)
+@dp.message_handler(state=EventState.wait_for_image, content_types=[ContentType.PHOTO, ContentType.TEXT])
 async def event_get_image(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь Напишите текст который там будет")
     link = msg.photo[0:len(msg.photo)]
@@ -65,9 +65,13 @@ async def event_get_image(msg: types.Message, state: FSMContext):
     await EventState.wait_for_text.set()
 
 
-@dp.message_handler(Text(["skip", "s", "/skip"]), state=EventState.wait_for_image, content_types=ContentType.TEXT)
+@dp.message_handler(
+    Text(["skip", "s", "/skip"]),
+    state=EventState.wait_for_image,
+    content_types=ContentType.TEXT
+)
 async def skip_photo_upload(msg: types.Message):
-    await msg.answer("Теперь Напишите текст который там будет")
+    await msg.answer("Теперь Напишите текст который там будет...")
     await EventState.wait_for_text.set()
 
 
@@ -95,6 +99,7 @@ async def write_text_file(msg: types.Message, state: FSMContext):
         inline_url = data.get("inline_reference", None)
 
     # creating inline text and etc.
+    # TL;DR oh no, so bad code ;(
     if inline_text and inline_url:
         to_show_inline = types.InlineKeyboardMarkup(inline_keyboard=[
             [

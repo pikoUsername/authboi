@@ -19,9 +19,11 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     # noinspection PyUnusedLocal
     async def on_process_message(self, message: types.Message, data: dict):
+        # hm, i may guess, that LoC should be a not so efficent
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:
+            # how it s work?
             limit = getattr(handler, 'throttling_rate_limit', self.rate_limit)
             key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
         else:
@@ -34,6 +36,9 @@ class ThrottlingMiddleware(BaseMiddleware):
             raise CancelHandler()
 
     async def message_throttled(self, message: types.Message, throttled: Throttled):
+        # idk how works in aiogram that,
+        # but i can guess, there
+        # have a query backup, and stores in dict variable.
         if throttled.exceeded_count <= 2:
             service_message = await message.reply('Слишком много Просите от Бота! ')
 
@@ -42,5 +47,5 @@ class ThrottlingMiddleware(BaseMiddleware):
             await message.delete()
         try:
             await message.delete()
-        except Exception:
+        except:
             pass

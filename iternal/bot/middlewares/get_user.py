@@ -6,8 +6,11 @@ from ..loader import db
 
 class GetUser(BaseMiddleware):
     async def get_user(self, data: dict, user: types.User):
+        # i know its bad practice, but its working
+        # and this bot not for production. :pog:
         user = await db.get_user(user.id)
 
+        # yes, i love it, aiogram and gman FOREVER.
         data["user"] = user
 
     async def on_pre_process_message(self, message: types.Message, data: dict):
