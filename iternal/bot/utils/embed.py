@@ -19,15 +19,27 @@ _AVAILABLE_TAGS = {
 }  # set, idk why do use it, but i think its efficent
 
 
+ohoh = lambda text: '"' + text + '"'  # yes, i know is bad, but i cant make more netter
+
+
 # note, tests in tests/bot/test_wrappers.py
-def wrap_text_html(text: str, pre_tag: str, **tags_attrubiutes) -> str:
+def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
     # i wont write available tags attribute,
-    assert pre_tag != _AVAILABLE_TAGS, "Telegram not support tag."
+    assert tag != _AVAILABLE_TAGS, "Telegram not supported tag."
 
-    attrs_tag = [f"{k}={v}" for k, v in tags_attrubiutes.items()] or ""
-    tag = f"{pre_tag} {attrs_tag}"
+    attrs_tag = [f"{k}={ohoh(v)}" for k, v in tags_attrubiutes.items()] or ""
 
-    return f"<{tag}>{text}</{tag}>".replace(" ", "")
+    pre_result = "<{tag} {attrs}>{text}</{tag}>"
+
+    if tags_attrubiutes:
+        pre_result.replace(" ", "")
+    result = pre_result.format(
+        tag=tag,
+        attrs=''.join(attrs_tag),
+        text=text,
+    )
+
+    return result
 
 
 def strong_text(text: str):
@@ -41,7 +53,7 @@ class Embed:
     Embed like discord, but more worse,
     maybe added pagination, for embed
     """
-    def __init__(self, title: str, value=None):
+    def __init__(self, title: str, value=tuple()):
         if not isinstance(value, list):
             self.value = "".join(str(v) for v in value)
         else:
@@ -107,8 +119,9 @@ class Field:
         self.embed = embed
 
     def get_embed(self) -> str:
+        _title = strong_text(self.title)
         text = (
-            f"\n\t<strong>{self.title}</strong>\n",
+            f"\n{_title}"
             f"\t{self.text}\n",
         )
         return "".join(text)

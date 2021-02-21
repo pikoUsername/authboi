@@ -6,7 +6,7 @@ def test_embed():
 
     e = Embed(title)
 
-    assert e.clean_embed == f"<h1>{title}</h1>"
+    assert e.clean_embed == f"<strong >{title}</strong>\n"
 
 
 def embed_paginator():
