@@ -90,7 +90,7 @@ class Field:
 
     def get_embed(self) -> str:
         text = (
-            f"\t<strong>{self.title}</strong>\n",
+            f"\n\t<strong>{self.title}</strong>\n",
             f"\t{self.text}\n",
         )
         return "".join(text)

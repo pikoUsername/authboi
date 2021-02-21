@@ -1,21 +1,20 @@
 from aiogram import types
 from aiogram.dispatcher.filters import CommandStart
-from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import EditMessageText, SendMessage
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
 from iternal.bot.loader import dp
 from iternal.bot.keyboards.inline.start import choice_kb
+from iternal.store.user import User
 
 
 @dp.message_handler(CommandStart())
-async def register_user(msg: types.Message):
+async def register_user(msg: types.Message, user: User):
     # here check to user exists
-    user = ctx_data.get()['user']
 
     if user:
-        return await msg.answer("Вы уже авторизованы как польветель!")
+        return SendMessage(msg.chat.id, "Вы уже авторизованы как польветель!")
 
     logger.info(f"Start register_user handler user_id: {msg.from_user.id}, chat_id: {msg.chat.id}")
     return SendMessage(msg.chat.id, "Выбирите:", reply_markup=choice_kb)

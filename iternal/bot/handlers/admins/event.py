@@ -123,10 +123,10 @@ async def send_all_event(msg: types.Message, state: FSMContext):
 
     try:
         await send_to_all_users(text, link, inline_kb)
-        await state.reset_data()
     except Exception as e:
         logger.error(e)
         await msg.answer("Ошибка невозможно прислать всем Пользветелям сообщение")
+    await state.finish()
 
 
 @dp.message_handler(Text(['N', 'n']), state=EventState.wait_for_accept)

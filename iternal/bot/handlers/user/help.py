@@ -36,18 +36,19 @@ async def bot_help(msg: types.Message):
         "/change_password - Смена пароля.",
         "/change_description - Смена описания.",
         "/change_name - Смена Имени профиля.",
-        "/change_email - Смена Эмейла профиля.",
+        "/change_email - Смена Эмейла профиля."
     ]
     if user.is_admin:
-        text.append(
+        text += [
             "/logs - Показать все логи.\n"
             "/remove_all_logs - Удалить все логи.\n"
             "/start_event - Создать Ивент.\n"
-            "/delete_user - Удалить Пользветеля\n"
-            "/set_admin - Улучшить Права Пользветеля\n"
-        )
+            "/delete_user - Удалить Пользветеля.\n"
+            "/set_admin - Улучшить Права Пользветеля.\n"
+            "/start_event - Создать Ивент, или отпарвить всем сообщение.\n"
+        ]
 
-    return SendMessage(msg.chat.id, "\n".join(str(v) for v in text))
+    return SendMessage(msg.chat.id, "\n".join(text))
 
 
 @dp.message_handler(commands="about")

@@ -8,14 +8,13 @@ from loguru import logger as log
 from ..loader import db, bot
 from iternal.store.user import User
 
+_DEFAULT_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_of_None.svg/1280px-Flag_of_None.svg.png"
+
 
 async def send_message(chat_id: int,
                        *args, **message_params) -> bool:
     try:
-        if message_params.get('photo'):
-            await bot.send_photo(chat_id, *args, **message_params)
-        else:
-            await bot.send_message(chat_id, *args, **message_params)
+        await bot.send_photo(chat_id, *args, **message_params)
     except exceptions.BotBlocked:
         log.error(f"Target [ID:{chat_id}]: blocked by user")
     except exceptions.ChatNotFound:
@@ -63,14 +62,13 @@ async def notify_all_admins(*args, **message_params):
     return result
 
 
-async def send_to_all_users(text: str, img_link: str = None, inline_kb: types.InlineKeyboardMarkup = None):
+async def send_to_all_users(
+    text: str,
+    img_link: str = None,
+    inline_kb: types.InlineKeyboardMarkup = None
+):
     # TODO - make more beatyful and more better, COMPLETED
     all_users = await db.get_all_users()
 
     for user in all_users:
-        # using modified aiogram
-        # there using instead of caption in send_photo:method uses just text attrubiut
-        # and this text firstly bacame a caption, and deletes
-        # bc aiogram uses **locals() for creating JSON response
-        # so its mt work, i need to test
-        await send_message(user.user_id, img_link, text=text, reply_markup=inline_kb)
+        await send_message(user.user_id, photo=img_link or _DEFAULT_IMG, text=text, reply_markup=inline_kb)
