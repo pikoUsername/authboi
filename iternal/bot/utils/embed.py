@@ -62,6 +62,19 @@ class Embed:
             field.clear()
 
 
+class EmbedPaginator(Embed):
+    def __init__(self, per_page: int = 5, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.per_page = per_page
+
+    def get_page(self, page: int):
+        return self.fields[page]
+
+    def has_perviuos_page(self):
+        pass  # todo embed paginator
+
+
 class Field:
     __slots__ = "text", "index", "embed", "title"
 
@@ -77,7 +90,7 @@ class Field:
 
     def get_embed(self) -> str:
         text = (
-            f"<h1>{self.title}</h1>\n"
-            f"{self.text}\n"
+            f"\t<strong>{self.title}</strong>\n",
+            f"\t{self.text}\n",
         )
         return "".join(text)
