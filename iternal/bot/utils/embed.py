@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import List
 
 from aiogram.types import ParseMode
 
@@ -8,7 +8,7 @@ __all__ = "Embed", "Field"
 
 
 class Embed:
-    __slots__ = "title", "value", "fields", "__fields_len"
+    __slots__ = "_title", "value", "fields", "__fields_len"
     """
     Embed like discord, but more worse,
     maybe added pagination, for embed
@@ -19,19 +19,25 @@ class Embed:
         else:
             self.value = value
 
-        self.title = "<h1>" + title + "</h1>"
-        self.fields: List[Field]
+        self._title = title
+        self.fields: List[Field] = []
         self.__fields_len = 0
 
     # properties
 
     @property
-    def to_dict(self) -> Dict[str, str]:
-        return {"": ""}  # todo dict, for json serialize
+    def title(self) -> str:
+        return "<strong>" + self._title + "</strong>"
 
     @property
     def clean_embed(self) -> str:
-        return ""  # todo clean embed, for send message
+        result = [self.title, self.value]
+
+        for r in self.fields:
+            res = r.get_embed()
+            result.append(res)
+
+        return "\n".join(result)
 
     # methods
 
@@ -44,7 +50,7 @@ class Embed:
 
     def create_field(self, *args, **kwargs) -> Field:
         if "index" in kwargs:
-            raise AttributeError("index attrubiute not available for free")
+            del kwargs['index']
 
         field = Field(*args, index=self.__fields_len, **kwargs)
         return field
@@ -68,3 +74,10 @@ class Field:
     def clear(self) -> None:
         del self.embed.fields[self.index]
         self.embed = None
+
+    def get_embed(self) -> str:
+        text = (
+            f"<h1>{self.title}</h1>\n"
+            f"{self.text}\n"
+        )
+        return "".join(text)

@@ -1,13 +1,12 @@
-from dataclasses import dataclass
-
 from aiogram.dispatcher.filters import BoundFilter
 from aiogram.dispatcher.handler import ctx_data
 
 
-@dataclass
 class IsAdminFilter(BoundFilter):
     key = "is_admin"
-    is_admin: bool
+
+    def __init__(self, is_admin: bool):
+        self.is_admin = is_admin
 
     async def check(self, _) -> bool:
         # get is_admin from user model
