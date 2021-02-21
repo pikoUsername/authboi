@@ -14,6 +14,6 @@ def init_app() -> web.Application:
 
     aiohttp_jinja2.setup(
         app, jinja2.FileSystemLoader(config.proj_path / "templates"))
-    admin.setup(app, 'admin') # todo working admin
+    admin.setup(app, 'admin')  # todo working admin
 
     return app

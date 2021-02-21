@@ -19,6 +19,9 @@ _AVAILABLE_TAGS = {
 }  # set, idk why do use it, but i think its efficent
 
 
+# just adds " for attrubiute
+# idk how to fix that
+# but it uses ONLY in "a" tag
 ohoh = lambda text: '"' + text + '"'  # yes, i know is bad, but i cant make more netter
 
 
@@ -55,9 +58,9 @@ class Embed:
     """
     def __init__(self, title: str, value=tuple()):
         if not isinstance(value, list):
-            self.value = "".join(str(v) for v in value)
-        else:
-            self.value = value
+            value = "".join(value)
+
+        self.value = value
 
         self._title = title
         self.fields: List[Field] = []
@@ -121,7 +124,7 @@ class Field:
     def get_embed(self) -> str:
         _title = strong_text(self.title)
         text = (
-            f"\n{_title}"
+            f"\n\t{_title}"
             f"\t{self.text}\n",
         )
         return "".join(text)

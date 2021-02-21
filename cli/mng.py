@@ -43,7 +43,7 @@ def webhook(skip_updates: bool):
 
 @cli.command()
 @click.option("--host", "-H", default="localhost", type=str, help="host for web application")
-@click.option("--port", "-p",default=8080, type=int, help="port whose chhosed for")
+@click.option("--port", "-p", default=8080, type=int, help="port whose chhosed for")
 def web(host: str, port: int):
     """
     Start Application

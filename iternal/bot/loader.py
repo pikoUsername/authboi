@@ -29,5 +29,6 @@ def setup():
     filters.setup(dp)
 
     logger.info("Configure Handlers...")
-    # nooooooooo, sky worker, why flake8 delete this line?
+    # oops not deletes
+    # something deletes this line
     import iternal.bot.handlers
