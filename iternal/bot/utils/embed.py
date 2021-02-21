@@ -4,7 +4,35 @@ from typing import List
 
 from aiogram.types import ParseMode
 
-__all__ = "Embed", "Field"
+__all__ = "Embed", "Field", "wrap_text_html", "strong_text"
+
+# represents Available HTML tags for telegram bot API
+_AVAILABLE_TAGS = {
+    "b",
+    "strong",
+    "i",
+    "em",
+    "strike",
+    "s",
+    "pre",
+    "a"
+}  # set, idk why do use it, but i think its efficent
+
+
+# note, tests in tests/bot/test_wrappers.py
+def wrap_text_html(text: str, pre_tag: str, **tags_attrubiutes) -> str:
+    # i wont write available tags attribute,
+    assert pre_tag != _AVAILABLE_TAGS, "Telegram not support tag."
+
+    attrs_tag = [f"{k}={v}" for k, v in tags_attrubiutes.items()] or ""
+    tag = f"{pre_tag} {attrs_tag}"
+
+    return f"<{tag}>{text}</{tag}>".replace(" ", "")
+
+
+def strong_text(text: str):
+    # just wrap text with <strong> </strong>
+    return wrap_text_html(text, "strong")
 
 
 class Embed:
@@ -27,7 +55,7 @@ class Embed:
 
     @property
     def title(self) -> str:
-        return "<strong>" + self._title + "</strong>"
+        return strong_text(self._title)
 
     @property
     def clean_embed(self) -> str:
@@ -44,22 +72,16 @@ class Embed:
     def add_field(self, title: str, text: str, *, parse_mode: str = "HTML") -> None:
         assert parse_mode in dir(ParseMode), "Not correct parse_mode"
 
-        field_to_add = self.create_field(embed=self, title=title, text=text)
+        field_to_add = self._create_field(embed=self, title=title, text=text)
         self.fields.append(field_to_add)
         self.__fields_len += 1
 
-    def create_field(self, *args, **kwargs) -> Field:
+    def _create_field(self, *args, **kwargs) -> Field:
         if "index" in kwargs:
             del kwargs['index']
 
         field = Field(*args, index=self.__fields_len, **kwargs)
         return field
-
-    # magic methods, __init__ not included
-
-    def __del__(self) -> None:
-        for field in self.fields:
-            field.clear()
 
 
 class EmbedPaginator(Embed):
@@ -83,10 +105,6 @@ class Field:
         self.text = text
         self.index = index
         self.embed = embed
-
-    def clear(self) -> None:
-        del self.embed.fields[self.index]
-        self.embed = None
 
     def get_embed(self) -> str:
         text = (
