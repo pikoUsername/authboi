@@ -8,7 +8,7 @@ def test_get_admin():
     asyncio.set_event_loop(loop)
     app = web.Application()
 
-    admin_app = admin.setup(app, "./chernobill", resources=tuple())
+    admin_app = admin.setup(app, "/chernobill", resources=tuple())
 
     result = admin.get_admin(app)
     assert admin_app is result, "admin_app must be same when get_admin method"
@@ -30,7 +30,7 @@ def test_get_admin_other_key():
     app = web.Application()
     app_key = "yoyoyo"
 
-    admin_app = admin.setup(app, "dsds", resources=tuple(), app_key=app_key)
+    admin_app = admin.setup(app, "/dsds", resources=tuple(), app_key=app_key)
 
     other = admin.get_admin(app, app_key=app_key)
 

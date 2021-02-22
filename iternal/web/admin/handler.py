@@ -11,7 +11,8 @@ from yarl import URL
 from typing import Union, Optional
 
 from .consts import APP_KEY, TEMPLATE_APP_KEY
-from .utils import validate_payload
+from .security import authorize
+from .utils import validate_payload, json_response, LoginForm
 from .exceptions import JsonValidationError
 
 __all__ = (
@@ -46,7 +47,7 @@ class AdminHandler:
         name: str = None,
         template: str = None
     ) -> None:
-        assert template.endswith(".html"), "Template Name should endswith .html"
+        assert template.endswith(".html") or template.endswith(".jinja2"), "Template Name should endswith .html"
 
         self._admin = admin
         self._loop = loop if loop else asyncio.get_event_loop()
@@ -89,11 +90,11 @@ class AdminHandler:
         context = {'name': self._name}
         return render_template(t, request, context, app_key=TEMPLATE_APP_KEY)
 
-    async def login_page(self, request):
+    async def login_page(self, request: web.Request):
         t = self._login_template
         return render_template(t, request, {}, app_key=TEMPLATE_APP_KEY)
 
-    async def token(self, request):
+    async def token(self, request: web.Request):
         raw_payload = await request.read()
         data = validate_payload(raw_payload, LoginForm)
         await authorize(request, data['username'], data['password'])
@@ -105,7 +106,7 @@ class AdminHandler:
         await remember(request, response, data['username'])
         return response
 
-    async def logout(self, request):
+    async def logout(self, request: web.Request):
         if "Authorization" not in request.headers:
             msg = "Auth header is not present, can not destroy token"
             raise JsonValidationError(msg)
@@ -121,9 +122,16 @@ def setup_admin_handlers(
     app: web.Application,
     handler: Optional[AdminHandler],
     static_folder: Union[str, Path],
-    prefix: Union[str, URL],
+    prefix: str = "/admin",
 ) -> None:
     logger.debug("setuping admin handlers...")
 
     add_route = app.router.add_route
-    add_route("GET", "", handler.index_page, name="admin.index")
+
+    add_route("GET", "/", handler.index_page, name=f"{APP_KEY}.index")
+
+    app.router.add_static(prefix, static_folder, name=f"{APP_KEY}.static")
+
+
+class AdminHandlerRest:
+    pass

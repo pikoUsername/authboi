@@ -1,9 +1,6 @@
 from __future__ import annotations
-import time
 
-from typing import List, TypeVar, Type
-
-from aiogram.types import ParseMode
+from typing import List, TypeVar, Type, Union
 
 __all__ = "Embed", "Field", "wrap_text_html", "strong_text"
 
@@ -32,12 +29,10 @@ def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
     # i wont write available tags attribute
     assert tag in _AVAILABLE_TAGS, "Telegram not supported tag."
 
-    attrs_tag = [f"{k}={ohoh(v)}" for k, v in tags_attrubiutes.items()] or ""
+    attrs_tag = [f"{k}={ohoh(v)}" if not isinstance(v, bool) else
+                 k for k, v in tags_attrubiutes.items()] or ""
 
     pre_result = "<{tag} {attrs}>{text}</{tag}>"
-
-    if not tags_attrubiutes:
-        pre_result.replace(" ", "")
 
     result = pre_result.format(
         tag=tag,
@@ -87,9 +82,7 @@ class Embed:
 
     # methods
 
-    def add_field(self, title: str, text: str, *, parse_mode: str = "HTML") -> None:
-        assert parse_mode in dir(ParseMode), "Not correct parse_mode"
-
+    def add_field(self, title: str, text: str) -> None:
         field_to_add = self._create_field(embed=self, title=title, text=text)
         self.fields.append(field_to_add)
         self.__fields_len += 1
@@ -127,9 +120,16 @@ class EmbedPaginator(Embed):
 class Field:
     __slots__ = "text", "index", "embed", "title"
 
-    def __init__(self, embed: Embed, title: str, text: str, index: int = 0):
+    def __init__(
+            self,
+            embed: Union[Embed, EmbedPaginator],
+            title: str,
+            text: str,
+            index: int = 0
+    ) -> None:
         self.title = title
         self.text = text
+        # for embed paginator
         self.index = index
         self.embed = embed
 

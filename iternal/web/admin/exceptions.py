@@ -29,7 +29,7 @@ class AdminRESTError(web.HTTPError):
         if not message:
             message = self.error
 
-        msg_dict = {"[error]": message}
+        msg_dict = {"error": message}
 
         if kwargs:
             msg_dict['error_details'] = kwargs
@@ -45,7 +45,7 @@ class ObjectNotFound(AdminRESTError):
 
 class JsonValidationError(AdminRESTError):
     status_code = 400
-    error = "validation error"
+    error = "Invalid json payload"
 
 
 class JsonForbiddenError(AdminRESTError):
