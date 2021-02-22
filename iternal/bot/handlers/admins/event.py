@@ -8,7 +8,7 @@ from loguru import logger
 from iternal.bot.loader import dp
 from iternal.bot.keyboards.inline import inline_choice_event
 from iternal.bot.states.user import InlineStates, EventState
-from iternal.bot.utils import send_to_all_users
+from iternal.bot.utils.spammer import send_to_all_users
 
 
 @dp.message_handler(

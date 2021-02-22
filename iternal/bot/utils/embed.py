@@ -1,4 +1,5 @@
 from __future__ import annotations
+import time
 
 from typing import List, TypeVar, Type
 
@@ -7,7 +8,7 @@ from aiogram.types import ParseMode
 __all__ = "Embed", "Field", "wrap_text_html", "strong_text"
 
 # represents Available HTML tags for telegram bot API
-_AVAILABLE_TAGS = {
+_AVAILABLE_TAGS = (
     "b",
     "strong",
     "i",
@@ -16,19 +17,20 @@ _AVAILABLE_TAGS = {
     "s",
     "pre",
     "a"
-}  # set, idk why do use it, but i think its efficent
+)  # set
 
 T = TypeVar("T")  # slut type
+
 # just adds " for attrubiute
 # idk how to fix that
-# but it uses ONLY in "a" tag
+# but it uses ONLY in "a" tag and with "href" attr
 ohoh = lambda text: '"' + text + '"'  # yes, i know is bad, but i cant make more netter
 
 
 # note, tests in tests/bot/test_wrappers.py
 def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
-    # i wont write available tags attribute,
-    assert tag != _AVAILABLE_TAGS, "Telegram not supported tag."
+    # i wont write available tags attribute
+    assert tag in _AVAILABLE_TAGS, "Telegram not supported tag."
 
     attrs_tag = [f"{k}={ohoh(v)}" for k, v in tags_attrubiutes.items()] or ""
 

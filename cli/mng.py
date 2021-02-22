@@ -18,7 +18,7 @@ def polling(skip_updates: bool):
     Start application in polling mode
     """
     from iternal.bot import loader
-    from iternal.bot.utils import runner
+    from iternal.bot.utils.executor import runner
 
     loader.setup()
     runner.skip_updates = skip_updates
@@ -33,7 +33,8 @@ def webhook(skip_updates: bool):
     """
     from iternal.bot import loader
     from iternal import config
-    from iternal.bot.utils import misc, runner
+    from iternal.bot.utils import misc
+    from iternal.bot.utils.executor import runner
 
     loader.setup()
     runner.skip_updates = skip_updates
@@ -67,7 +68,7 @@ def web(host: str, port: int):
 @click.argument("user_id", type=int)
 @click.option("--remove", "--rm", is_flag=True, default=False, help="Remove superuser rights")
 def add_admin(user_id: int, remove: bool):
-    from iternal.bot.utils import runner
+    from iternal.bot.utils.executor import runner
     from iternal.bot.loader import db
 
     try:
