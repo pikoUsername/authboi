@@ -49,7 +49,7 @@ def strong_text(text: str) -> str:
 
 
 class Embed:
-    __slots__ = "_title", "value", "fields", "__fields_len"
+    __slots__ = "_title", "value", "fields", "_fields_len"
     """
     Embed like discord, but more worse,
     maybe added pagination, for embed
@@ -62,7 +62,7 @@ class Embed:
 
         self._title = title
         self.fields: List[Field] = []
-        self.__fields_len = 0
+        self._fields_len = 0  # DONT TOUCH
 
     # properties
 
@@ -85,14 +85,23 @@ class Embed:
     def add_field(self, title: str, text: str) -> None:
         field_to_add = self._create_field(embed=self, title=title, text=text)
         self.fields.append(field_to_add)
-        self.__fields_len += 1
+        self._fields_len += 1
 
     def _create_field(self, *args, **kwargs) -> Field:
         if "index" in kwargs:
             del kwargs['index']
 
-        field = Field(*args, index=self.__fields_len, **kwargs)
+        field = Field(*args, index=self._fields_len, **kwargs)
         return field
+
+    def change_field(self, index: int, **kwargs):
+        f = self.fields[index]
+        f_dir = [a for a in f.__dir__() if not a.startswith("__")]
+        for k, v in kwargs.items():
+            if k in f_dir:
+                setattr(f, k, v)
+        self.fields[index] = f
+        return self.fields[index]
 
     @classmethod
     def from_dict(cls: Type[T], data: dict) -> T:
@@ -104,17 +113,62 @@ class Embed:
         return self
 
 
-class EmbedPaginator(Embed):
+class BasePaginator:
+    # base class for Memery Based Pagintors, and sql, and etc.
+    # and user storage too
+
+    __slots__ = ()
+
+    def has_pervious_page(self) -> bool:
+        raise NotImplementedError
+
+    def has_next_page(self) -> bool:
+        raise NotImplementedError
+
+    def next(self):
+        raise NotImplementedError
+
+    def pervious(self):
+        raise NotImplementedError
+
+
+class EmbedPaginator(Embed, BasePaginator):
+    """
+    Embed Paginator, fundament for TelegramEmbedPaginator.
+
+    Embed Paginator created like django paginator, but a it difference.
+    """
+    __slots__ = "_current_field", "per_field"
+
     def __init__(self, per_page: int = 5, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Embed, self).__init__(*args, **kwargs)
 
-        self.per_page = per_page
+        self._current_field = 0
+        self.per_field = per_page
 
-    def get_page(self, page: int):
-        return self.fields[page]
+    def get_field(self, page: int):
+        try:
+            return self.fields[page]
+        except IndexError as exc:
+            if self.fields:
+                if self.has_pervious_page():
+                    return self.get_field(page - 1)
+            raise exc
 
-    def has_perviuos_page(self):
-        pass  # todo embed paginator
+    def has_pervious_page(self):
+        return self._current_field > 1
+
+    def has_next_page(self):
+        return self._current_field <= self._fields_len
+
+    def next(self):
+        field = self.get_field(self._current_field + 1)
+        self._current_field += 1
+        return field
+
+    def pervious(self):
+        field = self.get_field(self._current_field - 1)
+        self._change_current_field(self._current_field - 1)
 
 
 class Field:
@@ -140,3 +194,6 @@ class Field:
             f"\t{self.text}\n",
         )
         return "".join(text)
+
+    def copy(self):
+        return self
