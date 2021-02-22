@@ -1,6 +1,8 @@
+import os
+
 from unittest.mock import Mock
 
-from iternal.bot.utils.embed import EmbedPaginator, Embed, Field
+from iternal.bot.utils.embed import EmbedFieldPaginator, Embed, Field
 
 
 def test_embed():
@@ -38,7 +40,10 @@ def test_field_creation():
     assert f.index == 0x1
 
 
-def embed_paginator():
-    e = EmbedPaginator()
+def test_embed_paginator():
+    e = EmbedFieldPaginator()
 
-    pass  # todo Embed paginator
+    for _ in range(100):
+        pr = os.urandom(20).hex()
+        e.add_field(pr, pr)
+        assert repr(e.next()) == f"\n\t{pr}\n{pr}\n"

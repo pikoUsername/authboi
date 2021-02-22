@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import List, TypeVar, Type, Union
 
+from gino.dialects.asyncpg import AsyncpgCursor
+
 __all__ = "Embed", "Field", "wrap_text_html", "strong_text"
 
 # represents Available HTML tags for telegram bot API
@@ -62,7 +64,7 @@ class Embed:
 
         self._title = title
         self.fields: List[Field] = []
-        self._fields_len = 0  # DONT TOUCH
+        self._fields_len = 0
 
     # properties
 
@@ -83,15 +85,17 @@ class Embed:
     # methods
 
     def add_field(self, title: str, text: str) -> None:
-        field_to_add = self._create_field(embed=self, title=title, text=text)
+        field_to_add = self._create_field(
+            index=self._fields_len,
+            embed=self,
+            title=title,
+            text=text
+        )
         self.fields.append(field_to_add)
         self._fields_len += 1
 
     def _create_field(self, *args, **kwargs) -> Field:
-        if "index" in kwargs:
-            del kwargs['index']
-
-        field = Field(*args, index=self._fields_len, **kwargs)
+        field = Field(*args, **kwargs)
         return field
 
     def change_field(self, index: int, **kwargs):
@@ -113,26 +117,7 @@ class Embed:
         return self
 
 
-class BasePaginator:
-    # base class for Memery Based Pagintors, and sql, and etc.
-    # and user storage too
-
-    __slots__ = ()
-
-    def has_pervious_page(self) -> bool:
-        raise NotImplementedError
-
-    def has_next_page(self) -> bool:
-        raise NotImplementedError
-
-    def next(self):
-        raise NotImplementedError
-
-    def pervious(self):
-        raise NotImplementedError
-
-
-class EmbedPaginator(Embed, BasePaginator):
+class EmbedFieldPaginator(Embed):
     """
     Embed Paginator, fundament for TelegramEmbedPaginator.
 
@@ -148,27 +133,31 @@ class EmbedPaginator(Embed, BasePaginator):
 
     def get_field(self, page: int):
         try:
-            return self.fields[page]
+            return self.fields[page:self.per_field]
         except IndexError as exc:
             if self.fields:
                 if self.has_pervious_page():
                     return self.get_field(page - 1)
             raise exc
 
-    def has_pervious_page(self):
+    def has_pervious_page(self) -> bool:
         return self._current_field > 1
 
-    def has_next_page(self):
+    def has_next_page(self) -> bool:
         return self._current_field <= self._fields_len
 
-    def next(self):
+    def next(self) -> Field:
         field = self.get_field(self._current_field + 1)
         self._current_field += 1
         return field
 
-    def pervious(self):
-        field = self.get_field(self._current_field - 1)
-        self._change_current_field(self._current_field - 1)
+    def pervious(self) -> Field:
+        if self._current_field < 1:
+            field = self.get_field(self._current_field - 1)
+            self._current_field -= 1
+        else:
+            field = self.get_field(self._current_field)
+        return field
 
 
 class Field:
@@ -176,7 +165,7 @@ class Field:
 
     def __init__(
             self,
-            embed: Union[Embed, EmbedPaginator],
+            embed: Union[Embed, EmbedFieldPaginator],
             title: str,
             text: str,
             index: int = 0
@@ -194,6 +183,9 @@ class Field:
             f"\t{self.text}\n",
         )
         return "".join(text)
+
+    def __repr__(self):
+        return self.get_embed()
 
     def copy(self):
         return self
