@@ -2,28 +2,22 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.utils.exceptions import MessageIsTooLong
-from aiogram.dispatcher.handler import ctx_data
 
+from iternal.bot.utils.embed import Embed
 from iternal.bot.loader import dp
-from iternal.bot.utils.throttling import rate_limit
+from iternal.store.user import User
 
 
 @dp.message_handler(Command("profile"), is_authed=True)
-@rate_limit(5, 'profile')
-async def get_user_profile(msg: types.Message):
-    data = ctx_data.get()
-    user = data["user"]
-    text = [
-        f"{user.description} - Описание",
-        f"Имя: {user.username}",
-        f"Email: {user.email}",
-        "пароль: не даем",
-    ]
+async def get_user_profile(msg: types.Message, user: User):
+    e = Embed("Профиль")
 
-    if user.is_admin:
-        text.append("Вы Админ.")
+    e.add_field("Имя", msg.from_user.last_name)
+    e.add_field("Описание", user.description)
+    e.add_field("Email", user.email)
+    e.add_field("Пароль", "nope")
 
     try:
-        return SendMessage(msg.chat.id, "\n".join(text))
+        return SendMessage(msg.chat.id, e.clean_embed)
     except MessageIsTooLong:
         return SendMessage(msg.chat.id, "Сообщение слишком Длинное, измените описание своего профиля")

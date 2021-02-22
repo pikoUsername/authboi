@@ -159,6 +159,10 @@ class EmbedFieldPaginator(Embed):
             field = self.get_field(self._current_field)
         return field
 
+    def __iter__(self):
+        if self.has_next_page():
+            return iter(self.next())
+
 
 class Field:
     __slots__ = "text", "index", "embed", "title"
@@ -179,13 +183,10 @@ class Field:
     def get_embed(self) -> str:
         _title = strong_text(self.title)
         text = (
-            f"\n\t{_title}"
-            f"\t{self.text}\n",
+            f"\t{_title}\n"
+            f"\t{self.text}",
         )
         return "".join(text)
 
-    def __repr__(self):
+    def __iter__(self):
         return self.get_embed()
-
-    def copy(self):
-        return self
