@@ -41,9 +41,11 @@ def test_field_creation():
 
 
 def test_embed_paginator():
-    e = EmbedFieldPaginator()
+    e = EmbedFieldPaginator(title="hahahaha")
 
-    for _ in range(100):
-        pr = os.urandom(20).hex()
-        e.add_field(pr, pr)
-        assert repr(e.next()) == f"\n\t{pr}\n{pr}\n"
+    pr = os.urandom(20).hex()
+    e.add_field(pr, pr)
+
+    # bad code, i understood
+    for f in e.fields:
+        assert f.get_embed() == f"\n\t<strong >{pr}</strong>\t{pr}\n"

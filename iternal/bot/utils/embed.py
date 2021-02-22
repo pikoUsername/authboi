@@ -126,7 +126,7 @@ class EmbedFieldPaginator(Embed):
     __slots__ = "_current_field", "per_field"
 
     def __init__(self, per_page: int = 5, *args, **kwargs):
-        super(Embed, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._current_field = 0
         self.per_field = per_page
