@@ -47,5 +47,5 @@ def test_embed_paginator():
     e.add_field(pr, pr)
 
     # bad code, i understood
-    for f in e.fields:
+    for f in e:
         assert f.get_embed() == f"\n\t<strong >{pr}</strong>\t{pr}\n"

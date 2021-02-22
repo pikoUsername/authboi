@@ -12,8 +12,8 @@ from iternal.store.user import User
 async def get_user_profile(msg: types.Message, user: User):
     e = Embed("Профиль")
 
-    e.add_field("Имя", msg.from_user.last_name)
-    e.add_field("Описание", user.description)
+    e.add_field("Имя", user.username)
+    e.add_field("Описание", user.description or "Без Описания")
     e.add_field("Email", user.email)
     e.add_field("Пароль", "nope")
 

@@ -60,7 +60,7 @@ class Embed:
         if not isinstance(value, list):
             value = "".join(value)
 
-        self.value = value
+        self.value = value if not value else f"{value}\n"
 
         self._title = title
         self.fields: List[Field] = []

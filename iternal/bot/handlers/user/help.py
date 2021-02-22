@@ -1,18 +1,15 @@
 from aiogram import types
 from aiogram.dispatcher.filters import CommandHelp
-from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 
 from iternal.bot.utils.throttling import rate_limit
 from iternal.bot.loader import dp
+from iternal.store.user import User
 
 
 @dp.message_handler(CommandHelp())
 @rate_limit(5, "help")
-async def bot_help(msg: types.Message):
-    data = ctx_data.get()
-    user = data['user']
-
+async def bot_help(msg: types.Message, user: User):
     if not user:
         text = [
             "Список команд: \n",
