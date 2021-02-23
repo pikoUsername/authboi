@@ -5,6 +5,8 @@ from aiogram.dispatcher.webhook import SendMessage
 from iternal.bot.utils.throttling import rate_limit
 from iternal.bot.loader import dp
 from iternal.store.user import User
+from iternal.bot.utils.embed import Embed
+from iternal.bot.utils.html import a
 
 
 @dp.message_handler(CommandHelp())
@@ -48,6 +50,11 @@ async def bot_help(msg: types.Message, user: User):
     return SendMessage(msg.chat.id, "\n".join(text))
 
 
-@dp.message_handler(commands="about")
+@dp.message_handler(commands=("about", "faq"))
 async def bot_about(msg: types.Message):
-    return SendMessage(msg.chat.id, '<a href="https://github.com/pikoUsername/authboi.git)">github</a>')
+    e = Embed("FAQ")
+
+    e.add_field("Исходники", a("Здесь", "https://github.com/pikoUsername"))
+    e.add_field("Про что", "Этот бот создан для хранения текста, и прочих напминалок.")
+
+    return SendMessage(msg.chat.id, e.clean_embed)

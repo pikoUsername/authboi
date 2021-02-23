@@ -18,8 +18,10 @@ db = DBCommands()
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
-help = HelpCommandEmbed(dp)
-help.setup()
+# expermintal
+# help = HelpCommandEmbed(dp)
+# help.setup_handlers_to_telegram()
+# help.setup()
 telegraph = Telegraph()
 
 

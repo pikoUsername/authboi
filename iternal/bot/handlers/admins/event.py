@@ -38,7 +38,7 @@ async def write_text_to_inline(msg: types.Message, state: FSMContext):
     await InlineStates.wait_for_reference.set()
 
 
-@dp.message_handler(state=InlineStates.wait_for_reference)
+@dp.message_handler(state=InlineStates.wait_for_reference, regexp="^(http|https)://")
 async def write_reference_inline(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь Пришлите Изображение,\n Вы можете просто Пропустить этап написав /skip.\n Отмена /cancel")
 

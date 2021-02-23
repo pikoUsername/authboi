@@ -14,7 +14,10 @@ _DEFAULT_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_o
 async def send_message(chat_id: int,
                        *args, **message_params) -> bool:
     try:
-        await bot.send_photo(chat_id, *args, **message_params)
+        if 'photo' in message_params:
+            await bot.send_photo(chat_id, *args, **message_params)
+        else:
+            await bot.send_message(chat_id, *args, **message_params)
     except exceptions.BotBlocked:
         log.error(f"Target [ID:{chat_id}]: blocked by user")
     except exceptions.ChatNotFound:
@@ -67,8 +70,8 @@ async def send_to_all_users(
     img_link: str = None,
     inline_kb: types.InlineKeyboardMarkup = None
 ):
-    # TODO - make more beatyful and more better, COMPLETED
     all_users = await db.get_all_users()
 
     for user in all_users:
-        await send_message(user.user_id, photo=img_link or _DEFAULT_IMG, text=text, reply_markup=inline_kb)
+        # DEFAULT_IMG using, bc telegram wont to see that
+        await send_message(user.user_id, photo=img_link or _DEFAULT_IMG, caption=text, reply_markup=inline_kb)

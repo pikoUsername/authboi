@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from aiogram import Dispatcher
-from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters import Command, StateFilter
 from aiogram.dispatcher.handler import Handler
 from aiogram import types
 from loguru import logger
@@ -34,20 +34,21 @@ class HelpCommandEmbed:
 
     def get_command_signature(self, handler_obj: Handler.HandlerObj) -> str:
         # filters is tuple
-        template = "{aliases} - {doc}"
-        if handler_obj.filters:
-            cmds = self.get_commands(handler_obj)
-        else:
-            return ""
+        cmds = self.get_commands(handler_obj)
+        if (not handler_obj.filters
+            and not handler_obj.filters
+            or StateFilter in handler_obj.filters
+        ):
+            return "N"
 
         # i hope it will work
         # {aliases} - {doc}
-        template.format(
+        result = "{aliases} - {doc}".format(
             aliases=" | ".join(cmd.commands for cmd in cmds),
             doc=handler_obj.handler.__doc__,
         )
 
-        return template
+        return result
 
     def add_handler_to_help(
         self,

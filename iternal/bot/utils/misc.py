@@ -2,18 +2,19 @@ from typing import Optional
 
 from aiogram import Dispatcher
 
+from iternal.bot.utils.embed import Embed
+
 
 def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
     pass_to_show = ["*" for _ in range(len(password))]
 
-    text = (
-        "Вы авторизованы как: ",
-        f"Имя: {login}",
-        f"email: {email}",
-        "Пароль: ",
-        "".join(pass_to_show),
-    )
-    return "\n".join(text)
+    e = Embed("Профиль: ")
+
+    e.add_field("Имя", login)
+    e.add_field("email", email)
+    e.add_field("Пароль", "".join(pass_to_show))
+
+    return e.clean_embed
 
 
 async def close_webhook(dp: Dispatcher):
