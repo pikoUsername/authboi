@@ -1,33 +1,41 @@
-from typing import List
+from typing import List, Union
 
-from aiogram.types import BotCommand, Message
 from aiogram import Dispatcher
+from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.handler import Handler
 from loguru import logger
 
 from iternal.bot.utils.embed import Embed
 
 
-class HelpCommandParser:
-    __slots__ = "commands", "embed"
+class HelpCommand:
+    __slots__ = "dp", "embed", "prefix", "suffix"
 
-    def __init__(self, commands: List[BotCommand]):
-        self.commands = commands
-        self.embed = Embed("Справка", "Справка для всех комманд, которые указаны. И доступны")
+    def __init__(self, prefix: str = "```", suffix: str = "```"):
+        self.embed = Embed("Справка")
+        self.dp = Dispatcher.get_current()
+        self.prefix = prefix
+        self.suffix = suffix
 
-    def add_command(self, command: str, description: str):
-        if not description.endswith("."):
-            description += "."
+    def get_command_signature(self, handler_obj: Handler.HandlerObj):
+        data: List[Command] = [
+            f for f in handler_obj.filters if isinstance(f, Command)]
 
-        return self.embed.add_field(command + " - ", description)
+        # {aliases} - {doc}
+        result = []
+        for d in data:
+            result.append(d)
 
-    def setup_all_commands(self) -> None:
-        for cmd in self.commands:
-            self.add_command(cmd.command, cmd.description)
+        return data
 
-    async def handler(self, m: Message, *_):
-        self.setup_all_commands()
-
-        return await m.answer(self.embed.clean_embed)
+    def add_handler(
+        self,
+        handler_obj: Handler.HandlerObj,
+    ):
+        self.embed.add_field(
+            "".join(self.get_command_signature(handler_obj)),
+            handler_obj.handler.__doc__ or "No Help Provided..."
+        )
 
     def setup(self, dp: Dispatcher) -> None:
         logger.debug("Setup help command.")
