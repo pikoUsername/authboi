@@ -4,7 +4,9 @@ from typing import List, TypeVar, Type, Union
 
 __all__ = "Embed", "Field"
 
-from iternal.bot.utils.html import strong_text
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+
+from iternal.bot.utils.html import strong
 
 T = TypeVar("T")  # slut type
 
@@ -29,7 +31,7 @@ class Embed:
 
     @property
     def title(self) -> str:
-        return strong_text(self._title)
+        return strong(self._title)
 
     @property
     def clean_embed(self) -> str:
@@ -123,6 +125,22 @@ class EmbedFieldPaginator(Embed):
             return iter(self.next())
 
 
+class TelegramEmbedPaginator(EmbedFieldPaginator):
+    __slots__ = "message", "_kb"
+    """
+    just edit message, for edit
+    """
+    default_kb = get_default_embed_kb
+
+    def __init__(self, message: Message, kb=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.message = message
+        self._kb = kb or self.default_kb(self.fields)
+
+    async def start(self) -> None:
+        m = self.message.answer()
+
+
 class Field:
     __slots__ = "text", "index", "embed", "title"
 
@@ -140,7 +158,7 @@ class Field:
         self.embed = embed
 
     def get_embed(self) -> str:
-        _title = strong_text(self.title)
+        _title = strong(self.title)
         text = (
             f"\t{_title}\n"
             f"\t{self.text}",
