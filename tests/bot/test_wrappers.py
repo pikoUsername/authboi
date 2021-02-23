@@ -1,6 +1,6 @@
 import time
 
-from iternal.bot.utils.embed import wrap_text_html
+from iternal.bot.utils.html import wrap_text_html
 
 
 def test_wrap_text_html():

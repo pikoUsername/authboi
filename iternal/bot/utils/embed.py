@@ -1,14 +1,35 @@
 from __future__ import annotations
 
-from typing import List, TypeVar, Type, Union
+from typing import List, TypeVar, Type, Union, Any
 
 __all__ = "Embed", "Field"
 
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram import Dispatcher
+from aiogram.types import (
+    Message,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    CallbackQuery
+)
+from aiogram.utils.callback_data import CallbackData
 
 from iternal.bot.utils.html import strong
 
 T = TypeVar("T")  # slut type
+
+
+class InvalidPage(Exception):
+    pass
+
+
+_DEFAULT_KB = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton("<<", callback_data="pervious_page"),
+        InlineKeyboardButton(">>", callback_data="next_page"),
+    ]
+], row_width=4)
+
+pagination_call = CallbackData("paginator", "key", "page")
 
 
 class Embed:
@@ -80,8 +101,6 @@ class Embed:
 
 class EmbedFieldPaginator(Embed):
     """
-    Embed Paginator, fundament for TelegramEmbedPaginator.
-
     Embed Paginator created like django paginator, but a it difference.
     """
     __slots__ = "_current_field", "per_field"
@@ -125,20 +144,119 @@ class EmbedFieldPaginator(Embed):
             return iter(self.next())
 
 
-class TelegramEmbedPaginator(EmbedFieldPaginator):
-    __slots__ = "message", "_kb"
-    """
-    just edit message, for edit
-    """
-    default_kb = get_default_embed_kb
+class Paginator:
+    __slots__ = ("page_list", "per_page", "current_page",
+                 "message", "_kb", "dp")
 
-    def __init__(self, message: Message, kb=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.message = message
-        self._kb = kb or self.default_kb(self.fields)
+    def __init__(self, object_list: List[Any], per_page: int = 1, kb=None, dp=None):
+        self.page_list = object_list
+        self.per_page = int(per_page)
+        self.current_page = 0
+        self._kb: InlineKeyboardMarkup = kb or _DEFAULT_KB
+        self.dp = dp or Dispatcher.get_current()
 
-    async def start(self) -> None:
-        m = self.message.answer()
+    @property
+    def page_range(self) -> range:
+        return range(0, len(self.page_list))
+
+    def page(self, page: int) -> Union[Any, List[Any]]:
+        if page > self.num_pages:
+            return ""
+        if self.per_page == 1:
+            return self.page_list[page]
+        else:
+            base = page * self.per_page
+            return self.page_list[base:base + self.per_page]
+
+    def page_number(self):
+        return len(self.page_list)
+
+    def next(self):
+        self.current_page += 1
+        return self.page(self.current_page)
+
+    def pervious(self):
+        self.current_page -= 1
+        return self.page(self.current_page)
+
+    @property
+    def num_pages(self):
+        return len(self.page_list)
+
+    def has_next(self):
+        return self.current_page <= self.num_pages
+
+    def has_previous(self):
+        return self.current_page > 1
+
+    def has_other_pages(self):
+        return self.has_previous() or self.has_next()
+
+    def next_page_number(self):
+        return self.current_page + 1
+
+    def previous_page_number(self):
+        return self.current_page - 1
+
+    async def start(self, m: Message = None):
+        if self.message and m is None:
+            raise TypeError("Message and arguemnt 'm' is None")
+
+        if m is not None:
+            self.message = m
+
+        self.dp.register_callback_query_handler(
+            self.page_kb_handler, state="*")
+        await self.show_page(self.current_page)
+
+    async def show_page(self, page: int):
+        page = self.page(page)
+        if self.message.from_user.is_bot:
+            return await self.message.edit_text(page, reply_markup=self._kb)
+        else:
+            self.message = await self.message.answer(page, reply_markup=self._kb)
+
+    def get_page_keyboard(max_pages: int, key="book", page: int = 1):
+        # Клавиатура будет выглядеть вот так:
+        # |<< | <5> | >>|
+
+        previous_page = page - 1
+        previous_page_text = "<< "
+
+        current_page_text = f"<{page}>"
+
+        next_page = page + 1
+        next_page_text = " >>"
+
+        markup = InlineKeyboardMarkup()
+        if previous_page > 0:
+            markup.insert(
+                InlineKeyboardButton(
+                    text=previous_page_text,
+                    callback_data=pagination_call.new(key=key, page=previous_page)
+                )
+            )
+
+        markup.insert(
+            InlineKeyboardButton(
+                text=current_page_text,
+                callback_data=pagination_call.new(key=key, page="current_page")
+            )
+        )
+
+        if next_page < max_pages:
+            markup.insert(
+                InlineKeyboardButton(
+                    text=next_page_text,
+                    callback_data=pagination_call.new(key=key, page=next_page)
+                )
+            )
+
+        return markup
+
+    async def page_kb_handler(self, query: CallbackQuery, cd: dict):
+        page = int(cd.get("page"))
+        await query.message.edit_text()
 
 
 class Field:
@@ -160,7 +278,23 @@ class Field:
     def get_embed(self) -> str:
         _title = strong(self.title)
         text = (
-            f"\t{_title}\n"
-            f"\t{self.text}",
+            f"{_title}\n"
+            f"{self.text}",
         )
         return "".join(text)
+
+    @classmethod
+    def from_dict(cls, **kwargs: Any) -> T:
+        a = cls.__new__(cls)
+
+        d = [elem for elem in dir(a)
+             if not elem.startswith("__") and not callable(elem)]
+
+        for k, v in kwargs.items():
+            if k in d:
+                setattr(a, k, v)
+
+        return a
+
+    __str__ = get_embed
+    __repr__ = get_embed
