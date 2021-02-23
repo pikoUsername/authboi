@@ -5,6 +5,7 @@ from loguru import logger
 
 from iternal import config
 from iternal.store.api import DBCommands
+from iternal.bot.utils.help import HelpCommandEmbed
 
 __all__ = (
     "db",
@@ -17,6 +18,8 @@ db = DBCommands()
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
+help = HelpCommandEmbed(dp)
+help.setup()
 telegraph = Telegraph()
 
 

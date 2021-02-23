@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import List, TypeVar, Type, Union
 
-from gino.dialects.asyncpg import AsyncpgCursor
-
 __all__ = "Embed", "Field", "wrap_text_html", "strong_text"
 
 # represents Available HTML tags for telegram bot API
@@ -15,7 +13,8 @@ _AVAILABLE_TAGS = (
     "strike",
     "s",
     "pre",
-    "a"
+    "a",
+    "code"
 )  # set
 
 T = TypeVar("T")  # slut type
@@ -31,16 +30,9 @@ def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
     # i wont write available tags attribute
     assert tag in _AVAILABLE_TAGS, "Telegram not supported tag."
 
-    attrs_tag = [f"{k}={ohoh(v)}" if not isinstance(v, bool) else
-                 k for k, v in tags_attrubiutes.items()] or ""
+    attrs_tag = [f"{k}={ohoh(v)}" for k, v in tags_attrubiutes.items()] or ""
 
-    pre_result = "<{tag} {attrs}>{text}</{tag}>"
-
-    result = pre_result.format(
-        tag=tag,
-        attrs=''.join(attrs_tag),
-        text=text,
-    )
+    result = f"<{tag} {''.join(attrs_tag)}>{text}</{tag}>"
 
     return result
 
@@ -168,11 +160,11 @@ class Field:
     __slots__ = "text", "index", "embed", "title"
 
     def __init__(
-            self,
-            embed: Union[Embed, EmbedFieldPaginator],
-            title: str,
-            text: str,
-            index: int = 0
+        self,
+        embed: Union[Embed, EmbedFieldPaginator],
+        title: str,
+        text: str,
+        index: int = 0
     ) -> None:
         self.title = title
         self.text = text
@@ -187,6 +179,3 @@ class Field:
             f"\t{self.text}",
         )
         return "".join(text)
-
-    def __iter__(self):
-        return self.get_embed()

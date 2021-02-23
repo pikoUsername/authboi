@@ -3,7 +3,7 @@ from . import (
     password,
     description,
     email,
-    help,
+    # help,
     name,
     profile,
     start,
@@ -11,5 +11,5 @@ from . import (
     exit,
 )
 
-__all__ = ("auth", "password", "description", "email", "help",
+__all__ = ("auth", "password", "description", "email", # "help",
            "name", "profile", "start", "what_can", "exit")
