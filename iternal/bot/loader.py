@@ -5,7 +5,7 @@ from loguru import logger
 
 from iternal import config
 from iternal.store.api import DBCommands
-from iternal.bot.utils.help import HelpCommandEmbed
+# from iternal.bot.utils.help import HelpCommandEmbed
 
 __all__ = (
     "db",

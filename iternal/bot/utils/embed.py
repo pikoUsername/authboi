@@ -148,11 +148,10 @@ class Paginator:
     __slots__ = ("page_list", "per_page", "current_page",
                  "message", "_kb", "dp")
 
-    def __init__(self, object_list: List[Any], per_page: int = 1, kb=None, dp=None):
+    def __init__(self, object_list: List[Any], per_page: int = 1, dp=None):
         self.page_list = object_list
         self.per_page = int(per_page)
         self.current_page = 0
-        self._kb: InlineKeyboardMarkup = kb or _DEFAULT_KB
         self.dp = dp or Dispatcher.get_current()
 
     @property
@@ -166,7 +165,10 @@ class Paginator:
             return self.page_list[page]
         else:
             base = page * self.per_page
-            return self.page_list[base:base + self.per_page]
+            try:
+                return self.page_list[base:base + self.per_page]
+            except IndexError:
+                pass
 
     def page_number(self):
         return len(self.page_list)
@@ -207,16 +209,9 @@ class Paginator:
 
         self.dp.register_callback_query_handler(
             self.page_kb_handler, state="*")
-        await self.show_page(self.current_page)
 
-    async def show_page(self, page: int):
-        page = self.page(page)
-        if self.message.from_user.is_bot:
-            return await self.message.edit_text(page, reply_markup=self._kb)
-        else:
-            self.message = await self.message.answer(page, reply_markup=self._kb)
-
-    def get_page_keyboard(max_pages: int, key="book", page: int = 1):
+    @staticmethod
+    def get_page_keyboard(max_pages: int, key="example", page: int = 1):
         # Клавиатура будет выглядеть вот так:
         # |<< | <5> | >>|
 
@@ -256,7 +251,8 @@ class Paginator:
 
     async def page_kb_handler(self, query: CallbackQuery, cd: dict):
         page = int(cd.get("page"))
-        await query.message.edit_text()
+        kb = self.get_page_keyboard(self.num_pages, cd.get("key"), page)
+        await query.message.edit_text(self.page(page), reply_markup=kb)
 
 
 class Field:
@@ -277,11 +273,7 @@ class Field:
 
     def get_embed(self) -> str:
         _title = strong(self.title)
-        text = (
-            f"{_title}\n"
-            f"{self.text}",
-        )
-        return "".join(text)
+        return f"{_title}\n{self.text}"
 
     @classmethod
     def from_dict(cls, **kwargs: Any) -> T:
