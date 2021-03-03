@@ -80,7 +80,7 @@ class HelpCommandEmbed:
         desc: str = None
     ) -> Optional[types.BotCommand]:
         if alias is None:
-            return
+            return None
         if desc is None:
             desc = "No Help provided..."
 

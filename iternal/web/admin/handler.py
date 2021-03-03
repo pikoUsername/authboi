@@ -47,7 +47,8 @@ class AdminHandler:
         name: str = None,
         template: str = None
     ) -> None:
-        assert template.endswith(".html") or template.endswith(".jinja2"), "Template Name should endswith .html"
+        if template is not None:
+            assert template.endswith(".html") or template.endswith(".jinja2"), "Template Name should endswith .html or .jinja2"
 
         self._admin = admin
         self._loop = loop if loop else asyncio.get_event_loop()
@@ -96,7 +97,7 @@ class AdminHandler:
 
     async def token(self, request: web.Request):
         raw_payload = await request.read()
-        data = validate_payload(raw_payload, LoginForm)
+        data: dict = validate_payload(raw_payload, LoginForm)
         await authorize(request, data['username'], data['password'])
 
         router = request.app.router
@@ -121,7 +122,7 @@ class AdminHandler:
 def setup_admin_handlers(
     app: web.Application,
     handler: Optional[AdminHandler],
-    static_folder: Union[str, Path],
+    static_folder: Union[str, Optional[Path]],
     prefix: str = "/admin",
 ) -> None:
     logger.debug("setuping admin handlers...")

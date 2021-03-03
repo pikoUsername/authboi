@@ -10,7 +10,7 @@ venv/*
 # logs
 logs/
 authboi/
-
+.mypy_cache/
 
 # pycahce
 */__pycache__/

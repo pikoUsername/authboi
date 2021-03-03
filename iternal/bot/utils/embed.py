@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, TypeVar, Type, Union, Any
+from typing import List, TypeVar, Type, Union, Any, Optional
 
 __all__ = "Embed", "Field"
 
@@ -158,7 +158,7 @@ class Paginator:
     def page_range(self) -> range:
         return range(0, len(self.page_list))
 
-    def page(self, page: int) -> Union[Any, List[Any]]:
+    def page(self, page: int) -> Optional[Union[Any, List[Any]]]:
         if page > self.num_pages:
             return ""
         if self.per_page == 1:
@@ -168,7 +168,7 @@ class Paginator:
             try:
                 return self.page_list[base:base + self.per_page]
             except IndexError:
-                pass
+                return None
 
     def page_number(self):
         return len(self.page_list)

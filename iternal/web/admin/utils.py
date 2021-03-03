@@ -34,7 +34,7 @@ LoginForm = t.Dict({
 
 def gather_template_folders(
         template_path: Union[Path, List[Path]]
-) -> Union[List[Path], Path]:
+) -> List[str]:
     if not isinstance(template_path, list):
         template_path = [template_path]
     template_root = str(TEMPLATES_ROOT)

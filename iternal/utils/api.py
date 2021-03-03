@@ -44,7 +44,7 @@ class GithubWrap:
         )
 
     @property
-    def loop(self) -> asyncio.AbstractEventLoop:
+    def loop(self) -> Optional[asyncio.AbstractEventLoop]:
         if self.loop is None:
             self._loop = asyncio.get_event_loop()
         return self._loop
