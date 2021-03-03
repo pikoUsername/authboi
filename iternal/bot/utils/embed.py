@@ -200,7 +200,7 @@ class Paginator:
     def previous_page_number(self):
         return self.current_page - 1
 
-    async def start(self, m: Message = None):
+    async def start(self, m: Optional[Message] = None):
         if self.message and m is None:
             raise TypeError("Message and arguemnt 'm' is None")
 

@@ -121,17 +121,19 @@ class AdminHandler:
 
 def setup_admin_handlers(
     app: web.Application,
-    handler: Optional[AdminHandler],
+    handler: AdminHandler,
     static_folder: Union[str, Optional[Path]],
-    prefix: str = "/admin",
+    prefix: str = None,
 ) -> None:
+    if prefix is None:
+        prefix = '/admin'
+
     logger.debug("setuping admin handlers...")
 
     add_route = app.router.add_route
 
-    add_route("GET", "/", handler.index_page, name=f"{APP_KEY}.index")
-
-    app.router.add_static(prefix, static_folder, name=f"{APP_KEY}.static")
+    add_route("GET", "/", handler.index_page, name=f"admin.index")
+    app.router.add_static(prefix, static_folder, name=f"admin.static")
 
 
 class AdminHandlerRest:
