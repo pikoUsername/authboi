@@ -11,7 +11,10 @@ from iternal.bot.states.user.cng_email import ChangeEmail
 @dp.message_handler(commands="change_email", is_authed=True, state="*")
 async def start_change_email(msg: types.Message):
     await ChangeEmail.wait_to_email.set()
-    return SendMessage(msg.chat.id, "Хорошо, Введите Емейл на который вы хотите сменить.")
+    async with SendMessage() as mes:
+        # yes, its working, lol
+        mes.text = "Хорошо, Введите Емейл на который вы хотите сменить."
+        mes.chat_id = msg.chat.id
 
 
 @dp.message_handler(state=ChangeEmail.wait_to_email, content_types=ContentType.TEXT)
@@ -22,8 +25,7 @@ async def change_email_input(msg: types.Message, state: FSMContext):
     if '@' not in msg.text:
         return SendMessage(msg.chat.id, "Некорректный эмейл, не содержится знака '@' в эмейле.")
 
-    async with state.proxy() as data:
-        data["email"] = msg.text
+    await state.update_data(email=msg.text)
 
     await ChangeEmail.wait_to_accept.set()
     return SendMessage(msg.chat.id, "Теперь вы Уверены в этом? Y/N")

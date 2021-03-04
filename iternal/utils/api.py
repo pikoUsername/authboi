@@ -1,7 +1,6 @@
 import asyncio
 from typing import Optional
 
-import aiogram
 import aiohttp
 from loguru import logger
 
@@ -15,12 +14,13 @@ __all__ = "github_api",
 DEFAULT_FILTER = ['self', 'cls']
 
 
-def compose_data(params: dict = None, files=None):
+def compose_data(params: dict = None):
     data = aiohttp.FormData(quote_fields=False)
 
     if params is not None:
         for k, v in params.items():
             data.add_field(k, str(v))
+    return data
 
 
 async def make_request(
