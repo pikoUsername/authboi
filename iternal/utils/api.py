@@ -1,6 +1,7 @@
 import asyncio
 from typing import Optional
 
+import aiogram
 import aiohttp
 from loguru import logger
 
@@ -10,6 +11,16 @@ except ImportError:
     import json
 
 __all__ = "github_api",
+
+DEFAULT_FILTER = ['self', 'cls']
+
+
+def compose_data(params: dict = None, files=None):
+    data = aiohttp.FormData(quote_fields=False)
+
+    if params is not None:
+        for k, v in params.items():
+            data.add_field(k, str(v))
 
 
 async def make_request(
@@ -23,6 +34,7 @@ async def make_request(
     logger.debug(f"Making Request: method: {method}, with data: {data}")
 
     url = "https://api.github.com/{method}"
+    data = compose_data(data)
 
     async with session.request(
             method_http,
@@ -31,6 +43,25 @@ async def make_request(
             **kwargs
     ) as r:
         return await r.json()
+
+
+def generate_payload(exclude: list = None, **kwargs):
+    """
+    Generate payload
+
+    Usage: payload = generate_payload(**locals(), exclude=['foo'])
+
+    :param exclude:
+    :param kwargs:
+    :return: dict
+    """
+    if exclude is None:
+        exclude = []
+
+    return {k: v for k, v in kwargs.items() if
+            k not in exclude + DEFAULT_FILTER
+            and v is not None
+            and not k.startswith('_') or not k.startswith("__")}
 
 
 class GithubWrap:
@@ -78,21 +109,42 @@ class GithubWrap:
         """
         return await make_request(self.session, http_method, method, data, **kwargs)
 
-    async def read_commits(self, owner: str, repo: str):
+    async def read_commits(self, owner: str, repo: str, **kwargs):
         """
         Get Commits from github repo
 
         Can overhead, if commits dict huge.
         """
-        return await self.send_request("GET", "/repos/{owner}/{repo}", dict(), owner=owner, repo=repo)
+        return await self.send_request(
+            "GET",
+            "/repos/{owner}/{repo}",
+            dict(**kwargs),
+            owner=owner,
+            repo=repo
+        )
 
-    async def read_comments_commit(self, owner: str, repo: str, commit_sha: str):
+    async def read_comments_commit(self, owner: str, repo: str, commit_sha: str, **kwargs):
         """
         Gets comments for commit
         """
+        data = generate_payload(**locals(), exclude=['owner', 'repo', 'commit_sha'])
+
         return await self.send_request(
             "GET", "/repos/{owner}/{repo}/{commit_sha}/comments",
-            dict(), repo=repo, owner=owner, commit_sha=commit_sha
+            data=data,
+            repo=repo,
+            owner=owner,
+            commit_sha=commit_sha
+        )
+
+    async def issue(self, owner: str, repo: str, **kwargs):
+        data = generate_payload(**locals(), exclude=['owner', 'repo'])
+        return await self.send_request(
+            "GET",
+            "/repos/{owner}/{repo}/issue",
+            data=data,
+            owner=owner,
+            repo=repo
         )
 
 
