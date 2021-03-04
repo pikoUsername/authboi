@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher.webhook import EditMessageText
 
 from iternal.bot.loader import dp
-from iternal.bot.keyboards.inline.start import choice_kb
+from iternal.bot.keyboards.inline.start import get_choice_kb
 
 
 @dp.callback_query_handler(text="what_can", state="*")
@@ -24,11 +24,19 @@ async def bot_what_can(call_back: types.CallbackQuery):
     ]
     bot_desc_kb = types.InlineKeyboardMarkup(inline_keyboard=bot_desc)
 
-    return EditMessageText('\n'.join(text), call_back.message.chat.id,
-                           reply_markup=bot_desc_kb, message_id=call_back.message.message_id)
+    return EditMessageText(
+        text='\n'.join(text),
+        chat_id=call_back.message.chat.id,
+        reply_markup=bot_desc_kb,
+        message_id=call_back.message.message_id
+    )
 
 
 @dp.callback_query_handler(text="back_to_reg_menu", state="*")
 async def back_to_reg_menu(call_back: types.CallbackQuery):
-    return EditMessageText("Выбирите: ", call_back.message.chat.id,
-                           message_id=call_back.message.message_id, reply_markup=choice_kb)
+    return EditMessageText(
+        text="Выбирите: ",
+        chat_id=call_back.message.chat.id,
+        message_id=call_back.message.message_id,
+        reply_markup=get_choice_kb()
+    )

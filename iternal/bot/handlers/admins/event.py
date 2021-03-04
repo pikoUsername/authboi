@@ -6,9 +6,11 @@ from aiogram.utils.exceptions import BadRequest
 from loguru import logger
 
 from iternal.bot.loader import dp
-from iternal.bot.keyboards.inline import inline_choice_event
+from iternal.bot.keyboards.inline import get_event_kb
 from iternal.bot.states.user import InlineStates, EventState
 from iternal.bot.utils.spammer import send_to_all_users
+from iternal.bot.utils.consts import DEFAULT_IMG
+from iternal.bot.utils.html import code
 
 
 @dp.message_handler(
@@ -18,7 +20,7 @@ from iternal.bot.utils.spammer import send_to_all_users
     is_admin=True, state="*"
 )
 async def start_event(msg: types.Message):
-    await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=inline_choice_event)
+    await msg.answer("Укажите Будет ли там Инлайн Кнопка?", reply_markup=get_event_kb())
     logger.info(f"Admin start create event, user_id {msg.from_user.id}")
     await EventState.wait_for_inline.set()
 
@@ -123,14 +125,16 @@ async def write_text_file(msg: types.Message, state: FSMContext):
 async def send_all_event(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         inline_kb = data.get("inline_kb", None)
-        link = data.get("link", None)
-        text = data.get("text", None)
+        link = data.get("link", DEFAULT_IMG)
+        text = data.get("text", "Нечего")
 
     try:
         await send_to_all_users(text, link, inline_kb)
-    except Exception as e:
-        logger.error(e)
-        await msg.answer("Ошибка невозможно прислать всем Пользветелям сообщение")
+    except Exception as exc:
+        logger.error(exc)
+        await msg.answer("Ошибка невозможно прислать всем Пользветелям сообщение, "
+                         f"Ошибка: {code(str(exc))}")
+
     await state.finish()
 
 

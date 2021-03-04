@@ -34,7 +34,7 @@ def a(text: str, url: str) -> str:
     return wrap_text_html(text, "a", href=url)
 
 
-def code(s: str, lang: str) -> str:
+def code(s: str, lang: str = None) -> str:
     return wrap_text_html(s, "code", lang=lang)
 
 

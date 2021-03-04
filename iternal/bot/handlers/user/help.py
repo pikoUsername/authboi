@@ -9,7 +9,7 @@ from iternal.bot.utils.embed import Embed
 from iternal.bot.utils.html import a
 
 
-@dp.message_handler(CommandHelp())
+@dp.message_handler(CommandHelp(), state="*")
 @rate_limit(5, "help")
 async def bot_help(msg: types.Message, user: User):
     if not user:

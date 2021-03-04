@@ -36,4 +36,4 @@ def setup():
     logger.info("Configure Handlers...")
     # oops not deletes
     # something deletes this line
-    import iternal.bot.handlers
+    from iternal.bot import handlers

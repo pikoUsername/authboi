@@ -1,11 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import ContentType
 
 from iternal.bot.loader import dp
 from iternal.bot.states.user.cng_email import ChangeEmail
+from iternal.store.user import User
 
 
 @dp.message_handler(commands="change_email", is_authed=True, state="*")
@@ -32,12 +32,10 @@ async def change_email_input(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=ChangeEmail.wait_to_accept)
-async def accept_change_email(msg: types.Message, state: FSMContext):
-    data = ctx_data.get()
-    user = data["user"]
-
+async def accept_change_email(msg: types.Message, state: FSMContext, user: User):
     async with state.proxy() as data:
         email = data["email"]
+
     try:
         await user.update(email=email).apply()
     except TypeError:

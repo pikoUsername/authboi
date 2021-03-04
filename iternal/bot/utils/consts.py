@@ -6,3 +6,5 @@ _BOT_COMMANDS = [
     BotCommand("help", "Справка")
 ]
 
+
+DEFAULT_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_of_None.svg/1280px-Flag_of_None.svg.png"

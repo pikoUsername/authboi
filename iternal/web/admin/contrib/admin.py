@@ -1,6 +1,6 @@
 try:
     import ujson as json
-except:
+except ImportError:
     import json
 from .models import ModelAdmin
 

@@ -1,13 +1,13 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text, Command
-from aiogram.dispatcher.handler import ctx_data
 from aiogram.dispatcher.webhook import SendMessage, DeleteMessage
 from aiogram.types import ContentType
 from loguru import logger
 
 from iternal.bot.states.user.exit import Exit
 from iternal.bot.loader import dp
+from iternal.store.user import User
 
 
 @dp.message_handler(Command("remove"), is_authed=True)
@@ -18,9 +18,7 @@ async def remove_user(msg: types.Message):
 
 
 @dp.message_handler(state=Exit.wait_to_password, content_types=ContentType.TEXT)
-async def user_pass_verify(msg: types.Message, state: FSMContext):
-    user = ctx_data.get()['user']
-
+async def user_pass_verify(msg: types.Message, state: FSMContext, user: User):
     if user.password != msg.text:
         return SendMessage(msg.chat.id, "Не правльный пароль\n отмена /cancel")
     logger.info("user verified password")
@@ -33,9 +31,8 @@ async def user_pass_verify(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=Exit.wait_to_accept)
-async def remove_user_fully(msg: types.Message, state: FSMContext):
+async def remove_user_fully(msg: types.Message, state: FSMContext, user: User):
     try:
-        user = ctx_data.get()['user']
         await user.delete()
         logger.info(f"user: {msg.from_user.username} account was removed")
         await msg.delete()

@@ -48,7 +48,7 @@ class AdminHandler:
         template: str = None
     ) -> None:
         if template is not None:
-            assert template.endswith(".html") or template.endswith(".jinja2"), "Template Name should endswith .html or .jinja2"
+            assert template.endswith(".html") or template.endswith(".jinja2")
 
         self._admin = admin
         self._loop = loop if loop else asyncio.get_event_loop()
@@ -132,8 +132,8 @@ def setup_admin_handlers(
 
     add_route = app.router.add_route
 
-    add_route("GET", "/", handler.index_page, name=f"admin.index")
-    app.router.add_static(prefix, static_folder, name=f"admin.static")
+    add_route("GET", "/", handler.index_page, name="admin.index")
+    app.router.add_static(prefix, static_folder, name="admin.static")
 
 
 class AdminHandlerRest:

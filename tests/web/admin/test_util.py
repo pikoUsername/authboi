@@ -12,7 +12,7 @@ def test_validate_payload():
     auth_form_text = b'{"username": "i m the sickest","password": "ducking_port"}'
     test_form = t.Dict({"username": t.String, "password": t.String})
     result = validate_payload(auth_form_text, test_form)
-    assert result == {"username": "i m the sickest","password": "ducking_port"}
+    assert result == {"username": "i m the sickest", "password": "ducking_port"}
 
 
 def test_jsonify():

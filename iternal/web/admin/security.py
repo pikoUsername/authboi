@@ -110,7 +110,7 @@ class DummyTokenIdentityPolicy(AbstractIdentityPolicy):
             identity, **kwargs
     ) -> None:
         # save token in storage and reply to client
-        response.headers['X-Token'] = identity+':'+self._make_hmac(identity)
+        response.headers['X-Token'] = identity + ':' + self._make_hmac(identity)
 
     async def forget(self, request: web.Request, response):
         token = request.headers.get("Authorization")

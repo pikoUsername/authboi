@@ -21,4 +21,4 @@ __all__ = (
 
 
 def get_state(key: str):
-    return locals()[key]
+    return globals()[key]

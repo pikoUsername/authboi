@@ -61,7 +61,8 @@ def generate_payload(exclude: list = None, **kwargs):
     return {k: v for k, v in kwargs.items() if
             k not in exclude + DEFAULT_FILTER
             and v is not None
-            and not k.startswith('_') or not k.startswith("__")}
+            and not k.startswith('_')
+            or not k.startswith("__")}
 
 
 class GithubWrap:

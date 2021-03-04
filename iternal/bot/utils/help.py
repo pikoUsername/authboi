@@ -35,7 +35,8 @@ class HelpCommandEmbed:
     def get_command_signature(self, handler_obj: Handler.HandlerObj) -> str:
         # filters is tuple
         cmds = self.get_commands(handler_obj)
-        if (not handler_obj.filters
+        if (
+            not handler_obj.filters
             and not handler_obj.filters
             or StateFilter in handler_obj.filters
         ):

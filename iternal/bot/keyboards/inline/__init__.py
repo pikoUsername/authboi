@@ -1,6 +1,5 @@
-from .start import choice_kb
-from .admin import admin_kb
-from .event import inline_choice_event
+from .start import get_choice_kb
+from .admin import get_admin_btns
+from .event import get_event_kb
 
-# dont ask me, why KB's not functions
-__all__ = ("admin_kb", "inline_choice_event", "choice_kb")
+__all__ = ("get_admin_btns", "get_choice_kb", "get_event_kb")

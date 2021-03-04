@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
 from iternal.bot.loader import dp
-from iternal.bot.keyboards.inline.start import choice_kb
+from iternal.bot.keyboards.inline.start import get_choice_kb
 from iternal.store.user import User
 
 
@@ -17,7 +17,7 @@ async def register_user(msg: types.Message, user: User):
         return SendMessage(msg.chat.id, "Вы уже авторизованы как польветель!")
 
     logger.info(f"Start register_user handler user_id: {msg.from_user.id}, chat_id: {msg.chat.id}")
-    return SendMessage(msg.chat.id, "Выбирите:", reply_markup=choice_kb)
+    return SendMessage(msg.chat.id, "Выбирите:", reply_markup=get_choice_kb())
 
 
 @dp.callback_query_handler(text="log_in")
@@ -39,6 +39,6 @@ async def log_in_user(call_back: types.CallbackQuery):
 async def back_to_main_menus(call_back: types.CallbackQuery):
     return EditMessageText(chat_id=call_back.message.chat.id,
                            text="Меню: ",
-                           reply_markup=choice_kb,
+                           reply_markup=get_choice_kb(),
                            message_id=call_back.message.message_id,
                            )

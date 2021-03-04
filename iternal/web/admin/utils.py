@@ -78,6 +78,7 @@ jsonify = partial(json.dumps, default=json_datetime_serial)
 
 json_response = partial(web.json_response, dumps=jsonify)
 
+
 def as_dict(exc, value=None):
     result = exc.as_dict(value)
     if isinstance(result, str):

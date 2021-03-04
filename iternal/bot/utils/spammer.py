@@ -8,7 +8,10 @@ from loguru import logger as log
 from ..loader import db, bot
 from iternal.store.user import User
 
-_DEFAULT_IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_of_None.svg/1280px-Flag_of_None.svg.png"
+
+async def delete_user(id: int) -> None:
+    u = await User.query.select(User.user_id == id).gino.first()
+    await u.delete()
 
 
 async def send_message(chat_id: int,
@@ -18,16 +21,12 @@ async def send_message(chat_id: int,
             await bot.send_photo(chat_id, *args, **message_params)
         else:
             await bot.send_message(chat_id, *args, **message_params)
-    except exceptions.BotBlocked:
-        log.error(f"Target [ID:{chat_id}]: blocked by user")
-    except exceptions.ChatNotFound:
-        log.error(f"Target [ID:{chat_id}]: invalid user ID")
     except exceptions.RetryAfter as e:
         log.error(f"Target [ID:{chat_id}]: Flood limit is exceeded. Sleep {e.timeout} seconds.")
         await asyncio.sleep(e.timeout)
         return await send_message(chat_id, *args, **message_params)  # Recursive call
-    except exceptions.UserDeactivated:
-        log.error(f"Target [ID:{chat_id}]: user is deactivated")
+    except (exceptions.UserDeactivated, exceptions.ChatNotFound, exceptions.BotBlocked):
+        await delete_user(chat_id)
     except exceptions.TelegramAPIError:
         log.exception(f"Target [ID:{chat_id}]: failed")
     else:
@@ -68,10 +67,17 @@ async def notify_all_admins(*args, **message_params):
 async def send_to_all_users(
     text: str,
     img_link: str = None,
-    inline_kb: types.InlineKeyboardMarkup = None
+    inline_kb: types.InlineKeyboardMarkup = None,
+    **kwargs
 ):
     all_users = await db.get_all_users()
 
     for user in all_users:
         # DEFAULT_IMG using, bc telegram wont to see that
-        await send_message(user.user_id, photo=img_link or _DEFAULT_IMG, caption=text, reply_markup=inline_kb)
+        await send_message(
+            user.user_id,
+            photo=img_link,
+            caption=text,
+            reply_markup=inline_kb,
+            **kwargs
+        )

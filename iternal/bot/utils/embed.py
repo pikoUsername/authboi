@@ -18,8 +18,7 @@ from iternal.bot.utils.html import strong
 T = TypeVar("T")  # slut type
 
 
-class InvalidPage(Exception):
-    pass
+class InvalidPage(Exception): pass
 
 
 _DEFAULT_KB = InlineKeyboardMarkup(inline_keyboard=[
@@ -146,13 +145,14 @@ class EmbedFieldPaginator(Embed):
 
 class Paginator:
     __slots__ = ("page_list", "per_page", "current_page",
-                 "message", "_kb", "dp")
+                 "message", "dp")
 
     def __init__(self, object_list: List[Any], per_page: int = 1, dp=None):
         self.page_list = object_list
         self.per_page = int(per_page)
         self.current_page = 0
         self.dp = dp or Dispatcher.get_current()
+        self.message = None
 
     @property
     def page_range(self) -> range:
@@ -201,7 +201,7 @@ class Paginator:
         return self.current_page - 1
 
     async def start(self, m: Optional[Message] = None):
-        if self.message and m is None:
+        if hasattr(self, 'message') and m is None:
             raise TypeError("Message and arguemnt 'm' is None")
 
         if m is not None:
