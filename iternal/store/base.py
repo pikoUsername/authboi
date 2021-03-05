@@ -43,5 +43,6 @@ class ContextGino(Gino):
 # please don't make duplicates of this object
 # it s can be dangerous
 db_ = ContextGino()  # for backward compatibility
+ContextGino.set_current(db_)
 # this var uses by handlers and etc.
 # if indeed need to copy this object, so just delete in end of file

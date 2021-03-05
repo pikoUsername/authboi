@@ -76,7 +76,7 @@ class DBCommands:
     async def exit_user(self, user_id: int) -> None:
         import warnings
 
-        warnings.warn("this Function is deprectaed.")
+        warnings.warn("this Function is deprecated.")
         user = await self.get_user(user_id)
         user.is_authed = False
         await user.update().apply()
