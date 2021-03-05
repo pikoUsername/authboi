@@ -14,7 +14,7 @@ def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
     e.add_field("email", email)
     e.add_field("Пароль", "".join(pass_to_show))
 
-    return e.clean_embed
+    return str(e)
 
 
 async def close_webhook(dp: Dispatcher):
