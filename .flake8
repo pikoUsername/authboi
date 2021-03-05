@@ -1,4 +1,4 @@
 [flake8]
 ignore=E731
-exclude=__pycache__,.git,venv
+exclude=__pycache__,.git,venv,.pytest_cache,.gitignore
 max-line-length=120

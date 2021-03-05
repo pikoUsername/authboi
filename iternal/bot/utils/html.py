@@ -19,7 +19,7 @@ _AVAILABLE_TAGS = (
 # note, tests in tests/bot/test_wrappers.py
 def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
     assert tag in _AVAILABLE_TAGS, "Telegram not supported tag."
-    attrs_tag = [f'{k}="{v}"' for k, v in tags_attrubiutes.items()] or ""
+    attrs_tag = [f'{k}="{v}"' for k, v in tags_attrubiutes.items()]
     result = f"<{tag} {''.join(attrs_tag)}>{text}</{tag}>"
     return result
 

@@ -45,10 +45,11 @@ class Embed:
         if not isinstance(value, list):
             value = "".join(value)
 
-        # spahetti, from asia
-        self.value = "\n"
+        # spahetti, from asia"
         if value is not None:
-            self.value += value
+            self.value = value
+        else:
+            self.value = value
 
         self._title = title
         self.fields: List[Field] = []
@@ -128,8 +129,6 @@ class EmbedFieldPaginator(Embed):
                 if self.has_pervious_page():
                     return self.get_field(page - 1)
             raise exc
-        finally:
-            del exc
 
     def has_pervious_page(self) -> bool:
         return self._current_field > 1

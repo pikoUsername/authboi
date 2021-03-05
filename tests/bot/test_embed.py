@@ -10,7 +10,7 @@ def test_embed():
 
     e = Embed(title)
 
-    assert e.clean_embed == f"<strong >{title}</strong>\n"
+    assert str(e) == f"<strong >{title}</strong>\n"
 
 
 def test_embed_title():
