@@ -36,10 +36,7 @@ async def accept_change_email(msg: types.Message, state: FSMContext, user: User)
     async with state.proxy() as data:
         email = data["email"]
 
-    try:
-        await user.update(email=email).apply()
-    except TypeError:
-        return SendMessage(msg.chat.id, "Ошибка, Невозможно Сменить Эмейл.")
+    await user.update(email=email).apply()
     await state.finish()
     return SendMessage(msg.chat.id, "Успех, Вы поменяли Свой Эмейл.")
 

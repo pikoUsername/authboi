@@ -32,16 +32,23 @@ pagination_call = CallbackData("paginator", "key", "page")
 
 
 class Embed:
-    __slots__ = "_title", "value", "fields", "_fields_len"
     """
     Embed like discord, but more worse,
     maybe added pagination, for embed
     """
-    def __init__(self, title: str, value=tuple()):
+    __slots__ = "_title", "value", "fields", "_fields_len"
+
+    def __init__(self, title: str, value=None):
+        if not value:
+            value = tuple()
+
         if not isinstance(value, list):
             value = "".join(value)
 
-        self.value = value if not value else f"{value}\n"
+        # spahetti, from asia
+        self.value = "\n"
+        if value is not None:
+            self.value += value
 
         self._title = title
         self.fields: List[Field] = []
@@ -53,7 +60,6 @@ class Embed:
     def title(self) -> str:
         return strong(self._title)
 
-    @property
     def clean_embed(self) -> str:
         result = [self.title, self.value]
 
@@ -62,6 +68,8 @@ class Embed:
             result.append(res)
 
         return "\n".join(result)
+
+    __str__ = __repr__ = clean_embed
 
     # methods
 
@@ -82,9 +90,11 @@ class Embed:
     def change_field(self, index: int, **kwargs):
         f = self.fields[index]
         f_dir = [a for a in f.__dir__() if not a.startswith("__")]
+
         for k, v in kwargs.items():
             if k in f_dir:
                 setattr(f, k, v)
+
         self.fields[index] = f
         return self.fields[index]
 
@@ -118,6 +128,8 @@ class EmbedFieldPaginator(Embed):
                 if self.has_pervious_page():
                     return self.get_field(page - 1)
             raise exc
+        finally:
+            del exc
 
     def has_pervious_page(self) -> bool:
         return self._current_field > 1
@@ -258,22 +270,22 @@ class Paginator:
 class Field:
     __slots__ = "text", "index", "embed", "title"
 
-    def __init__(
-        self,
-        embed: Union[Embed, EmbedFieldPaginator],
-        title: str,
-        text: str,
-        index: int = 0
-    ) -> None:
+    def __init__(self, embed, title, text, index=None):
+        if index is None:
+            index = 9
+
         self.title = title
         self.text = text
-        # for embed paginator
         self.index = index
         self.embed = embed
 
     def get_embed(self) -> str:
         _title = strong(self.title)
-        return f"{_title}\n{self.text}"
+        text = (
+            f"{_title}\n"
+            f"{self.text}",
+        )
+        return "".join(text)
 
     @classmethod
     def from_dict(cls, **kwargs: Any) -> T:
@@ -288,5 +300,4 @@ class Field:
 
         return a
 
-    __str__ = get_embed
-    __repr__ = get_embed
+    __str__ = __repr__ = get_embed
