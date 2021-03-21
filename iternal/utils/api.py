@@ -121,7 +121,7 @@ class GithubWrap:
 
     async def read_comments_commit(self, owner: str, repo: str, commit_sha: str, **kwargs):
         """
-        Gets comments for commit
+        Gets comments from commit
         """
         data = generate_payload(**locals(), exclude=['owner', 'repo', 'commit_sha'])
 
