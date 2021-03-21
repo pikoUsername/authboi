@@ -8,6 +8,14 @@ class IsAdminFilter(BoundFilter):
     def __init__(self, is_admin: bool):
         self.is_admin = is_admin
 
-    async def check(self, _) -> bool:
+    async def check(self, *_) -> bool:
+        del _
         # get is_admin from user model
-        return ctx_data.get()["user"].is_admin or False
+        user = ctx_data.get()["user"]
+
+        try:
+            return user.is_admin
+        except AttributeError:
+            pass
+        finally:
+            return False
