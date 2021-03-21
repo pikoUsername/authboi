@@ -73,14 +73,6 @@ class DBCommands:
         await new_user.create()
         return new_user
 
-    async def exit_user(self, user_id: int) -> None:
-        import warnings
-
-        warnings.warn("this Function is deprecated.")
-        user = await self.get_user(user_id)
-        user.is_authed = False
-        await user.update().apply()
-
     async def create_admin_user(self, user_id: int, remove):
         user = await self.get_user(user_id)
         if not user:

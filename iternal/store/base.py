@@ -9,10 +9,6 @@ T = TypeVar("T")
 
 
 class ContextGino(Gino):
-    # unfortunetly, variant of
-    # using with ContextInstanceMixin from aiogram
-    # not working
-    __context_instance = ContextVar("context_gino")
     """
     For context bind, and pool.
     usage is simple
@@ -21,6 +17,10 @@ class ContextGino(Gino):
     but take care about global "GINO"'s
     like that globals may raise huge problems
     """
+    # unfortunetly, variant of
+    # using with ContextInstanceMixin from aiogram
+    # not working
+    __context_instance = ContextVar("context_gino")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
