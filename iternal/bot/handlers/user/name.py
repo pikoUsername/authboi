@@ -6,17 +6,13 @@ from loguru import logger
 
 from iternal.bot.states.user.cng_name import ChangeName
 from iternal.bot.loader import db, dp
+from iternal.store.user import User
 
 
 @dp.message_handler(commands="change_name", is_authed=True, state="*")
-async def start_change_name(msg: types.Message, state: FSMContext):
+async def start_change_name(msg: types.Message, state: FSMContext, user: User):
     current_state = await state.get_state()
-    if current_state:
-        return
-
-    user = await db.get_user(msg.from_user.id)
-
-    if not user:
+    if user is None or current_state is None:
         return
 
     await msg.answer("Хорошо, скажите имя на которое вы хотите сменить")
@@ -25,7 +21,7 @@ async def start_change_name(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state=ChangeName.wait_to_name, content_types=ContentType.TEXT)
 async def wait_to_name_(msg: types.Message, state: FSMContext):
-    if ' ' in msg.text or len(msg.text) >= 200:
+    if msg.text.isspace() or len(msg.text) >= 200:
         return await msg.answer("Не допустимое Имя, Есть пробел в Имени или оно прывышает лимит в 200 знаков!")
 
     async with state.proxy() as data:
@@ -57,5 +53,5 @@ async def cancel_change_name(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=ChangeName.wait_to_accept)
-async def accept_to_change_name(msg: types.Message, state: FSMContext):
+async def accept_to_change_name(msg: types.Message):
     return SendMessage(chat_id=msg.chat.id, text="Повторите действие или выйдите /cancel или N.")

@@ -13,7 +13,7 @@ from iternal.store.user import User
 async def register_user(msg: types.Message, user: User):
     # here check to user exists
 
-    if user:
+    if user is not None:
         return SendMessage(msg.chat.id, "Вы уже авторизованы как польветель!")
 
     logger.info(f"Start register_user handler user_id: {msg.from_user.id}, chat_id: {msg.chat.id}")
@@ -31,8 +31,7 @@ async def log_in_user(call_back: types.CallbackQuery):
     return EditMessageText(chat_id=call_back.message.chat.id,
                            message_id=call_back.message.message_id,
                            text="Прежде чем пройти и использвать бота, авторизуйтесь! видите Логин или Имя.",
-                           reply_markup=back_kb
-                           )
+                           reply_markup=back_kb)
 
 
 @dp.callback_query_handler(text="back_to_main_menu")
@@ -40,5 +39,4 @@ async def back_to_main_menus(call_back: types.CallbackQuery):
     return EditMessageText(chat_id=call_back.message.chat.id,
                            text="Меню: ",
                            reply_markup=get_choice_kb(),
-                           message_id=call_back.message.message_id,
-                           )
+                           message_id=call_back.message.message_id,)

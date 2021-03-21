@@ -49,13 +49,11 @@ async def change_password(msg: types.Message, state: FSMContext):
 
 
 @dp.message_handler(text=("Y", "y", "yes"), state=ChangePassword.wait_to_accept_pass)
-async def accept_change_password(msg: types.Message, state: FSMContext):
+async def accept_change_password(msg: types.Message, state: FSMContext, user: User):
     async with state.proxy() as data:
         logger.info(f"user: {msg.from_user.username}, changed password")
         password = data["password"]
 
-    data = ctx_data.get()
-    user = data["user"]
     try:
         await user.update(password=password).apply()
         await state.finish()
