@@ -6,13 +6,13 @@ from iternal.bot.utils.embed import Embed
 
 
 def fill_auth_final(password: str, login: str, email: str) -> Optional[str]:
-    pass_to_show = ["*" for _ in range(len(password))]
+    pass_to_show = "*" * len(password)
 
     e = Embed("Профиль: ")
 
     e.add_field("Имя", login)
     e.add_field("email", email)
-    e.add_field("Пароль", "".join(pass_to_show))
+    e.add_field("Пароль", pass_to_show)
 
     return str(e)
 
