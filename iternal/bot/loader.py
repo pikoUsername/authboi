@@ -25,6 +25,7 @@ dp = Dispatcher(bot, storage=storage)
 telegraph = Telegraph()
 
 
+# noinspection PyUnusedLocal
 def setup():
     from . import middlewares, filters
     from .utils import executor
@@ -34,6 +35,4 @@ def setup():
     filters.setup(dp)
 
     logger.info("Configure Handlers...")
-    # oops not deletes
-    # something deletes this line
     from iternal.bot import handlers
