@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import List
 
 from aiogram import types
@@ -7,6 +8,7 @@ from loguru import logger
 from .user import User
 from .event import Event
 from iternal.config import ADMIN_IDS
+from iternal.utils.security import generate_hash
 
 
 class DBCommands:
@@ -50,7 +52,7 @@ class DBCommands:
         user: types.User,
         login: str,
         email: str,
-        password: str = None,
+        password: str,
     ) -> User:
         old_user = await self.get_user(user.id)
 
@@ -60,7 +62,7 @@ class DBCommands:
         new_user = User()
         new_user.login = login
         new_user.email = email
-        new_user.password = password
+        new_user.password = generate_hash(password)
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
