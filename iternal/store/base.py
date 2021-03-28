@@ -6,6 +6,7 @@ from sqlalchemy import sql
 import sqlalchemy as sa
 from gino import Gino
 
+
 __all__ = "ContextGino", "db_"
 
 T = TypeVar("T")
@@ -32,9 +33,14 @@ class ContextGino(Gino):
 
     @classmethod
     def get_current(cls: Type[T], no_error: bool = True) -> T:
-        if no_error:
-            return cls.__context_instance.get(None)
-        return cls.__context_instance.get()
+        try:
+            ctx = cls.__context_instance.get()
+        except LookupError:
+            if no_error:
+                return
+            raise
+        else:
+            return ctx
 
     @classmethod
     def set_current(cls: Type[T], value: T) -> None:
@@ -46,13 +52,12 @@ class ContextGino(Gino):
 # please don't make duplicates of this object
 # it s can be dangerous
 db_ = ContextGino()  # for backward compatibility
-ContextGino.set_current(db_)
 # this var uses by handlers and etc.
 # if indeed need to copy this object, so just delete in end of file
 
 
 class BaseModel(db_.Model):
-    __abstract__ = True
+    __abstract__ = 1
     query: sql.Select
 
     id = db_.Column(db_.Integer(), index=True, primary_key=True, unique=True)
@@ -70,7 +75,7 @@ class BaseModel(db_.Model):
 
 
 class TimedBaseModel(BaseModel):
-    __abstract__ = True
+    __abstract__ = 1
 
     created_at = db_.Column(db_.DateTime(True), server_default=db.func.now())
     updated_at = db_.Column(

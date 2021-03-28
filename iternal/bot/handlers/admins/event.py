@@ -35,8 +35,7 @@ async def admin_event_choice_yes(call_back: types.CallbackQuery):
 async def write_text_to_inline(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь Ввидите Ccылку для кнопки,\n Вы можете отменить действие с помощью /cancel")
 
-    async with state.proxy() as data:
-        data["inline_text"] = msg.text
+    await state.set_data({"inline_text": msg.text})
     await InlineStates.wait_for_reference.set()
 
 
@@ -44,8 +43,7 @@ async def write_text_to_inline(msg: types.Message, state: FSMContext):
 async def write_reference_inline(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь Пришлите Изображение,\n Вы можете просто Пропустить этап написав /skip.\n Отмена /cancel")
 
-    async with state.proxy() as data:
-        data["inline_reference"] = msg.text
+    await state.set_data({"inline_reference": msg.text})
     await EventState.wait_for_image.set()
 
 
@@ -61,9 +59,7 @@ async def event_get_image(msg: types.Message, state: FSMContext):
     await msg.answer("Теперь Напишите текст который там будет")
     link = msg.photo[0:len(msg.photo)]
 
-    async with state.proxy() as data:
-        data["link"] = link
-
+    await state.set_data({"link": link})
     await EventState.wait_for_text.set()
 
 
@@ -103,20 +99,12 @@ async def write_text_file(msg: types.Message, state: FSMContext):
     # creating inline text and etc.
     # TL;DR oh no, so bad code ;(
     if inline_text and inline_url:
-        to_show_inline = types.InlineKeyboardMarkup(inline_keyboard=[
-            [
-                types.InlineKeyboardButton(text=inline_text, url=inline_url),
-            ]
-        ], row_width=1)
+        to_show_inline = types.InlineKeyboardMarkup(row_width=1)
+        to_show_inline.add([types.InlineKeyboardButton(text=inline_text, url=inline_url)])
 
-        async with state.proxy() as data:
-            data["inline_kb"] = to_show_inline
-
+        await state.set_data({"inline_kb": to_show_inline})
         if not link:
-            try:
-                return await msg.answer(safed_text, reply_markup=to_show_inline)
-            except BadRequest:
-                return
+            return await msg.answer(safed_text, reply_markup=to_show_inline)
         return await msg.answer_photo(photo=link, caption=safed_text, reply_markup=to_show_inline)
     return await msg.answer(safed_text)
 
