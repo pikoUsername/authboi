@@ -10,14 +10,14 @@ def test_embed():
 
     e = Embed(title)
 
-    assert str(e) == f"<strong >{title}</strong>\n"
+    assert str(e) == f"<strong>{title}</strong>\n"
 
 
 def test_embed_title():
     title = "test"
 
     e = Embed(title)
-    assert e.title == f"<strong >{title}</strong>"
+    assert e.title == f"<strong>{title}</strong>"
 
 
 def test_embed_add_field():

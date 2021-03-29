@@ -9,7 +9,7 @@ def test_wrap_text_html():
     text = "LOL_KEK_CHEBUREK"
     result = wrap_text_html(text, "strong")  # strong style
 
-    assert result == f"<strong >{text}</strong>"
+    assert result == f"<strong>{text}</strong>"
 
 
 def test_wrap_text_html_href():
@@ -23,7 +23,7 @@ def test_wrap_deep():
     url = "https://google.com"
     text = "lol"
     result = wrap_text_html(wrap_text_html(text, "a", href=url), "code")
-    assert result == f'<code ><a href="{url}">{text}</a></code>'
+    assert result == f'<code><a href="{url}">{text}</a></code>'
 
 
 def test_html_wrap_perf():

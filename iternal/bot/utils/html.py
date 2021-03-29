@@ -13,14 +13,17 @@ _AVAILABLE_TAGS = (
     "pre",
     "a",
     "code"
-)  # set
+)
 
 
 # note, tests in tests/bot/test_wrappers.py
-def wrap_text_html(text: str, tag: str, **tags_attrubiutes) -> str:
+def wrap_text_html(text: str, tag: str, **tags_attrs) -> str:
     assert tag in _AVAILABLE_TAGS, "Telegram not supported tag."
-    attrs_tag = [f'{k}="{v}"' for k, v in tags_attrubiutes.items()]
-    result = f"<{tag} {''.join(attrs_tag)}>{text}</{tag}>"
+    attrs_tag = [f'{k}="{v}"' for k, v in tags_attrs.items()]
+    if not attrs_tag:
+        result = f"<{tag}>{text}</{tag}>"
+    else:
+        result = f"<{tag} {''.join(attrs_tag)}>{text}</{tag}>"
     return result
 
 
