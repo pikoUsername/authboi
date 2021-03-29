@@ -1,7 +1,5 @@
 from .base import db_, TimedBaseModel
 
-__all__ = "User",
-
 
 class User(TimedBaseModel):
     """

@@ -86,7 +86,7 @@ class GithubWrap:
             self._session = aiohttp.ClientSession(loop=self.loop)
         return self._session
 
-    async def send_request(self,
+    async def request(self,
                            http_method: str,
                            method: str,
                            data: dict,
@@ -112,7 +112,7 @@ class GithubWrap:
         """
         data = generate_payload(**locals(), exclude=['owner', 'repo'])
 
-        return await self.send_request(
+        return await self.request(
             "GET",
             "/repos/{owner}/{repo}",
             data=data,
@@ -125,7 +125,7 @@ class GithubWrap:
         """
         data = generate_payload(**locals(), exclude=['owner', 'repo', 'commit_sha'])
 
-        return await self.send_request(
+        return await self.request(
             "GET", "/repos/{owner}/{repo}/{commit_sha}/comments",
             data=data,
             url_kwargs={'owner': owner, "repo": repo, "commit_sha": commit_sha}
@@ -133,7 +133,7 @@ class GithubWrap:
 
     async def issue(self, owner: str, repo: str, **kwargs):
         data = generate_payload(**locals(), exclude=['owner', 'repo'])
-        return await self.send_request(
+        return await self.request(
             "GET",
             "/repos/{owner}/{repo}/issue",
             data=data,

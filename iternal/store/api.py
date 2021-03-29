@@ -1,23 +1,35 @@
-from __future__ import annotations
-
 from typing import List
 
 from aiogram import types
 from loguru import logger
+from gino import GinoConnection
 
 from .user import User
 from .event import Event
 from iternal.config import ADMIN_IDS
 from iternal.utils.security import generate_hash
 
+from .util import ContextGino
+
+
+async def _get_user(_user_id: int) -> User:
+    _user = await User.query.where(User.user_id == _user_id).gino.first()
+    return _user
+
 
 class DBCommands:
-    __slots__ = ()
+    __slots__ = "_current_user",
 
-    @staticmethod
-    async def get_user(user_id: int) -> User:
-        user = await User.query.where(User.user_id == user_id).gino.first()
-        return user
+    async def get_user(self, user_id: int) -> User:
+        user = getattr(self, '_current_user', None)
+        # caches result to _current_user
+        if user is None or user and user_id != user.user_id:
+            user = await _get_user(user_id)
+            setattr(self, '_current_user', user)
+            return user
+
+        if user is not None and user_id == user.user_id:
+            return user
 
     @staticmethod
     async def remove_user(user_id: int) -> None:
@@ -50,9 +62,7 @@ class DBCommands:
     async def add_new_user(
         self,
         user: types.User,
-        login: str,
-        email: str,
-        password: str,
+        **kwargs
     ) -> User:
         old_user = await self.get_user(user.id)
 
@@ -60,34 +70,36 @@ class DBCommands:
             return old_user
 
         new_user = User()
-        new_user.login = login
-        new_user.email = email
-        new_user.password = generate_hash(password)
+        new_user.login = kwargs['login']
+        new_user.email = kwargs['email']
+        new_user.password = generate_hash(kwargs['password'])
         new_user.user_id = user.id
         new_user.username = user.username
         new_user.full_name = user.full_name
 
-        if user.id in ADMIN_IDS:
-            new_user.is_admin = True
-        else:
-            new_user.is_admin = False
+        new_user.is_admin = True if user.id in ADMIN_IDS else False
 
         await new_user.create()
         return new_user
 
-    async def create_admin_user(self, user_id: int, remove):
+    async def create_admin_user(self, user_id: int, remove: bool) -> int:
         user = await self.get_user(user_id)
-        if not user:
-            logger.error("User is not registered in bot")
+        if user is None:
             raise ValueError("User is not registered in bot")
 
-        logger.info(
-            "Loaded user {user}.",
-            user=user.user_id,
-        )
         await user.update(is_admin=not remove).apply()
         if remove:
             logger.warning("User {user} now IS NOT superuser", user=user_id)
         else:
             logger.warning("User {user} now IS superuser", user=user_id)
-        return True
+        # memory economy
+        return 1
+
+    async def acquire(self, *args, **kwargs) -> GinoConnection:
+        """
+        You must to close this, or later
+
+        :return:
+        """
+        db_ = ContextGino.get_current()
+        return db_.acquire(*args, **kwargs)

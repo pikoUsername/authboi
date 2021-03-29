@@ -20,6 +20,7 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 # expermintal
 # help = HelpCommandEmbed(dp)
+# # Can increase a runtime
 # help.setup_handlers_to_telegram()
 # help.setup()
 telegraph = Telegraph()

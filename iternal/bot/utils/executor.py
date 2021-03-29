@@ -10,15 +10,15 @@ from . import db
 from ..loader import dp as dispatcher
 
 
-runner = Executor(dispatcher=dispatcher)
+runner = Executor(dispatcher)
 
 
-async def on_startup_webhook(dp):
+async def on_startup_webhook(dp: Dispatcher) -> None:
     logger.info("Configure Web-Hook URL to: {url}", url=config.WEBHOOK_URL)
     await dp.bot.set_webhook(config.WEBHOOK_URL, ip_address=config.DOMAIN)
 
 
-async def notify_admins(dp: Dispatcher):
+async def notify_admins(dp: Dispatcher) -> None:
     # optimaze it
     all_admins = await User.query.where(User.is_admin is True).gino.all()
     for user in all_admins:
