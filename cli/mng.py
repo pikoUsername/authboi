@@ -46,6 +46,7 @@ def webhook(skip_updates: bool):
 @click.option("--host", "-H", default="localhost", type=str, help="host for web application")
 @click.option("--port", "-p", default=8080, type=int, help="port whose chhosed for")
 def web(host: str, port: int):
+    # TODO Make arguemtn parser for automation click.option creating, and docs parsing
     """
     Start Application
     """

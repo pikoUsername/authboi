@@ -28,7 +28,7 @@ POSTGRES_USER = dstr("DB_USER")
 POSTGRES_PASS = dstr("DB_PASS")
 
 # webhook
-DOMAIN = str(os.getenv("DOMAIN", default="localhost/"))
+DOMAIN = os.getenv("DOMAIN", default="localhost")
 SECRET_KEY = secrets.token_urlsafe(48)
 WEBHOOK_BASE_PATH = str(os.getenv("WEBHOOK_BASE_PATH", default="/webhook"))
 WEBHOOK_PATH = f"{WEBHOOK_BASE_PATH}/{SECRET_KEY}"
@@ -45,6 +45,5 @@ BOT_PUBLIC_PORT = dint("BOT_PUBLIC_PORT", default=3030)
 # logs path
 LOGS_BASE_PATH = str(proj_path / "logs")
 POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
-
 
 DEBUG = True
