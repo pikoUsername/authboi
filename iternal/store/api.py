@@ -103,3 +103,8 @@ class DBCommands:
         """
         db_ = ContextGino.get_current()
         return db_.acquire(*args, **kwargs)
+
+    async def get_user_name3password(self, login: str, password: str) -> "User":
+        password = generate_hash(password)
+        _t = User.query.select(User.login == login and User.password == password).gino.first()
+        return await _t

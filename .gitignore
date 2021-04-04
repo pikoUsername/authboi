@@ -28,3 +28,4 @@ data/__pycache__/
 # pytest cache
 tests/.pytest_cache/
 .pytest_cache/
+dir

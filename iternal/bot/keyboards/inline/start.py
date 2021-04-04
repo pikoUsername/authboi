@@ -6,6 +6,7 @@ def get_choice_kb():
         [
             InlineKeyboardButton("<< Что может этот бот", callback_data="what_can"),
             InlineKeyboardButton("Авторизоватся >>", callback_data="log_in"),
+            InlineKeyboardButton("Войти <>", callback_data="sign_in")
         ],
     ]
 

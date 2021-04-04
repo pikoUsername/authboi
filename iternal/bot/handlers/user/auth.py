@@ -127,8 +127,6 @@ async def yes_auth_password(msg: types.Message, state: FSMContext):
 
     text = fill_auth_final(password, login, email)
     await state.finish()
-    logger.info('------USER AUTHORIZATION!------')
-    logger.info(f"| login: {login} | email: {email}")
     return SendMessage(msg.chat.id, text)
 
 
