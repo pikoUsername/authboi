@@ -57,4 +57,4 @@ async def bot_about(msg: types.Message):
     e.add_field("Исходники", a("Здесь", "https://github.com/pikoUsername"))
     e.add_field("Про что", "Этот бот создан для хранения текста, и прочих напминалок.")
 
-    return SendMessage(msg.chat.id, e.clean_embed)
+    return SendMessage(msg.chat.id, str(e))

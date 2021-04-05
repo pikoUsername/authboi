@@ -27,14 +27,6 @@ POSTGRES_PORT = dint("DB_PORT")
 POSTGRES_USER = dstr("DB_USER")
 POSTGRES_PASS = dstr("DB_PASS")
 
-# webhook
-DOMAIN = os.getenv("DOMAIN", default="localhost")
-SECRET_KEY = secrets.token_urlsafe(48)
-WEBHOOK_BASE_PATH = str(os.getenv("WEBHOOK_BASE_PATH", default="/webhook"))
-WEBHOOK_PATH = f"{WEBHOOK_BASE_PATH}/{SECRET_KEY}"
-WEBHOOK_URL = f"https://{DOMAIN}{WEBHOOK_PATH}"
-
-
 # telegram
 BOT_TOKEN = dstr("BOT_TOKEN")
 ADMIN_IDS = [
@@ -47,3 +39,9 @@ LOGS_BASE_PATH = str(proj_path / "logs")
 POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
 
 DEBUG = True
+
+# webhook
+DOMAIN = os.getenv("DOMAIN", default="localhost")
+WEBHOOK_BASE_PATH = str(os.getenv("WEBHOOK_BASE_PATH", default="/webhook"))
+WEBHOOK_PATH = f"{WEBHOOK_BASE_PATH}/{BOT_TOKEN}"
+WEBHOOK_URL = f"https://{DOMAIN}{WEBHOOK_PATH}"

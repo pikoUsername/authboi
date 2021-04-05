@@ -16,4 +16,4 @@ class User(TimedBaseModel):
     password = db_.Column(db_.String(255))  # there must be hash
     referral = db_.Column(db_.Integer)
     description = db_.Column(db_.String)
-    is_admin = db_.Column(db_.Boolean)
+    is_admin = db_.Column(db_.Boolean, default=True)
